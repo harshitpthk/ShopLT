@@ -14,7 +14,7 @@ import com.shoplite.Utils.CartGlobals;
 import com.shoplite.Utils.Globals;
 import com.shoplite.Utils.Constants.DBState;
 import com.shoplite.connection.ConnectionInterface;
-import com.shoplite.connection.ServerConnection;
+import com.shoplite.connection.ServerConnectionMaker;
 import com.shoplite.connection.ServiceProvider;
 import com.shoplite.interfaces.PackListInterface;
 
@@ -35,7 +35,7 @@ public class PackList implements ConnectionInterface {
 			shopURL  = "https://" + "planetp1940097444trial.hanatrial.ondemand.com/shop-sys/";
 		
 		try {
-			ServerConnection.sendRequest(this, shopURL);
+			ServerConnectionMaker.sendRequest(this, shopURL);
 			}
 		catch (RetrofitError e) {
 			  System.out.println(e.getResponse().getStatus());
@@ -65,21 +65,21 @@ public class PackList implements ConnectionInterface {
 					//Log.e("Retrofit error", response.getMessage());
 					//Log.e("Retrofit error", response.getStackTrace().toString());
 					//Controls.dismiss_progress_dialog();
-					ServerConnection.recieveResponse(null);
+					ServerConnectionMaker.recieveResponse(null);
 					String shopURL = null;
 					if(Globals.connected_shop_url != null)
 						shopURL  = "https://" + Globals.connected_shop_url;
 					else
 						shopURL  = "https://" + "planetp1940097444trial.hanatrial.ondemand.com/shop-sys/";
 			
-					ServerConnection.sendRequest(CartGlobals.CartServerRequestQueue.peekFirst(), shopURL);
+					ServerConnectionMaker.sendRequest(CartGlobals.CartServerRequestQueue.peekFirst(), shopURL);
 					
 				}
 
 				@Override
 				public void success(JsonObject message, Response response) {
 					// TODO Auto-generated method stub
-					ServerConnection.recieveResponse(response);
+					ServerConnectionMaker.recieveResponse(response);
 					Log.e("PackList", response.toString());
 					calling_class_object_internal.PackListSuccess(obj);
 					CartGlobals.CartServerRequestQueue.removeFirst();
@@ -89,7 +89,7 @@ public class PackList implements ConnectionInterface {
 							shopURL  = "https://" + Globals.connected_shop_url;
 						else
 							shopURL  = "https://" + "planetp1940097444trial.hanatrial.ondemand.com/shop-sys/";
-						ServerConnection.sendRequest(CartGlobals.CartServerRequestQueue.peekFirst(), shopURL);
+						ServerConnectionMaker.sendRequest(CartGlobals.CartServerRequestQueue.peekFirst(), shopURL);
 					}
 					
 					

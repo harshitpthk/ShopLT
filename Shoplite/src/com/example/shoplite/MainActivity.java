@@ -12,7 +12,7 @@ import com.shoplite.UI.Controls;
 import com.shoplite.Utils.Globals;
 import com.shoplite.Utils.util;
 import com.shoplite.connection.ConnectionInterface;
-import com.shoplite.connection.ServerConnection;
+import com.shoplite.connection.ServerConnectionMaker;
 import com.shoplite.connection.ServiceProvider;
 import com.shoplite.database.DbHelper;
 import com.shoplite.models.User;
@@ -273,7 +273,7 @@ public class MainActivity extends Activity implements ConnectionInterface  {
 			
 			Controls.show_loading_dialog(this, "Signing Up");
 			
-			ServerConnection.sendRequest(this,util.starURL);
+			ServerConnectionMaker.sendRequest(this,util.starURL);
 			
 			 
 		}
@@ -304,7 +304,7 @@ public class MainActivity extends Activity implements ConnectionInterface  {
 				Toast.makeText(getBaseContext(), arg0.toString(), Toast.LENGTH_LONG).show();
 				Log.e("Retrofit error", arg0.getUrl());
 				Log.e("Retrofit error", arg0.getMessage());
-				ServerConnection.recieveResponse(null);
+				ServerConnectionMaker.recieveResponse(null);
 			}
 
 			@Override
@@ -320,8 +320,8 @@ public class MainActivity extends Activity implements ConnectionInterface  {
 				
 			    
 			    
-				ServerConnection.recieveResponse(response);
-				Globals.dbhelper.setItem("JSESSIONID",ServerConnection.star_sessionID );
+				ServerConnectionMaker.recieveResponse(response);
+				Globals.dbhelper.setItem("JSESSIONID",ServerConnectionMaker.star_sessionID );
 				ma.finish();
 	        	Intent i = new Intent(ma, Verification.class);
 	        	startActivity(i);

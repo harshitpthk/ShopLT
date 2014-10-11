@@ -12,7 +12,7 @@ import com.example.shoplite.Login;
 import com.google.gson.JsonObject;
 import com.shoplite.Utils.Globals;
 import com.shoplite.Utils.util;
-import com.shoplite.connection.ServerConnection;
+import com.shoplite.connection.ServerConnectionMaker;
 import com.shoplite.connection.ServiceProvider;
 import com.shoplite.connection.ConnectionInterface;
 import com.shoplite.database.DbHelper;
@@ -79,7 +79,7 @@ public class Verification extends Activity implements ConnectionInterface {
 	{
 		Controls.show_loading_dialog(this, "Resending");
 		resend = true;
-		ServerConnection.sendRequest(this,util.starURL);
+		ServerConnectionMaker.sendRequest(this,util.starURL);
 		
 	}
 	
@@ -87,12 +87,12 @@ public class Verification extends Activity implements ConnectionInterface {
 	{
 		Controls.show_loading_dialog(this, "Verifying");
 		verify = true;
-		if( ServerConnection.star_sessionID == null  ){
+		if( ServerConnectionMaker.star_sessionID == null  ){
 	    	
-			ServerConnection.star_sessionID = Globals.dbhelper.getItem("JSESSIONID_STAR" );
+			ServerConnectionMaker.star_sessionID = Globals.dbhelper.getItem("JSESSIONID_STAR" );
     	
 		}
-		ServerConnection.sendRequest(this,util.starURL);
+		ServerConnectionMaker.sendRequest(this,util.starURL);
 	}
 
 	@Override
@@ -115,7 +115,7 @@ public class Verification extends Activity implements ConnectionInterface {
 					Toast.makeText(getBaseContext(), arg0.toString(), Toast.LENGTH_LONG).show();
 					Log.e("Retrofit error", arg0.getUrl());
 					Log.e("Retrofit error", arg0.getMessage());
-					ServerConnection.recieveResponse(null);
+					ServerConnectionMaker.recieveResponse(null);
 				}
 
 				@Override
@@ -123,7 +123,7 @@ public class Verification extends Activity implements ConnectionInterface {
 					
 					Globals.dbhelper.setItem("cliendID", clientID.get(0).toString());
 					String email = Globals.dbhelper.getItem("email");
-					ServerConnection.recieveResponse(response);
+					ServerConnectionMaker.recieveResponse(response);
 					
 					
 					Toast.makeText(getBaseContext(), clientID.get(0).toString(), Toast.LENGTH_LONG).show();
@@ -156,7 +156,7 @@ public class Verification extends Activity implements ConnectionInterface {
 					Toast.makeText(getBaseContext(), arg0.toString(), Toast.LENGTH_LONG).show();
 					Log.e("Retrofit error", arg0.getUrl());
 					Log.e("Retrofit error", arg0.getMessage());
-					ServerConnection.recieveResponse(null);
+					ServerConnectionMaker.recieveResponse(null);
 					
 				}
 
@@ -166,7 +166,7 @@ public class Verification extends Activity implements ConnectionInterface {
 					
 					Integer auth_token = arg0;
 					Toast.makeText(getBaseContext(), arg0.toString(), Toast.LENGTH_LONG).show();
-					ServerConnection.recieveResponse(response);
+					ServerConnectionMaker.recieveResponse(response);
 					Globals.dbhelper.setItem("auth-token", auth_token.toString() );
 										
 				}

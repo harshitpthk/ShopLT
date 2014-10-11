@@ -12,7 +12,7 @@ import retrofit.client.Header;
 import retrofit.client.Response;
 
 
-public class ServerConnection  {
+public class ServerConnectionMaker  {
 	
 	
 	

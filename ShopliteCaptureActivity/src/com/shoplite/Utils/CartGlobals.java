@@ -3,7 +3,7 @@ package com.shoplite.Utils;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import com.shoplite.connection.ServerConnection;
+import com.shoplite.connection.ServerConnectionMaker;
 import com.shoplite.models.ItemCategory;
 import com.shoplite.models.OrderItemDetail;
 import com.shoplite.models.PackList;

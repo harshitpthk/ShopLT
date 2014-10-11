@@ -94,7 +94,7 @@ import eu.livotov.zxscan.ZXScanHelper;
  * @author Harshit Pathak
  */
 
-public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.Callback,ConnectionInterface,ShopInterface,LocationInterface,ItemInterface,OnMarkerClickListener, OnCameraChangeListener
+public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.Callback,ShopInterface,LocationInterface,ItemInterface,OnMarkerClickListener, OnCameraChangeListener
 {
 
     private static final String TAG = CaptureActivity.class.getSimpleName();
@@ -646,25 +646,7 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
     }
     
     
-    public void showCart(View v)
-    {
-    	
-    		
-    		
-    		if(cartFrag.isAdded()){
-        		getSupportFragmentManager().beginTransaction().detach(cartFrag).commit();
-        		getSupportFragmentManager().executePendingTransactions();
-        		//mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, ldrawer);
-        	}
-    		else{
-    			getSupportFragmentManager().beginTransaction().attach(cartFrag ).addToBackStack(null).commit();
-        		getSupportFragmentManager().executePendingTransactions();
-        		//mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, ldrawer);
-    		}
-        	
-    	
-		
-    }
+    
     public void initiateCamera(SurfaceView surfaceView)
     {
     	if(conFrag.isAdded()){
@@ -748,33 +730,15 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
     }
 
     private void setCurrentShopping(int i) {
-		// TODO Auto-generated method stub
-    	
+		    	
     	conFrag.mViewPager.setCurrentItem(i);
 	}
     
     
-    public void delete_last_scanned(View v)
-    {
-    	final Animation animScale = AnimationUtils.loadAnimation(this, R.anim.buttonscale);
-    	v.startAnimation(animScale);
-    	cartFrag.remove_scanned_item("capture_activity",Globals.item_order_list.size()-1);
-    }
    
-    public void shopAtStore(View v)
-    {
-
-    	setCurrentShopping(1); 
-    }
-    public void shopOutsideStore(View v)
-    {
-    	setCurrentShopping(0);   
-    }
-	public void showOrderHistory(View v)
-	{
-		setCurrentShopping(2);
-		
-	}
+    //Google Map Related Methods
+	
+	
 	public void toggle_map()
 	{
     	
@@ -792,55 +756,96 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 		}
 	    	
 	}
+	public void mapShopSearch(View v)
+	{
+		EditText ev = (EditText)findViewById(R.id.map_search_tv);
+		
+		MapUI.search_location(ev.getText().toString());
+	}
 	@Override
 	public void onCameraChange(CameraPosition arg0) {
-		// TODO Auto-generated method stub
+		
 		LinearLayout connected_shop_details_view = (LinearLayout)findViewById(R.id.connected_shop_details);
 		ViewAnimation.slideToBottom(connected_shop_details_view);
 		
 		
 	}
-	
-	public void show_item_siblings(View view)
-	{
-	    	
-	    	DrawerLayout itemDrawerLayout = (DrawerLayout)AddDialog.findViewById(R.id.drawer_add_item);
-	    	ListView itemDrawer = (ListView)AddDialog.findViewById(R.id.left_drawer_add_item);
-	    	itemDrawerLayout.openDrawer(itemDrawer);
+	@Override
+	public boolean onMarkerClick(Marker marker) {
+		
+		double lat = 	marker.getPosition().latitude;
+		double lng = marker.getPosition().longitude;
+		LatLng coordinate = new LatLng(lat, lng);
+		
+		Shop shopObject = Globals.get_shop_from_location(coordinate,MapUI.mMap);
+		if(shopObject == null){
+			Toast.makeText(this, "This shop is out of range", Toast.LENGTH_LONG).show();
+			//Options for off-line shopping after proper message
 			
+		}
+		else{
+			if(shopObject.getName().equals(Globals.connected_shop_name)){
+				Toast.makeText(this, ("You are Connected to " + Globals.connected_shop_name), Toast.LENGTH_LONG).show();
+			}
+			else{
+				connect_to_shop(shopObject);
+				
+			}
+		}
+		return false;
 	}
+	
+	
+	//UI Buttons Methods
+	
 	public void shopsNearLocation(View v)
     {
 		final Animation animScale = AnimationUtils.loadAnimation(this, R.anim.buttonscale);
     	v.startAnimation(animScale);
     	toggle_map();
     }
-	
-	protected void connect_to_shop(Shop shopObj) {
-		
-		String shopURL =shopObj.getUrl();
-		String shopName = shopObj.getName();
-		com.shoplite.models.Location shopLoc = shopObj.getLocation();
-		shopObj.connect_to_shop(this,shopURL,shopName,shopLoc);
-		
-		Toast.makeText(getBaseContext(), ("Connecting to " + shopName), Toast.LENGTH_SHORT).show();
+	public void showCart(View v)
+    {
+    	   	
+    		if(cartFrag.isAdded()){
+        		getSupportFragmentManager().beginTransaction().detach(cartFrag).commit();
+        		getSupportFragmentManager().executePendingTransactions();
+        		
+        	}
+    		else{
+    			getSupportFragmentManager().beginTransaction().attach(cartFrag ).addToBackStack(null).commit();
+        		getSupportFragmentManager().executePendingTransactions();
+        		
+    		}
+    		mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, ldrawer);
+        	
     	
+		
+    }
+    public void delete_last_scanned(View v)
+    {
+    	final Animation animScale = AnimationUtils.loadAnimation(this, R.anim.buttonscale);
+    	v.startAnimation(animScale);
+    	cartFrag.remove_scanned_item("capture_activity",Globals.item_order_list.size()-1);
+    }
+    public void shopAtStore(View v)
+    {
+    	setCurrentShopping(1); 
+    }
+    public void shopOutsideStore(View v)
+    {
+    	setCurrentShopping(0);   
+    }
+	public void showOrderHistory(View v)
+	{
+		setCurrentShopping(2);
+		
 	}
 	
-	public void get_shop_list()
-	{
 		
-		Shop shopObj = new Shop();
-		shopObj.get_shop_list(this);
-	}
-		
-    @Override
-	public void sendRequest(ServiceProvider serviceProvider) {
-				
-		
-	}
+   
 
-
+	// Shop Methods
 	
    
 	@Override
@@ -865,11 +870,18 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 		location.made_use_of_location = true;
 	}
 
+	public void get_shop_list()
+	{
+		
+		Shop shopObj = new Shop();
+		shopObj.get_shop_list(this);
+	}
 
 	@Override
 	public void shop_list_success() {
 		
-		if(Globals.shop_list_fetch_success){
+	
+			Toast.makeText(Globals.ApplicationContext, ("Welcome to " + Globals.connected_shop_name), Toast.LENGTH_LONG).show();
 			if( Globals.shop_list != null && Globals.shop_list.size()>0){
 				MapUI.mMap.setOnMarkerClickListener(this);
 				for(int i = 0; i < Globals.shop_list.size() ; i++ ){
@@ -900,7 +912,7 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 			
 			
     	       
-		}
+		
 //		Shop shpObject =new Shop();
 //		shpObject.setName("CIty FOod Center");
 //		shpObject.setUrl("planetp1940097444trial.hanatrial.ondemand.com/shop-sys/");
@@ -913,16 +925,17 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 		MapUI.move_map_camera(coordinate);
 	}
 
-	public void mapShopSearch(View v)
-	{
-		EditText ev = (EditText)findViewById(R.id.map_search_tv);
+	protected void connect_to_shop(Shop shopObj) {
 		
-		MapUI.search_location(ev.getText().toString());
+		String shopURL =shopObj.getUrl();
+		String shopName = shopObj.getName();
+		com.shoplite.models.Location shopLoc = shopObj.getLocation();
+		shopObj.connect_to_shop(this,shopURL,shopName,shopLoc);
+		
+		Toast.makeText(getBaseContext(), ("Connecting to " + shopName), Toast.LENGTH_SHORT).show();
+    	
 	}
-
 	
-
-
 	@Override
 	public void shop_connected() {
 		double lat =  Globals.connected_shop_location.getLatitude();
@@ -935,38 +948,15 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 	}
 
 
-	@Override
-	public boolean onMarkerClick(Marker marker) {
-		
-		double lat = 	marker.getPosition().latitude;
-		double lng = marker.getPosition().longitude;
-		LatLng coordinate = new LatLng(lat, lng);
-		
-		Shop shopObject = Globals.get_shop_from_location(coordinate,MapUI.mMap);
-		if(shopObject == null){
-			Toast.makeText(this, "This shop is out of range", Toast.LENGTH_LONG).show();
-			//Options for off-line shopping after proper message
-			
-		}
-		else{
-			if(shopObject.getName().equals(Globals.connected_shop_name)){
-				Toast.makeText(this, ("You are Connected to " + Globals.connected_shop_name), Toast.LENGTH_LONG).show();
-			}
-			else{
-				connect_to_shop(shopObject);
-				
-			}
-		}
-		return false;
-	}
-
+	
+	//Item Methods
+	
 
 	@Override
 	public void ItemAdded() {
 		
 		
 	}
-
 
 	@Override
 	public void ItemGetSuccess() {
@@ -983,7 +973,6 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 		cardView.setVisibility(1);
 		Controls.show_add_item_dialog_spinner(this,AddDialog,Globals.fetched_item_category);
 	}
-
 
 	@Override
 	public void ItemListGetSuccess() {
@@ -1028,7 +1017,14 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 		
 	}
 
-
+	public void show_item_siblings(View view)
+	{
+	    	
+	    	DrawerLayout itemDrawerLayout = (DrawerLayout)AddDialog.findViewById(R.id.drawer_add_item);
+	    	ListView itemDrawer = (ListView)AddDialog.findViewById(R.id.left_drawer_add_item);
+	    	itemDrawerLayout.openDrawer(itemDrawer);
+			
+	}
 
 	
 }

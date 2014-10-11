@@ -2,16 +2,13 @@ package com.shoplite.models;
 
 
 import java.util.ArrayList;
-
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 import android.util.Log;
-import android.widget.Toast;
-
 import com.shoplite.Utils.Globals;
 import com.shoplite.connection.ConnectionInterface;
-import com.shoplite.connection.ServerConnection;
+import com.shoplite.connection.ServerConnectionMaker;
 import com.shoplite.connection.ServiceProvider;
 import com.shoplite.interfaces.ItemInterface;
 
@@ -23,8 +20,8 @@ public class Item implements ConnectionInterface {
 	private int itemCategory;
 	private double price;
 	private int quantity;
-	
-	
+	private boolean get_item_bool;
+	private boolean get_items_from_brand_bool;
 	private Input ItemInput = new Input();
 	private Input brandInput = new Input();
 	
@@ -66,94 +63,81 @@ public class Item implements ConnectionInterface {
 		this.price = price;
 		this.quantity = quantity;
 	}
-
+	
 	public  void getItem( ItemInterface calling_class_object,int itemID) {
-		// TODO Auto-generated method stub
+		
 		Item.calling_class_object = calling_class_object;
-		Globals.get_item_bool = true;
-		ItemInput.id = 10000;//itemID;
+		this.get_item_bool = true;
+		ItemInput.id = 10000;
 		ItemInput.type = "ItemCategoryId";
 		String shopURL = null;
-		if(Globals.connected_shop_url != null)
-			shopURL  = "https://" + Globals.connected_shop_url;
-		else
-			shopURL  = "https://" + "planetp1940097444trial.hanatrial.ondemand.com/shop-sys/";
-		ServerConnection.sendRequest(this, shopURL);
+		shopURL  = "https://" + Globals.connected_shop_url;
+		ServerConnectionMaker.sendRequest(this, shopURL);
 		
 	}
+	
 	public  void getItems( ItemInterface calling_class_object,int brandId) {
-		// TODO Auto-generated method stub
+		
 		Item.calling_class_object = calling_class_object;
-		Globals.get_items_from_brand_bool = true;
+		this.get_items_from_brand_bool = true;
 		brandInput.id = brandId;//itemID;
 		brandInput.type = "brand";
 		String shopURL = null;
-		if(Globals.connected_shop_url != null)
-			shopURL  = "https://" + Globals.connected_shop_url;
-		else
-			shopURL  = "https://" + "planetp1940097444trial.hanatrial.ondemand.com/shop-sys/";
-		ServerConnection.sendRequest(this, shopURL);
+		shopURL  = "https://" + Globals.connected_shop_url;
+		ServerConnectionMaker.sendRequest(this, shopURL);
 		
 	}
 	
 	@Override
 	public void sendRequest(ServiceProvider serviceProvider) {
-		if(Globals.get_items_from_brand_bool = true && !Globals.get_item_bool){
+		if(this.get_items_from_brand_bool = true ){
 			serviceProvider.getItems( brandInput,new Callback<ArrayList<ItemCategory>>(){
 
 				@Override
 				public void failure(RetrofitError response) {
 					if (response.isNetworkError()) {
-						Log.e("Retrofit error", "503"); // Use another code if you'd prefer
+						Log.e("Service Unavailable", "503"); // Use another code if you'd prefer
 				    }
-					//Toast.makeText(getBaseContext(), arg0.toString(), Toast.LENGTH_LONG).show();
-					//Log.e("Retrofit error", response.getUrl());
-					//Log.e("Retrofit error", response.getMessage());
-					//Controls.dismiss_progress_dialog();
-					ServerConnection.recieveResponse(null);
+					else{
+						Log.e("Get Items Failure",response.getMessage());
+					}
+					
+					ServerConnectionMaker.recieveResponse(null);
 					
 				}
 
 				@Override
 				public void success(ArrayList<ItemCategory> itemFamily, Response response) {
-					// TODO Auto-generated method stub
-					ServerConnection.recieveResponse(response);
-					Log.e("Retrofit Success", response.toString());
-					Log.e("Retrofit Success", itemFamily.toString());
-					//Toast.makeText(Globals.ApplicationContext, itemFamily.toString(), Toast.LENGTH_LONG).show();
-					Globals.get_items_from_brand_bool = false;
+					
+					ServerConnectionMaker.recieveResponse(response);
 					Globals.simmilar_item_list = itemFamily;
 					Item.calling_class_object.ItemListGetSuccess();
 				}
 				
 			});
 		}
-		else if(Globals.get_item_bool = true){
+		else if(this.get_item_bool = true){
 			serviceProvider.getItem( ItemInput,new Callback<ItemCategory>(){
 
 				@Override
 				public void failure(RetrofitError response) {
 					if (response.isNetworkError()) {
-						Log.e("Retrofit error", "503"); // Use another code if you'd prefer
+						Log.e("Service Unavailable", "503"); 	
 				    }
-					//Toast.makeText(getBaseContext(), arg0.toString(), Toast.LENGTH_LONG).show();
-					Log.e("Retrofit error", response.getUrl());
-					Log.e("Retrofit error", response.getMessage());
-					//Controls.dismiss_progress_dialog();
-					ServerConnection.recieveResponse(null);
+					else{
+						Log.e("Get Item Failure",response.getMessage());
+					}
+					
+					ServerConnectionMaker.recieveResponse(null);
 					
 				}
 
 				@Override
 				public void success(ItemCategory item, Response response) {
-					// TODO Auto-generated method stub
-					ServerConnection.recieveResponse(response);
-					Log.e("Retrofit Success", response.toString());
-					Log.e("Retrofit Success", item.toString());
-					Toast.makeText(Globals.ApplicationContext, item.toString(), Toast.LENGTH_LONG).show();
-					Globals.get_item_bool = false;
+					
+					ServerConnectionMaker.recieveResponse(response);
 					Globals.fetched_item_category = item;
-					getItems(Item.calling_class_object,item.getBrandId());
+					getItems(Item.calling_class_object,item.getBrandId());   			//Currently calling all the products at the same time of the item fetch, have to move it to demand based fetching
 					Item.calling_class_object.ItemGetSuccess();
 					
 				}

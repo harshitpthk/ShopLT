@@ -19,7 +19,7 @@ import com.shoplite.UI.Controls;
 import com.shoplite.Utils.location;
 import com.shoplite.Utils.util;
 import com.shoplite.connection.ConnectionInterface;
-import com.shoplite.connection.ServerConnection;
+import com.shoplite.connection.ServerConnectionMaker;
 import com.shoplite.connection.ServiceProvider;
 
 import eu.livotov.zxscan.ZXScanHelper;
@@ -59,7 +59,7 @@ public class Login implements ConnectionInterface {
 		generateAuthCode(key);
 		this.email = email;
 		this.mContext = context;
-		ServerConnection.sendRequest(this,util.starURL);
+		ServerConnectionMaker.sendRequest(this,util.starURL);
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class Login implements ConnectionInterface {
 				//Toast.makeText(getBaseContext(), arg0.toString(), Toast.LENGTH_LONG).show();
 				Log.e("Retrofit error", arg0.getUrl());
 				Log.e("Retrofit error", arg0.getMessage());
-				ServerConnection.recieveResponse(null);
+				ServerConnectionMaker.recieveResponse(null);
 			}
 
 			@Override
@@ -85,7 +85,7 @@ public class Login implements ConnectionInterface {
 				Log.e("Retrofit Success", message);
 				
 				
-				ServerConnection.recieveResponse(response);
+				ServerConnectionMaker.recieveResponse(response);
 
 				// code lines to initiate scanner activity
 				
