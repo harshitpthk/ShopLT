@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">sholite</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_settings_">Settings_Activity</string>
+    <string name="title_activity_verification">Verification</string>
+    <string name="verification_message">We have sent a code for verifying you as a real person, please enter the code received on your phone numbered  </string>
+    <string name="title_activity_navigation_drawer_test">NavigationDrawerTest</string>
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_example">Example action</string>
+    <string name="signup_again">Sign Up Again</string>
+    <string name="signup">Sign Up</string>
+    <string name="resend">Resend</string>
+    <string name="verify">Verify</string>
+    <string name="get_started"> Get Started</string>
+    <string name="title_activity_cart">Shopping Cart</string>
+     
+    
+</resources>

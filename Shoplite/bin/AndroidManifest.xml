@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.sholite"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="19" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature android:name="android.hardware.camera" />
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.INTERNET" />
+     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS_FULL" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false" />
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.example.shoplite.MainActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppBaseTheme" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.google.zxing.client.android.CaptureActivity"
+            android:clearTaskOnLaunch="true"
+            android:configChanges="orientation|keyboardHidden"
+            android:stateNotNeeded="true"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+       
+        <!--
+        <activity android:name="com.google.zxing.client.android.CaptureActivity"
+		   android:screenOrientation="portrait"
+		   android:configChanges="orientation|keyboardHidden"
+		   android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+		   android:windowSoftInputMode="stateAlwaysHidden">
+		   <intent-filter>
+		      <action android:name="android.intent.action.MAIN"/>
+		      <category android:name="android.intent.category.DEFAULT"/>
+		   </intent-filter>
+		   <intent-filter>
+		      <action android:name="com.google.zxing.client.android.SCAN"/>
+		      <category android:name="android.intent.category.DEFAULT"/>
+		    </intent-filter>
+		</activity>
+        -->
+
+        
+        
+        <activity
+            android:name="com.example.shoplite.Verification"
+            android:label="@string/title_activity_verification"
+            android:theme="@style/AppBaseTheme" >
+        </activity>
+        
+        <activity
+            android:name="com.shoplite.activities.SettingsActivity"
+            android:theme="@style/AppTheme"
+            android:parentActivityName="com.google.zxing.client.android.CaptureActivity">
+        </activity>
+
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyDPgUuXyn1ouDvZbyWVbaCjUOkzLqcfnFE" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+       
+    </application>
+
+</manifest>

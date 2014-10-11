@@ -1,0 +1,88 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="#fff"
+    tools:context="com.example.shoplite.Verification" >
+
+     <TextView 
+            android:id="@+id/verify_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="44sp"
+            android:textAlignment="viewEnd"
+            android:textColor="#816687"
+            android:text="Verify"
+            android:typeface="sans"
+     />
+    <TextView
+        android:id="@+id/verification_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/verification_message" 
+        android:layout_below="@+id/verify_header"
+        android:layout_marginTop="20dp"/>
+    <EditText 
+        android:id="@+id/phone_no_verification"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="phone"
+        android:layout_below="@+id/verification_message"
+        android:layout_marginTop="5dp"
+        android:enabled="false"
+       />
+    <EditText 
+        android:id="@+id/verification_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:layout_below="@+id/phone_no_verification"
+        android:layout_marginTop="5dp"
+       />
+    <LinearLayout android:layout_width="match_parent"
+   android:orientation="horizontal"
+   android:id="@+id/button_layout" 
+   android:layout_below="@+id/verification_input"
+   android:layout_height="wrap_content"
+   android:layout_marginTop="20dp" >
+   <Button android:layout_weight="1"
+        android:id="@+id/verify"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Verify"
+       	 android:textColor="#816687"
+        android:onClick="verify"
+        android:background="@drawable/button"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="10dp"
+       />
+   <Button android:layout_weight="1"
+        android:id="@+id/resend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Resend"
+       	 android:textColor="#816687"
+        android:onClick="resend"
+        android:background="@drawable/button"
+        android:layout_marginTop="20dp"
+         android:layout_marginRight="10dp"
+       />
+    <Button android:layout_weight="1"
+        android:id="@+id/sign_up_again"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sign Up Again"
+      	 android:textColor="#816687"
+        android:onClick="signup_again"
+        android:background="@drawable/button"
+        android:layout_marginTop="20dp"
+       />
+    
+    
+    </LinearLayout>
+
+</RelativeLayout>

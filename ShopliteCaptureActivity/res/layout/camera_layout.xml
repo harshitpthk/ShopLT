@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    
+
+     <SurfaceView
+		android:id="@+id/preview_view"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent" >
+			          
+	 </SurfaceView>
+			    
+			    <com.google.zxing.client.android.ViewfinderView
+			            android:id="@+id/viewfinder_view"
+			            android:layout_width="fill_parent"
+			            android:layout_height="fill_parent"
+			            android:visibility="gone" />
+			    
+			    
+			     
+			     <ImageButton
+			        android:id="@+id/delete_button"
+			        android:contentDescription="@string/delete_last_scanned"
+			        android:layout_width="30dp"
+			        android:layout_height="30dp"
+			    	android:layout_marginTop="100dp"
+			        android:background="@drawable/delete"
+			        android:layout_gravity="center_horizontal|center_vertical"
+			        android:onClick="delete_last_scanned"
+			      />
+			      
+			 
+			     <View
+			        android:layout_width="180dp"
+			        android:layout_height="180dp"
+			        android:background="@drawable/qrcodeview"
+			        android:layout_gravity="center_horizontal|center_vertical"
+			        android:layout_marginTop="-20dp"/>
+			     <View 
+			         android:layout_width="30dp"
+			         android:layout_height="30dp"
+			         android:layout_marginTop="-20dp"
+			         android:background="@drawable/qrcode"
+			         android:layout_gravity="center_horizontal|center_vertical"/>
+			     <TextView 
+			         android:layout_width="match_parent"
+			         android:layout_height="wrap_content"
+			         android:id="@+id/qr_sugg_text"
+			         android:layout_marginTop="180dp"
+			         android:layout_marginLeft="20dp"
+			          android:layout_marginRight="20dp"
+			         android:padding="15dp"
+			         android:background="#fff"
+			         android:layout_gravity="center_horizontal|center_vertical"
+			         android:alpha="0.7"
+			         android:textColor="#816687"
+			         android:textSize="17sp"
+			         android:text="@string/qrcodeview_message"
+			         />
+</FrameLayout>

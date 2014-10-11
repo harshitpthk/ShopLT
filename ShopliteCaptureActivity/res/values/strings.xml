@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright (C) 2010 ZXing authors
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<resources>
+
+    <string name="zx_msg_default_status">Place a barcode inside the viewfinder rectangle to scan it.</string>
+    <string name="zx_error">Internal Library Error</string>
+    <string name="zx_close">Close</string>
+    <string name="zx_unexpected_camera_error">Unexpected camera or subsystem error: %s</string>
+    <string name="title_activity_add_item">AddItem</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="qrcodeview_message">Kindly place the QR code in the above square.</string>
+    <string name="empty_cart_message">Your Shopping Cart is empty, Go Back and add some items to your cart. :)</string>
+    <string name="save_cart_list">Save List</string>
+      <string name="order_string">Order Now</string>
+      <string name="shop_at_store">Shop at store</string>
+       <string name="shop_offline">Shop outside store</string>
+       <string name="shops_near_you">Shops near your location</string>
+       <string name="shopping_cart">Shopping cart</string>
+        <string name="order_history">Orders history</string>
+         <string name="delete_last_scanned">Delete Last Scanned Item</string>
+         <string name="drawer_open">OpenDrawer</string>
+         <string name="drawer_close">CloseDrawer</string>
+         <string name="map_search_text">Find Shops </string>
+        
+       
+
+</resources>
