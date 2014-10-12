@@ -12,8 +12,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-
+import android.app.SearchManager;
+import android.widget.SearchView;
+import android.widget.SearchView.OnQueryTextListener;
 import android.app.AlertDialog;
+
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -29,11 +32,13 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MenuItem.OnActionExpandListener;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -118,6 +123,7 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
     SurfaceHolder.Callback cameraSurfaceCallback = this;
     private ActionBarDrawerToggle mDrawerToggle;
     private Window window;
+	private Menu MenuReference;
 	
    
     
@@ -137,22 +143,6 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
         window = getWindow();
         int scanner_layout = R.layout.scanner_layout_capture;                 	// setting the custom layout on top of capture activity
         setContentView(scanner_layout);
-        
-        if(!conFrag.isAdded()){
-        	getSupportFragmentManager().beginTransaction().add(R.id.fragment_container,conFrag ).commit();
-        	
-        }
-        
-        getSupportFragmentManager().executePendingTransactions();
-        conFrag.getChildFragmentManager().executePendingTransactions();
-        
-      
-        if(!cartFrag.isAdded()){
-        	getSupportFragmentManager().beginTransaction().add(R.id.container,cartFrag ).detach(cartFrag).commit();
-        	
-        }
-        
-        getSupportFragmentManager().executePendingTransactions();
         
         
         
@@ -185,6 +175,8 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
                 R.layout.drawer_list_item, main_action));
         // Set the list's click listener
     	ldrawer.setOnItemClickListener(new DrawerItemClickListener());
+    	 mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, ldrawer);
+    	
     	MapUI.mMapFragment = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.mapFragment));
     	MapUI.mMap = MapUI.mMapFragment.getMap();
        
@@ -307,12 +299,7 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
              return true;
            }
     	
-    	 if(item.getItemId() == R.id.search) {
-         
-             toggle_map();
-             return true;
-    	}
-    	else if(item.getItemId() == R.id.shopping_cart){
+    	 if(item.getItemId() == R.id.shopping_cart){
          
         	 showCart(null);
              return true;
@@ -324,11 +311,49 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
     
     
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
+    public boolean onCreateOptionsMenu(final Menu menu) {
+        MenuReference = menu;
+    	MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.custom_action_bar, menu);
- 
+                
+        SearchView shopSearchView = (SearchView)menu.findItem(R.id.search).getActionView();
+        shopSearchView.setQueryHint("Enter Locality to Search Shops Nearby");
+        MenuItem shopSearch = (MenuItem) menu.findItem(R.id.search);
+        
+        shopSearch.setOnActionExpandListener(new OnActionExpandListener() {
+			
+			@Override
+			public boolean onMenuItemActionExpand(MenuItem item) {
+				
+				FrameLayout map_container = (FrameLayout)findViewById(R.id.map_container);
+				map_container.setVisibility(View.VISIBLE);
+				MapUI.mapVisible = true;
+				return true;
+			}
+			
+			@Override
+			public boolean onMenuItemActionCollapse(MenuItem item) {
+				FrameLayout map_container = (FrameLayout)findViewById(R.id.map_container);
+				map_container.setVisibility(View.INVISIBLE);
+				MenuItem CartMenuItem = (MenuItem) menu.findItem(R.id.shopping_cart);
+	            CartMenuItem.setVisible(true);
+				MapUI.mapVisible = false;
+				return true;
+			}
+		});
         return super.onCreateOptionsMenu(menu);
+    }
+    
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu)
+    {
+    	
+    		MenuItem CartMenuItem = (MenuItem) menu.findItem(R.id.shopping_cart);
+            CartMenuItem.setVisible(false);
+    	
+        
+		return super.onPrepareOptionsMenu(menu);
+    	
     }
 
     private void decodeOrStoreSavedBitmap(Bitmap bitmap, Result result)
@@ -668,13 +693,20 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 				@Override
 				public void onPageSelected(int position) {
 					// TODO Auto-generated method stub
+					MenuItem CartMenuItem = (MenuItem) MenuReference.findItem(R.id.shopping_cart);
+					 MenuItem ShopMap = (MenuItem) MenuReference.findItem(R.id.search);
 					if(position == 0){
+						
+			            CartMenuItem.setVisible(true);
+			            ShopMap.setVisible(true);
 						getActionBar().setDisplayHomeAsUpEnabled(true);
 			            getActionBar().setHomeButtonEnabled(true);
 						mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, ldrawer);
 						window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 					}
 					else if(position == 1){
+						CartMenuItem.setVisible(true);
+				        ShopMap.setVisible(true);
 						getActionBar().setDisplayHomeAsUpEnabled(false);
 						getActionBar().setHomeButtonEnabled(false);
 					    window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -682,6 +714,8 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 						
 					}
 					else{
+						CartMenuItem.setVisible(false);
+				        ShopMap.setVisible(false);
 						window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 						getActionBar().setDisplayHomeAsUpEnabled(false);
 						getActionBar().setHomeButtonEnabled(false);
@@ -756,17 +790,41 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 		}
 	    	
 	}
-	public void mapShopSearch(View v)
+	public void mapShopContinue(View v)
 	{
-		EditText ev = (EditText)findViewById(R.id.map_search_tv);
 		
-		MapUI.search_location(ev.getText().toString());
+		if(!conFrag.isAdded()){
+        	getSupportFragmentManager().beginTransaction().add(R.id.fragment_container,conFrag ).commit();
+        	
+        }
+        
+        getSupportFragmentManager().executePendingTransactions();
+        conFrag.getChildFragmentManager().executePendingTransactions();
+        
+      
+        if(!cartFrag.isAdded()){
+        	getSupportFragmentManager().beginTransaction().add(R.id.container,cartFrag ).detach(cartFrag).commit();
+        	
+        }
+        
+        getSupportFragmentManager().executePendingTransactions();
+        
+        FrameLayout map_container = (FrameLayout)findViewById(R.id.map_container);
+		
+		if(MapUI.mapVisible){
+			map_container.setVisibility(View.INVISIBLE);
+			MapUI.mapVisible = false;
+		}
+		MenuItem CartMenuItem = (MenuItem) MenuReference.findItem(R.id.shopping_cart);
+		CartMenuItem.setVisible(true);
+        
 	}
+	
 	@Override
 	public void onCameraChange(CameraPosition arg0) {
 		
 		LinearLayout connected_shop_details_view = (LinearLayout)findViewById(R.id.connected_shop_details);
-		ViewAnimation.slideToBottom(connected_shop_details_view);
+		//ViewAnimation.slideToBottom(connected_shop_details_view);
 		
 		
 	}
@@ -810,14 +868,21 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
     		if(cartFrag.isAdded()){
         		getSupportFragmentManager().beginTransaction().detach(cartFrag).commit();
         		getSupportFragmentManager().executePendingTransactions();
-        		
+        		if(conFrag.mViewPager.getCurrentItem() == 0){
+        			getActionBar().setDisplayHomeAsUpEnabled(true);
+        			getActionBar().setHomeButtonEnabled(true);
+        		}
+        		mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, ldrawer);
         	}
     		else{
     			getSupportFragmentManager().beginTransaction().attach(cartFrag ).addToBackStack(null).commit();
         		getSupportFragmentManager().executePendingTransactions();
+        		getActionBar().setDisplayHomeAsUpEnabled(false);
+    			getActionBar().setHomeButtonEnabled(false);
+        		mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, ldrawer);
         		
     		}
-    		mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, ldrawer);
+    		
         	
     	
 		
@@ -830,14 +895,17 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
     }
     public void shopAtStore(View v)
     {
+    	
     	setCurrentShopping(1); 
     }
     public void shopOutsideStore(View v)
     {
+    	
     	setCurrentShopping(0);   
     }
 	public void showOrderHistory(View v)
 	{
+		
 		setCurrentShopping(2);
 		
 	}
@@ -881,7 +949,7 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 	public void shop_list_success() {
 		
 	
-			Toast.makeText(Globals.ApplicationContext, ("Welcome to " + Globals.connected_shop_name), Toast.LENGTH_LONG).show();
+			
 			if( Globals.shop_list != null && Globals.shop_list.size()>0){
 				MapUI.mMap.setOnMarkerClickListener(this);
 				for(int i = 0; i < Globals.shop_list.size() ; i++ ){
@@ -938,6 +1006,7 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 	
 	@Override
 	public void shop_connected() {
+		Toast.makeText(Globals.ApplicationContext, ("Welcome to " + Globals.connected_shop_name), Toast.LENGTH_LONG).show();
 		double lat =  Globals.connected_shop_location.getLatitude();
 		double lng =  Globals.connected_shop_location.getLongitude();
 		
