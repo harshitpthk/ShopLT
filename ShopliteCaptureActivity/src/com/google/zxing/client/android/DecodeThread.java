@@ -43,7 +43,7 @@ final class DecodeThread extends Thread
     private final CaptureActivity activity;
     private final Map<DecodeHintType, Object> hints;
     private Handler handler;
-    private final CountDownLatch handlerInitLatch;
+    private final CountDownLatch handlerInitLatch ;
 
     DecodeThread(CaptureActivity activity,
                  Collection<BarcodeFormat> decodeFormats,

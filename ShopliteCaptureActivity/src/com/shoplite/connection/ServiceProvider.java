@@ -1,6 +1,9 @@
 package com.shoplite.connection;
 
 import java.util.ArrayList;
+
+import org.json.JSONObject;
+
 import com.google.gson.JsonObject;
 import com.shoplite.models.Input;
 import com.shoplite.models.ItemCategory;
@@ -9,6 +12,7 @@ import com.shoplite.models.User;
 
 import retrofit.Callback;
 import retrofit.http.Body;
+import retrofit.http.GET;
 import retrofit.http.Header;
 import retrofit.http.POST;
 
@@ -41,5 +45,9 @@ public interface ServiceProvider {
 	
 	@POST("/service/user/packitems")
 	void packList(@Body com.shoplite.models.PackList packlist, Callback<JsonObject> callback);
+	
+	
+	@GET("/")
+	void getPlacesSuggestion(Callback<JsonObject> callback);
 	
 }

@@ -88,9 +88,13 @@ public final class CaptureActivityHandler extends Handler implements ItemInterfa
         restartPreviewAndDecode();
     }
     
-    public void stopDecodeThread()
+   
+    
+    public void resumeDecodeThread()
     {
     	
+    	state = State.PREVIEW;
+        cameraManager.requestPreviewFrame(decodeThread.getHandler(), R.id.zx_decode);
     }
 
     @Override
@@ -112,32 +116,37 @@ public final class CaptureActivityHandler extends Handler implements ItemInterfa
 
         } else if (message.what == R.id.zx_decode_failed)
         {// We're decoding as fast as possible, so when one decode fails, start another.
-            state = State.PREVIEW;
-            cameraManager.requestPreviewFrame(decodeThread.getHandler(), R.id.zx_decode);
+        	if(activity.conFrag.mViewPager.getCurrentItem()==1){
+        		if(activity.cartFrag.isDetached() == true){
+        			state = State.PREVIEW;
+            		cameraManager.requestPreviewFrame(decodeThread.getHandler(), R.id.zx_decode);
+        		}
+        	}
 
         } else if (message.what == R.id.zx_return_scan_result)
         {
             Log.d(TAG, "Got return scan result message");
             activity.setResult(Activity.RESULT_OK, (Intent) message.obj);
-            
-           // Result rawResult = (Result) message.obj;
-             Intent result = (Intent) message.obj;
-             Bundle extras = result.getExtras();
-             String QRCValue = (String) extras.get("SCAN_RESULT");
-             Gson gson =  new Gson();
-             Item QRItem =  gson.fromJson(QRCValue, Item.class);
-
-             
-     		//Intent i = new Intent(activity,AddItem.class);
-     		//activity.startActivity(i);
-            Controls.show_alert_dialog("Add Item",QRItem.getName() ,"Add Item","Cancel" ,this,activity, R.layout.activity_add_item);
-            getItem(QRItem.getId());
+            Intent result = (Intent) message.obj;
+            Bundle extras = result.getExtras();
+            String QRCValue = (String) extras.get("SCAN_RESULT");       //{"id":"10000","itemcategory":"10000"}
+            Gson gson =  new Gson();
+            Item QRItem = null;
+            try{
+            	 QRItem =  gson.fromJson(QRCValue, Item.class);
+            	 Controls.show_alert_dialog("Add Item",QRItem.getName() ,"Add Item","Cancel" ,this,activity, R.layout.activity_add_item);
+                 getItem(QRItem);
+            }
+            catch(Exception e){
+            	Controls.show_single_action_dialog("Item Not Found","This Code doesn't contain any product information.\nFor any other use the value is \n"+ QRCValue,"Okay" ,this,activity );
+                
+            	Toast.makeText(activity.getBaseContext(), "", Toast.LENGTH_LONG).show();
+            	
+            }
            
+            
+                      
            
-            
-            
-           // restartPreviewAndDecode();
-            //activity.recreate();
 
         } else if (message.what == R.id.zx_launch_product_query)
         {
@@ -181,10 +190,10 @@ public final class CaptureActivityHandler extends Handler implements ItemInterfa
     }
     // Custom methods
     
-    public  void getItem(int ItemID)
+    public  void getItem(Item QRItem)
     {
-    	Item callingItem = new Item(0, null,0 , 0 );
-    	callingItem.getItem(activity,ItemID);
+    	
+    	QRItem.getItem(activity);
     	
     	
     }
@@ -312,6 +321,14 @@ public final class CaptureActivityHandler extends Handler implements ItemInterfa
 		}
 		
 		
+	}
+
+
+
+	@Override
+	public void neutral_button_alert_method() {
+		// TODO Auto-generated method stub
+		restartPreviewAndDecode();
 	}
 
 	

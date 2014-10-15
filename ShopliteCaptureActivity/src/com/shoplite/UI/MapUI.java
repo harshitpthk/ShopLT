@@ -1,10 +1,15 @@
 package com.shoplite.UI;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Point;
 import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.shoplite.Utils.Globals;
@@ -26,4 +31,22 @@ public class MapUI  extends SupportMapFragment{
 		
 	}
 	
+	class MapOverlay extends com.google.android.maps.Overlay
+	{
+	    public boolean draw(Canvas canvas, MapView mapView, 
+	    boolean shadow, long when) 
+	    {
+	        super.draw(canvas, mapView, shadow);                   
+
+	        //---translate the GeoPoint to screen pixels---
+	        Point screenPts = new Point();
+	        mapView.getProjection().toPixels(p, screenPts);
+
+	        //---add the marker---
+	        Bitmap bmp = BitmapFactory.decodeResource(
+	            getResources(), R.drawable.pink);            
+	        canvas.drawBitmap(bmp, screenPts.x, screenPts.y-32, null);         
+	        return true;
+	    }
+	} 
 }

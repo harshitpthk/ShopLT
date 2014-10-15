@@ -53,26 +53,26 @@ public class CartFragment extends Fragment implements PackListInterface{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
         Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-		View view = inflater.inflate(R.layout.activity_cart, container, false);
-		Button saveCartButton = (Button) view.findViewById(R.id.save_cart_list);
+		View root = inflater.inflate(R.layout.activity_cart, container, false);
+		Button saveCartButton = (Button) root.findViewById(R.id.save_cart_list);
 		saveCartButton.setOnClickListener(new OnClickListener() {
 	          public void onClick(View v) {
 
 	          }
 	       });
 		
-		view.setOnTouchListener(new OnTouchListener()
+		root.setOnTouchListener(new OnTouchListener()
 	    {
 	       
 
 			@Override
 			public boolean onTouch(View v, MotionEvent arg1) {
 				// TODO Auto-generated method stub
-				return false;
+				return true;
 			}
 	    });
 			
-		Button orderButton = (Button) view.findViewById(R.id.order_button);
+		Button orderButton = (Button) root.findViewById(R.id.order_button);
 		orderButton.setOnClickListener(new OnClickListener() {
 	          public void onClick(View v) {
 
@@ -82,7 +82,7 @@ public class CartFragment extends Fragment implements PackListInterface{
 		
 
 	       
-        return view;
+        return root;
     }
 	@Override
 	public void onResume()

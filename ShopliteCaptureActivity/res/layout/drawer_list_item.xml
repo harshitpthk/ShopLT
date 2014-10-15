@@ -27,7 +27,6 @@
     android:textColor="@drawable/activated_text"
     android:fontFamily="sans-serif"
     android:background="?android:attr/activatedBackgroundIndicator"
-    
     android:minHeight="?android:attr/listPreferredItemHeightSmall"/>
 
  

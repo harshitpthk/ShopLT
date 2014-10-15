@@ -22,35 +22,35 @@ public class Item implements ConnectionInterface {
 	private int quantity;
 	private boolean get_item_bool;
 	private boolean get_items_from_brand_bool;
-	private Input ItemInput = new Input();
-	private Input brandInput = new Input();
+	private Input ItemInput;
+	private Input brandInput;
 	
 	public int getId() {
-		return id;
+		return this.id;
 	}
 	public void setId(int id) {
 		this.id = id;
 	}
 	public String getName() {
-		return name;
+		return this.name;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
 	public int getItemCategory() {
-		return itemCategory;
+		return this.itemCategory;
 	}
 	public void setItemCategory(int itemCategory) {
 		this.itemCategory = itemCategory;
 	}
 	public double getPrice() {
-		return price;
+		return this.price;
 	}
 	public void setPrice(double price) {
 		this.price = price;
 	}
 	public int getQuantity() {
-		return quantity;
+		return this.quantity;
 	}
 	public void setQuantity(int barcode) {
 		this.quantity = barcode;
@@ -64,12 +64,12 @@ public class Item implements ConnectionInterface {
 		this.quantity = quantity;
 	}
 	
-	public  void getItem( ItemInterface calling_class_object,int itemID) {
+	public  void getItem( ItemInterface calling_class_object) {
 		
 		Item.calling_class_object = calling_class_object;
 		this.get_item_bool = true;
-		ItemInput.id = 10000;
-		ItemInput.type = "ItemCategoryId";
+		ItemInput = new Input(this.getId(),"ItemCategoryId");
+		
 		String shopURL = null;
 		shopURL  = "https://" + Globals.connected_shop_url;
 		ServerConnectionMaker.sendRequest(this, shopURL);
@@ -80,8 +80,8 @@ public class Item implements ConnectionInterface {
 		
 		Item.calling_class_object = calling_class_object;
 		this.get_items_from_brand_bool = true;
-		brandInput.id = brandId;//itemID;
-		brandInput.type = "brand";
+		brandInput = new Input(brandId,"brand");
+		
 		String shopURL = null;
 		shopURL  = "https://" + Globals.connected_shop_url;
 		ServerConnectionMaker.sendRequest(this, shopURL);
@@ -90,7 +90,7 @@ public class Item implements ConnectionInterface {
 	
 	@Override
 	public void sendRequest(ServiceProvider serviceProvider) {
-		if(this.get_items_from_brand_bool = true ){
+		if(this.get_items_from_brand_bool == true ){
 			serviceProvider.getItems( brandInput,new Callback<ArrayList<ItemCategory>>(){
 
 				@Override
@@ -116,7 +116,7 @@ public class Item implements ConnectionInterface {
 				
 			});
 		}
-		else if(this.get_item_bool = true){
+		else if(this.get_item_bool == true){
 			serviceProvider.getItem( ItemInput,new Callback<ItemCategory>(){
 
 				@Override

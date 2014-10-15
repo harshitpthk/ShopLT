@@ -71,6 +71,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.google.zxing.client.android.CaptureActivity" />
         </activity>
+         <uses-library 	android:name="com.google.android.maps" />
         
     </application>
 

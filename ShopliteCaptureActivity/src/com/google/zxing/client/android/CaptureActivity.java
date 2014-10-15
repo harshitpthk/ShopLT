@@ -31,6 +31,7 @@ import android.os.Message;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.DrawerLayout;
 
 import android.util.Log;
@@ -51,6 +52,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SearchView.OnSuggestionListener;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
@@ -71,6 +73,7 @@ import com.shoplite.UI.ItemThumbnail;
 import com.shoplite.UI.MapUI;
 import com.shoplite.UI.ViewAnimation;
 import com.shoplite.Utils.Globals;
+import com.shoplite.Utils.PlacesAutoComplete;
 import com.shoplite.Utils.location;
 import com.shoplite.connection.ConnectionInterface;
 import com.shoplite.connection.ServiceProvider;
@@ -124,7 +127,8 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
     private ActionBarDrawerToggle mDrawerToggle;
     private Window window;
 	private Menu MenuReference;
-	
+	public String current_container_fragment = null;
+	public static  SearchView shopSearchView = null;
    
     
     
@@ -179,7 +183,7 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
     	
     	MapUI.mMapFragment = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.mapFragment));
     	MapUI.mMap = MapUI.mMapFragment.getMap();
-       
+    	MapUI.mMap.setOnCameraChangeListener(this);
         hasSurface = false;
        // inactivityTimer = new InactivityTimer(this);
         beepManager = new BeepManager(this);
@@ -214,7 +218,7 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
         
 		// initially hide map;
 		
-		MapUI.mMap.setOnCameraChangeListener(this);
+	
 		
     }
 
@@ -267,12 +271,11 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
         {
             case KeyEvent.KEYCODE_BACK:
             	if(cartFrag.isAdded()){
-            		getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.slidein_opposite,R.anim.slideout_opposite).detach(cartFrag).commit();
-            		//mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, ldrawer);
+            		showCart(null);
                 	
             	}else{
-            		setResult(RESULT_CANCELED);
-            		finish();
+            		
+            		moveTaskToBack (true);
             	}
                 return true;
 
@@ -315,9 +318,45 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
         MenuReference = menu;
     	MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.custom_action_bar, menu);
-                
-        SearchView shopSearchView = (SearchView)menu.findItem(R.id.search).getActionView();
-        shopSearchView.setQueryHint("Enter Locality to Search Shops Nearby");
+        
+        SearchManager searchManager = (SearchManager) getSystemService(getApplicationContext().SEARCH_SERVICE);
+        shopSearchView = (SearchView)menu.findItem(R.id.search).getActionView();
+        shopSearchView.setQueryHint("Enter Locality to Search Shops");
+        shopSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        shopSearchView.setOnQueryTextListener(new OnQueryTextListener(){
+
+			@Override
+			public boolean onQueryTextChange(String newText) {
+				// TODO Auto-generated method stub
+				PlacesAutoComplete pl = new PlacesAutoComplete();
+				pl.autocomplete(newText);
+				return true;
+			}
+
+			@Override
+			public boolean onQueryTextSubmit(String query) {
+				// TODO Auto-generated method stub
+				return true;
+			}
+        	
+        });
+        shopSearchView.setOnSuggestionListener(new OnSuggestionListener(){
+
+			@Override
+			public boolean onSuggestionClick(int arg0) {
+				// TODO Auto-generated method stub
+				Toast.makeText(getApplicationContext(), Integer.toString(arg0), Toast.LENGTH_SHORT).show();
+				return true;
+			}
+
+			@Override
+			public boolean onSuggestionSelect(int arg0) {
+				// TODO Auto-generated method stub
+				Toast.makeText(getApplicationContext(), Integer.toString(arg0), Toast.LENGTH_SHORT).show();
+				return true;
+			}});
+        
+        
         MenuItem shopSearch = (MenuItem) menu.findItem(R.id.search);
         
         shopSearch.setOnActionExpandListener(new OnActionExpandListener() {
@@ -333,14 +372,19 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 			
 			@Override
 			public boolean onMenuItemActionCollapse(MenuItem item) {
-				FrameLayout map_container = (FrameLayout)findViewById(R.id.map_container);
-				map_container.setVisibility(View.INVISIBLE);
-				MenuItem CartMenuItem = (MenuItem) menu.findItem(R.id.shopping_cart);
-	            CartMenuItem.setVisible(true);
-				MapUI.mapVisible = false;
+				if(conFrag.isAdded())
+				{
+					FrameLayout map_container = (FrameLayout)findViewById(R.id.map_container);
+					map_container.setVisibility(View.INVISIBLE);
+					MenuItem CartMenuItem = (MenuItem) menu.findItem(R.id.shopping_cart);
+		            CartMenuItem.setVisible(true);
+					MapUI.mapVisible = false;
+									
+				}
 				return true;
 			}
 		});
+        
         return super.onCreateOptionsMenu(menu);
     }
     
@@ -356,6 +400,39 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
     	
     }
 
+    public void initCamera(SurfaceHolder surfaceHolder)
+    {
+        if (surfaceHolder == null)
+        {
+            throw new IllegalStateException("No SurfaceHolder provided");
+        }
+        if (cameraManager.isOpen())
+        {
+            Log.w(TAG, "initCamera() while already open -- late SurfaceView callback?");
+            return;
+        }
+        try
+        {
+            cameraManager.openDriver(surfaceHolder);
+            
+            // Creating the handler starts the preview, which can also throw a RuntimeException.
+            if (handler == null)
+            {
+                handler = new CaptureActivityHandler(this, decodeFormats, characterSet, cameraManager);
+            }
+            decodeOrStoreSavedBitmap(null, null);
+        } catch (IOException ioe)
+        {
+            Log.w(TAG, ioe);
+            displayFrameworkBugMessageAndExit(ioe);
+        } catch (RuntimeException e)
+        {
+            // Barcode Scanner has seen crashes in the wild of this variety:
+            // java.?lang.?RuntimeException: Fail to connect to camera service
+            Log.w(TAG, "Unexpected error initializing camera", e);
+            displayFrameworkBugMessageAndExit(e);
+        }
+    }
     private void decodeOrStoreSavedBitmap(Bitmap bitmap, Result result)
     {
         // Bitmap isn't used yet -- will be used soon
@@ -554,39 +631,7 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
         }
     }
 
-    public void initCamera(SurfaceHolder surfaceHolder)
-    {
-        if (surfaceHolder == null)
-        {
-            throw new IllegalStateException("No SurfaceHolder provided");
-        }
-        if (cameraManager.isOpen())
-        {
-            Log.w(TAG, "initCamera() while already open -- late SurfaceView callback?");
-            return;
-        }
-        try
-        {
-            cameraManager.openDriver(surfaceHolder);
-            
-            // Creating the handler starts the preview, which can also throw a RuntimeException.
-            if (handler == null)
-            {
-                handler = new CaptureActivityHandler(this, decodeFormats, characterSet, cameraManager);
-            }
-            decodeOrStoreSavedBitmap(null, null);
-        } catch (IOException ioe)
-        {
-            Log.w(TAG, ioe);
-            displayFrameworkBugMessageAndExit(ioe);
-        } catch (RuntimeException e)
-        {
-            // Barcode Scanner has seen crashes in the wild of this variety:
-            // java.?lang.?RuntimeException: Fail to connect to camera service
-            Log.w(TAG, "Unexpected error initializing camera", e);
-            displayFrameworkBugMessageAndExit(e);
-        }
-    }
+   
 
     private void displayFrameworkBugMessageAndExit(Throwable err)
     {
@@ -675,7 +720,7 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
     public void initiateCamera(SurfaceView surfaceView)
     {
     	if(conFrag.isAdded()){
-    		setCurrentShopping(1);   										// 1 is kept for shopping at store
+    		  										// 1 is kept for shopping at store
     		conFrag.mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener(){
 
 				@Override
@@ -703,6 +748,8 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 			            getActionBar().setHomeButtonEnabled(true);
 						mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, ldrawer);
 						window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+						 
+						
 					}
 					else if(position == 1){
 						CartMenuItem.setVisible(true);
@@ -711,7 +758,8 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 						getActionBar().setHomeButtonEnabled(false);
 					    window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 					    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, ldrawer);
-						
+					    handler.resumeDecodeThread();
+					   
 					}
 					else{
 						CartMenuItem.setVisible(false);
@@ -720,6 +768,8 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 						getActionBar().setDisplayHomeAsUpEnabled(false);
 						getActionBar().setHomeButtonEnabled(false);
 			    		mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, ldrawer);
+			    		
+			    		
 					}
 					
 				}
@@ -817,7 +867,9 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 		}
 		MenuItem CartMenuItem = (MenuItem) MenuReference.findItem(R.id.shopping_cart);
 		CartMenuItem.setVisible(true);
-        
+		MenuItem shopSearch = (MenuItem) MenuReference.findItem(R.id.search);
+		shopSearch.collapseActionView();
+		setCurrentShopping(1); 
 	}
 	
 	@Override
@@ -864,7 +916,7 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
     }
 	public void showCart(View v)
     {
-    	   	
+		MenuItem shopSearch = (MenuItem) MenuReference.findItem(R.id.search);
     		if(cartFrag.isAdded()){
         		getSupportFragmentManager().beginTransaction().detach(cartFrag).commit();
         		getSupportFragmentManager().executePendingTransactions();
@@ -872,17 +924,21 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
         			getActionBar().setDisplayHomeAsUpEnabled(true);
         			getActionBar().setHomeButtonEnabled(true);
         		}
-        		mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, ldrawer);
+        		else if(conFrag.mViewPager.getCurrentItem() == 1){
+        			handler.resumeDecodeThread();
+        		}
+        		shopSearch.setVisible(true);
         	}
     		else{
     			getSupportFragmentManager().beginTransaction().attach(cartFrag ).addToBackStack(null).commit();
         		getSupportFragmentManager().executePendingTransactions();
         		getActionBar().setDisplayHomeAsUpEnabled(false);
     			getActionBar().setHomeButtonEnabled(false);
-        		mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, ldrawer);
+    			
+        		shopSearch.setVisible(false);
         		
     		}
-    		
+    		mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, ldrawer);
         	
     	
 		
@@ -983,10 +1039,10 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 		
 //		Shop shpObject =new Shop();
 //		shpObject.setName("CIty FOod Center");
-//		shpObject.setUrl("planetp1940097444trial.hanatrial.ondemand.com/shop-sys/");
+//		shpObject.setUrl("planetp1940097436trial.hanatrial.ondemand.com/shop-sys/");
 //		shpObject.setLocation(Globals.current_location);
 //		connect_to_shop(shpObject);
-		
+//		
 		double lat = Globals.current_location.getLatitude();
 		double lng = Globals.current_location.getLongitude();
 		LatLng coordinate = new LatLng(lat, lng);
@@ -1049,6 +1105,7 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 		
 			for(int i = 0 ; i < Globals.simmilar_item_list.size();i++){
 				final ItemCategory itemFamily = Globals.simmilar_item_list.get(i);
+			
 				Card card = new Card(getBaseContext());
 				CardHeader header = new CardHeader(getBaseContext());
 				
@@ -1059,7 +1116,7 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 				header.setOtherButtonClickListener(new CardHeader.OnClickCardHeaderOtherButtonListener() {
 		            @Override
 		            public void onButtonItemClick(Card card, View view) {
-		                Toast.makeText(getApplicationContext(), "Click on Other Button", Toast.LENGTH_LONG).show();
+		                
 		                card.getCardHeader().setOtherButtonVisible(false);
 		                
 		                cardView.replaceCard(card);

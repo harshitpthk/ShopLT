@@ -171,6 +171,7 @@ public final class CameraManager
             
         }
     }
+   
 
     /**
      * Tells the camera to stop drawing preview frames.

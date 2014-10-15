@@ -48,7 +48,7 @@ public class Controls {
 			
 		}
 		
-		
+		//alert.setTitle(Title);
 		alert.setPositiveButton(positive_button_caption, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 			 
@@ -71,6 +71,7 @@ public class Controls {
 		//alertDialog.getWindow().setLayout(1000, 1300);
 		calling_class_object.save_alert_dialog(alertDialog);
 	}
+
 	public static void show_add_item_dialog_spinner(Context context,AlertDialog AddDialog,ItemCategory itemFamily)
 	{
 		 measure_list_array = new ArrayList<String>();
@@ -110,4 +111,26 @@ public class Controls {
 		if(pd != null)
 			pd.dismiss();
 	}
+
+	public static void show_single_action_dialog(String title, String message,String button_caption,ControlsInterface calling_class_object,Context context)
+	{
+		Controls.calling_class_object = calling_class_object;
+		AlertDialog.Builder alert = new AlertDialog.Builder(context);
+		//alert.setTitle(title);
+		alert.setMessage(message);
+		alert.setNeutralButton(button_caption,  new DialogInterface.OnClickListener(){
+
+			@Override
+			public void onClick(DialogInterface arg0, int arg1) {
+				// TODO Auto-generated method stub
+				Controls.calling_class_object.neutral_button_alert_method();
+			}
+			
+		});
+		
+		AlertDialog alertDialog = alert.create();
+		alertDialog.show();
+		alertDialog.setCancelable(false);
+	}
+
 }

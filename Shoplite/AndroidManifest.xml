@@ -29,6 +29,7 @@
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true" />
+   
 
     <application
         android:allowBackup="true"
@@ -53,7 +54,10 @@
             android:stateNotNeeded="true"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="stateAlwaysHidden" >
+           
         </activity>
+        
+        
        
         <!--
         <activity android:name="com.google.zxing.client.android.CaptureActivity"
@@ -92,6 +96,9 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+         <uses-library
+        	android:name="com.google.android.maps" />
+         
 
        
     </application>

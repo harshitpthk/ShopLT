@@ -40,7 +40,66 @@
 	        android:drawSelectorOnTop="true"
 	        android:layout_below="@+id/cardview"
         />
+	    <LinearLayout 
+	        android:id="@+id/itemVariableContainer"
+	        android:orientation="horizontal"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@+id/item_measures">
+	    <LinearLayout 
+	        android:id="@+id/typePickerContainer"
+	          android:orientation="vertical"
+	         android:layout_height="wrap_content"
+	         android:layout_width="wrap_content"
+	         android:layout_margin="20dp">
+	        
+	        <TextView 
+	            android:id="@+id/typePickerHeading"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:textAlignment="center"
+		        android:text="Measures"
+		        android:textSize="18sp"
+		        android:textColor="#bbb">
+	            
+	        </TextView>
 	    
+		    <NumberPicker
+		        android:id="@+id/typePicker"
+		        android:layout_height="wrap_content"
+		        android:layout_width="wrap_content"
+		        
+		        >
+		        
+		    </NumberPicker>
+	    </LinearLayout>
+	    <LinearLayout
+	        android:id="@+id/qntPickerContainer"
+	         
+	          android:orientation="vertical"
+	          android:layout_height="wrap_content"
+	          android:layout_width="wrap_content"
+	          android:layout_margin="20dp"
+	          >
+		    <TextView
+		        android:id="@+id/qntPickerHeader"
+		        android:layout_height="wrap_content"
+		        android:layout_width="match_parent"
+		        android:textAlignment="center"
+		        android:text="Quantity"
+		        android:textSize="18sp"
+		        android:textColor="#bbb">
+		        
+		    </TextView>
+	    
+		    <NumberPicker
+		        android:id="@+id/qntPicker"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		       
+		        ></NumberPicker>
+	    </LinearLayout>
+	    </LinearLayout>
 	    
 
 	</RelativeLayout>
