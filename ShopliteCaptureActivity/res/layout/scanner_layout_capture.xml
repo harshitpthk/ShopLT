@@ -72,21 +72,82 @@
 	        android:layout_height="fill_parent" 
 	        android:background="@drawable/dropshadow_roundborder"           
 	        />	
+	        
+			
 	        <LinearLayout 
-	            android:id="@+id/connected_shop_details"
+	            android:id="@+id/shop_details_container"
 	            android:layout_width="fill_parent"
-	            android:layout_height="200dp"
+	            android:layout_height="wrap_content"
 	            android:orientation="vertical"
 	            android:layout_gravity="bottom"
-	            android:background="#fff">
+	            android:onClick="showFullShopDetails"
+	            >
+	            <View
+        			android:layout_width="fill_parent"
+       				android:layout_height="5dp"
+       				android:background="@drawable/drop_shadow"
+       				android:layout_gravity="top"
+       				android:layout_marginTop="-3dp" >
+    				</View>
+	           		
+	        <FrameLayout 
+	            android:id="@+id/shop_details_primary"
+	            android:layout_width="fill_parent"
+	            android:layout_height="150dp"
+	            android:orientation="vertical"
+	            android:layout_gravity="bottom"
+	            android:onClick="showFullShopDetails"
+	            >
+	            	
+	            <LinearLayout 
+	                android:id="@+id/shop_details_header"
+	                android:layout_height="fill_parent"
+	                android:layout_width="fill_parent"
+	                android:padding="20dp"
+	                android:layout_gravity="left"
+	                android:background="#fff"
+	                android:orientation="vertical">
+	                 
+	                <TextView
+	                    android:id="@+id/shop_details_heading"
+	                    android:layout_width="fill_parent"
+	                    android:layout_height="wrap_content"
+	                    android:textSize="19sp"
+	                    android:textColor="#999"
+	                    
+	                    >
+	                    </TextView>
+	                 <TextView
+	                     android:id="@+id/shop_details_description"
+	                     android:layout_width="fill_parent"
+	                     android:layout_height="wrap_content"
+	                     android:textSize="16sp"
+	                     android:textColor="#999"
+	                    ></TextView>
+	                 <RatingBar android:id="@+id/ratingBar"
+	                     android:layout_width="40dp"
+	                     android:layout_height="10dp"
+	                     android:numStars="5"
+	                     android:rating="5"
+	                     android:isIndicator="true"
+	                    
+	                      />
+	                
+	            </LinearLayout>
+	            	
+    			
 	           <Button android:id="@+id/ShopStart"
 	               android:layout_width="wrap_content"
 	               android:layout_height="wrap_content"
 	               android:layout_margin="20dp"
+	               android:text="Continue"
+	               android:layout_gravity="right|center_vertical"
 	               android:onClick="mapShopContinue"></Button>
+
+	           
 	            
-	        </LinearLayout>
-	        
+	        </FrameLayout>
+	       </LinearLayout>
 	       
 	        
         </FrameLayout>

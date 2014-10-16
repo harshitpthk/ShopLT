@@ -4,7 +4,7 @@
     <!-- initialSearch bar -->
     <item android:id="@+id/search"
           android:title="@string/map_search_text"
-          android:icon="@drawable/search"
+          android:icon="@drawable/shopsearch"
           android:showAsAction="collapseActionView|ifRoom"
           android:actionViewClass="android.widget.SearchView"
          

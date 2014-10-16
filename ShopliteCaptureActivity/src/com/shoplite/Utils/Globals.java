@@ -60,15 +60,14 @@ public class Globals {
 		Globals.near_shop_distance_matrix.put(distance,shpObject);
 		
 	}
-	public static Shop get_shop_from_location(LatLng loc,GoogleMap mMap) {
-		if(Globals.shop_list_near != null){
-			for(int i = 0 ; i < Globals.shop_list_near.size(); i++){
-				Shop shopObject = Globals.shop_list_near.get(i);
+	public static Shop get_shop_from_location(LatLng loc) {
+		if(Globals.shop_list != null){
+			for(int i = 0 ; i < Globals.shop_list.size(); i++){
+				Shop shopObject = Globals.shop_list.get(i);
 				double lat = shopObject.getLocation().getLatitude();
 				double lng = shopObject.getLocation().getLongitude();
 				LatLng coordinate = new LatLng(lat, lng);
-				Marker marker = mMap.addMarker(new MarkerOptions().position(coordinate).draggable(false).title(Globals.connected_shop_name).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-				coordinate = marker.getPosition();
+
 				if(coordinate.equals(loc)){
 					return shopObject;
 				}

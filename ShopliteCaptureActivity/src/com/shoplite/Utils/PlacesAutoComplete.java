@@ -2,6 +2,8 @@ package com.shoplite.Utils;
 
 
 
+import java.util.ArrayList;
+
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -29,12 +31,12 @@ public class PlacesAutoComplete {
 	private static final String API_KEY = "AIzaSyDYYRgTGk777pOLVGQgqyYA3QtFKF9BMbw";
 	public  static ServiceProvider serviceProvider = null;
 	public static JsonArray placesPrediction = new JsonArray();
-	
+	public static ArrayList<PlacePrediction> placesList;
 	private static String[] columnNames = {"_id","description"};
 	public static MatrixCursor suggestionCursor  ;
 	
 	public void autocomplete(String input) {
-	   
+		placesList = new ArrayList<PlacePrediction>();
 		suggestionCursor  = new MatrixCursor(columnNames);
 	    StringBuilder sb = new StringBuilder(PLACES_API_BASE + TYPE_AUTOCOMPLETE + OUT_JSON);
 	    sb.append("?key=" + API_KEY);
@@ -67,7 +69,7 @@ public class PlacesAutoComplete {
 				for (int i = 0; i < placesPrediction.size(); i++) {
 					Gson gson = new Gson();
 					PlacePrediction pl = gson.fromJson(placesPrediction.get(i), PlacePrediction.class);
-					
+					placesList.add(pl);
 					suggestionCursor.addRow(new Object[]{i,pl.getDescription()});
 		            
 		            

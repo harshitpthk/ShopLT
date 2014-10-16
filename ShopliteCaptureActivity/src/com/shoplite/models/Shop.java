@@ -25,6 +25,7 @@ public class Shop implements ConnectionInterface {
 	private static ShopInterface calling_class_object;
 	private boolean get_shop_list_bool;
 	private boolean connect_to_shop_bool;
+	private static Location areaLocation;
 	
 	public String getName() {
 		return name;
@@ -52,10 +53,11 @@ public class Shop implements ConnectionInterface {
 		this.location = location;
 	}
 	
-	public void get_shop_list(ShopInterface calling_class_object)
+	public void get_shop_list(ShopInterface calling_class_object,Location areaLocation)
 	{
 		Shop.calling_class_object = calling_class_object;
 		this.get_shop_list_bool = true;
+		this.areaLocation = areaLocation;
 		ServerConnectionMaker.sendRequest(this,util.starURL);
 		//Toast.makeText(Globals.ApplicationContext, "getting shop lists ", Toast.LENGTH_SHORT).show();
 	}
@@ -115,7 +117,7 @@ public class Shop implements ConnectionInterface {
 		
 		else if(this.get_shop_list_bool){
 			
-			serviceProvider.getshoplist(Globals.current_location, new Callback<ArrayList<Shop>>(){
+			serviceProvider.getshoplist(this.areaLocation, new Callback<ArrayList<Shop>>(){
 
 				
 				@Override
@@ -139,12 +141,12 @@ public class Shop implements ConnectionInterface {
 					
 					if( shoplist != null && shoplist.size() > 0  ){
 						Globals.shop_list = shoplist;
-						Shop.calling_class_object.shop_list_success();
+						Shop.calling_class_object.shop_list_success(areaLocation);
 					}
 					else{
 						Globals.shop_list_fetch_success = true;
-						Toast.makeText(Globals.ApplicationContext, "No shop nearby", Toast.LENGTH_LONG).show();
-						Shop.calling_class_object.shop_list_success();
+						Toast.makeText(Globals.ApplicationContext, "No shops in this Area", Toast.LENGTH_LONG).show();
+						Shop.calling_class_object.shop_list_success(areaLocation);
 					}
 					
 				}

@@ -153,10 +153,10 @@ public class DbHelper extends  SQLiteOpenHelper{
 		Shop shp;
 		ArrayList<Shop> shoplist = new ArrayList<Shop>();
 		try{
-			Double lat_lower_bound = lat - 0.0009;
-			Double lat_upper_bound = lat + 0.0009;
-			Double lng_lower_bound = lng - 0.0009;
-			Double lng_upper_bound = lng + 0.0009;
+			Double lat_lower_bound = lat - 0.02;
+			Double lat_upper_bound = lat + 0.02;
+			Double lng_lower_bound = lng - 0.02;
+			Double lng_upper_bound = lng + 0.02;
 			
 						
 			SQLiteDatabase database = this.getReadableDatabase();
