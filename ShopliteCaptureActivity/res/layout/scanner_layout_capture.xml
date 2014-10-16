@@ -90,21 +90,21 @@
        				android:layout_marginTop="-3dp" >
     				</View>
 	           		
-	        <FrameLayout 
+	        <LinearLayout 
 	            android:id="@+id/shop_details_primary"
 	            android:layout_width="fill_parent"
-	            android:layout_height="150dp"
-	            android:orientation="vertical"
-	            android:layout_gravity="bottom"
+	            android:layout_height="120dp"
 	            android:onClick="showFullShopDetails"
+	            android:orientation="horizontal"
+	            android:background="#fff"
 	            >
 	            	
 	            <LinearLayout 
 	                android:id="@+id/shop_details_header"
 	                android:layout_height="fill_parent"
 	                android:layout_width="fill_parent"
-	                android:padding="20dp"
-	                android:layout_gravity="left"
+	                android:padding="10dp"
+	               android:layout_weight = "1"
 	                android:background="#fff"
 	                android:orientation="vertical">
 	                 
@@ -113,7 +113,7 @@
 	                    android:layout_width="fill_parent"
 	                    android:layout_height="wrap_content"
 	                    android:textSize="19sp"
-	                    android:textColor="#999"
+	                    android:textColor="@color/app_color"
 	                    
 	                    >
 	                    </TextView>
@@ -123,30 +123,34 @@
 	                     android:layout_height="wrap_content"
 	                     android:textSize="16sp"
 	                     android:textColor="#999"
+	                    
 	                    ></TextView>
-	                 <RatingBar android:id="@+id/ratingBar"
-	                     android:layout_width="40dp"
+	                <!-- <RatingBar android:id="@+id/ratingBar"
+	                     android:layout_width="60dp"
 	                     android:layout_height="10dp"
 	                     android:numStars="5"
 	                     android:rating="5"
 	                     android:isIndicator="true"
 	                    
-	                      />
+	                      /> --> 
 	                
 	            </LinearLayout>
 	            	
     			
-	           <Button android:id="@+id/ShopStart"
+	           <Button android:id="@+id/startShop"
 	               android:layout_width="wrap_content"
 	               android:layout_height="wrap_content"
-	               android:layout_margin="20dp"
-	               android:text="Continue"
-	               android:layout_gravity="right|center_vertical"
+	               android:layout_margin="10dp"
+	               android:text="Shop"
+	               android:layout_gravity="center_vertical"
+	              	android:textColor="@color/app_color"
+	               android:background="@drawable/button"
+	               android:visibility="invisible"
 	               android:onClick="mapShopContinue"></Button>
 
 	           
 	            
-	        </FrameLayout>
+	        </LinearLayout>
 	       </LinearLayout>
 	       
 	        

@@ -6,10 +6,8 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.gson.JsonObject;
-
 import com.shoplite.Utils.Globals;
 import com.shoplite.Utils.util;
 import com.shoplite.connection.ConnectionInterface;
@@ -57,20 +55,20 @@ public class Shop implements ConnectionInterface {
 	{
 		Shop.calling_class_object = calling_class_object;
 		this.get_shop_list_bool = true;
-		this.areaLocation = areaLocation;
+		Shop.areaLocation = areaLocation;
 		ServerConnectionMaker.sendRequest(this,util.starURL);
-		//Toast.makeText(Globals.ApplicationContext, "getting shop lists ", Toast.LENGTH_SHORT).show();
+		
 	}
 	public void connect_to_shop(ShopInterface calling_class_object , String shopURL, String shopName, Location shopLoc)
 	{
 		Shop.calling_class_object = calling_class_object;
 		this.connect_to_shop_bool  = true;
-		Globals.connect_to_shop_name = shopName;
-		Globals.connect_to_shop_url = shopURL;
-		Globals.connect_to_shop_location = shopLoc;
-		shopURL= "https://" + Globals.connect_to_shop_url;
+		this.name = shopName;
+		this.url = shopURL;
+		this.location = shopLoc;
+		shopURL= "https://" + shopURL;
 		ServerConnectionMaker.sendRequest(this,shopURL);
-		//Toast.makeText(Globals.ApplicationContext, "connecting to  shop ", Toast.LENGTH_SHORT).show();
+		
 	}
 	
 	
@@ -78,7 +76,7 @@ public class Shop implements ConnectionInterface {
 	public void sendRequest(ServiceProvider serviceProvider) {
 			
 		if(this.connect_to_shop_bool){
-			
+			final Shop shopToConnect = this;
 			serviceProvider.loginShop(ServerConnectionMaker.star_sessionID, new Callback<JsonObject>(){
 
 				@Override
@@ -100,13 +98,11 @@ public class Shop implements ConnectionInterface {
 					Log.e("Retrofit Success", response.toString());
 					Log.e("Retrofit Success", result.toString());
 					ServerConnectionMaker.recieveResponse(response);
-					
 					Globals.connected_to_shop_success = true;
-					Globals.connected_shop_name = Globals.connect_to_shop_name;
-					Globals.connected_shop_url = Globals.connect_to_shop_url;
-					Globals.connected_shop_location = Globals.connect_to_shop_location;
-					Globals.dbhelper.storeShopLocation(Globals.connected_shop_name, Globals.connected_shop_url, Globals.connected_shop_location.getLatitude(), Globals.connected_shop_location.getLongitude());
-					
+					Globals.connected_shop_name = shopToConnect.getName();
+					Globals.connected_shop_url = shopToConnect.getUrl();
+					Globals.connected_shop_location = shopToConnect.getLocation();
+					Globals.dbhelper.storeShopLocation(shopToConnect.getName(), shopToConnect.getUrl(), shopToConnect.getLocation().getLatitude(), shopToConnect.getLocation().getLongitude());
 					Shop.calling_class_object.shop_connected();
 					
 				}
@@ -117,7 +113,7 @@ public class Shop implements ConnectionInterface {
 		
 		else if(this.get_shop_list_bool){
 			
-			serviceProvider.getshoplist(this.areaLocation, new Callback<ArrayList<Shop>>(){
+			serviceProvider.getshoplist(Shop.areaLocation, new Callback<ArrayList<Shop>>(){
 
 				
 				@Override
@@ -135,19 +131,12 @@ public class Shop implements ConnectionInterface {
 
 				@Override
 				public void success(ArrayList<Shop> shoplist, Response response) {
-					
+					Globals.shop_list.addAll(shoplist);
 					Log.e("Retrofit Success", response.toString());
 					ServerConnectionMaker.recieveResponse(response);
+					Shop.calling_class_object.shop_list_success(areaLocation,shoplist);
+						
 					
-					if( shoplist != null && shoplist.size() > 0  ){
-						Globals.shop_list = shoplist;
-						Shop.calling_class_object.shop_list_success(areaLocation);
-					}
-					else{
-						Globals.shop_list_fetch_success = true;
-						Toast.makeText(Globals.ApplicationContext, "No shops in this Area", Toast.LENGTH_LONG).show();
-						Shop.calling_class_object.shop_list_success(areaLocation);
-					}
 					
 				}
 
