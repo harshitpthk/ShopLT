@@ -137,7 +137,7 @@ public class Item implements ConnectionInterface {
 					
 					ServerConnectionMaker.recieveResponse(response);
 					Globals.fetched_item_category = item;
-					getItems(Item.calling_class_object,item.getBrandId());   			//Currently calling all the products at the same time of the item fetch, have to move it to demand based fetching
+								//Currently calling all the products at the same time of the item fetch, have to move it to demand based fetching
 					Item.calling_class_object.ItemGetSuccess();
 					
 				}

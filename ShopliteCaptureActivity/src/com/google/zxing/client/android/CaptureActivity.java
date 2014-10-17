@@ -35,6 +35,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -44,18 +45,19 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.view.ViewTreeObserver;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.Transformation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
 import android.widget.SearchView.OnSuggestionListener;
@@ -75,7 +77,7 @@ import com.google.zxing.Result;
 import com.google.zxing.ResultMetadataType;
 import com.google.zxing.ResultPoint;
 import com.google.zxing.client.android.camera.CameraManager;
-import com.shoplite.UI.AnimatedLinearLayout;
+import com.shoplite.UI.ButteryProgressBar;
 import com.shoplite.UI.Controls;
 import com.shoplite.UI.ItemThumbnail;
 import com.shoplite.UI.MapUI;
@@ -135,25 +137,64 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 	private Menu MenuReference;
 	public String current_container_fragment = null;
 	public static  SearchView shopSearchView = null;
-   
-    
+   public ProgressBar  prgBar;
+   public TextView shop_detail_heading;
+   public TextView shop_detail_description;
+   public Button startShop;
+   public static ButteryProgressBar progressBar;
+   public static FrameLayout decorView;
     
        
    
     @Override
     public void onCreate(Bundle icicle)
     {
-        super.onCreate(icicle);
+		  
+		 super.onCreate(icicle);
 
-        if (android.os.Build.VERSION.SDK_INT < 8 || ZXScanHelper.isBlockCameraRotation())
-        {
-        	setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
+	    if (android.os.Build.VERSION.SDK_INT < 8 || ZXScanHelper.isBlockCameraRotation())
+	    {
+	    	setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+	    }
        
         window = getWindow();
-        int scanner_layout = R.layout.scanner_layout_capture;                 	// setting the custom layout on top of capture activity
-        setContentView(scanner_layout);
         
+        int scanner_layout = R.layout.scanner_layout_capture;                 	// setting the custom layout on top of capture activity
+		setContentView(scanner_layout);
+        
+     // create new ProgressBar and style it
+        progressBar = new ButteryProgressBar(this);
+        progressBar.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 24));
+       
+       
+
+        // retrieve the top view of our application
+       decorView = (FrameLayout) getWindow().getDecorView();
+        //decorView.addView(progressBar);
+
+        // Here we try to position the ProgressBar to the correct position by looking
+        // at the position where content area starts. But during creating time, sizes 
+        // of the components are not set yet, so we have to wait until the components
+        // has been laid out
+        // Also note that doing progressBar.setY(136) will not work, because of different
+        // screen densities and different sizes of actionBar
+        ViewTreeObserver observer = progressBar.getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                View contentView = decorView.findViewById(android.R.id.content);
+                progressBar.setY(contentView.getY() - 10);
+
+                ViewTreeObserver observer = progressBar.getViewTreeObserver();
+                observer.removeGlobalOnLayoutListener(this);
+            }
+        });
+        
+        
+        
+        getActionBar().setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+        getActionBar().setHomeButtonEnabled(false);
+        getActionBar().setDisplayHomeAsUpEnabled(false);
         
         
         
@@ -172,26 +213,27 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 					            }
         	
         				   };
-	   mDrawerLayout.setDrawerListener(mDrawerToggle);
-
-        
-        getActionBar().setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-        getActionBar().setHomeButtonEnabled(false);
-        getActionBar().setDisplayHomeAsUpEnabled(false);
-	   
+	    mDrawerLayout.setDrawerListener(mDrawerToggle);
         ldrawer = (ListView)this.findViewById(R.id.left_drawer_capture);
-     
-        ldrawer.setAdapter(new ArrayAdapter<String>(this.getBaseContext(),
-                R.layout.drawer_list_item, main_action));
-        // Set the list's click listener
-    	ldrawer.setOnItemClickListener(new DrawerItemClickListener());
-    	 mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, ldrawer);
+        ldrawer.setAdapter(new ArrayAdapter<String>(this.getBaseContext(),R.layout.drawer_list_item, main_action));
+        ldrawer.setOnItemClickListener(new DrawerItemClickListener());// Set the list's click listener
+    	mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, ldrawer);
+    	 
     	
+    	shop_detail_heading = (TextView)findViewById(R.id.shop_details_heading);
+    	shop_detail_description = (TextView)findViewById(R.id.shop_details_description);
+    	startShop = (Button)findViewById(R.id.startShop);
+    	  
+    	  
+    	
+    	  
     	MapUI.mMapFragment = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.mapFragment));
     	MapUI.mMap = MapUI.mMapFragment.getMap();
-    	MapUI.mMap.setMyLocationEnabled(true);
     	MapUI.mMap.setOnCameraChangeListener(this);
-        hasSurface = false;
+    	MapUI.mMap.setOnMarkerClickListener(this);
+    	//MapUI.mMap.setMyLocationEnabled(true);
+    	
+    	hasSurface = false;
        // inactivityTimer = new InactivityTimer(this);
         beepManager = new BeepManager(this);
 
@@ -199,9 +241,9 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
         {
             ZXScanHelper.getUserCallback().onScannerActivityCreated(this);
         }
-        MapUI.mMap.setOnMarkerClickListener(this);
         
-       // toggle_map();
+        
+       
 		
 		
         
@@ -224,7 +266,14 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
         // off screen.
         
 		// initially hide map;
-		
+		if(!conFrag.isAdded()){
+        	getSupportFragmentManager().beginTransaction().add(R.id.fragment_container,conFrag ).commit();
+        	
+        }
+		if(!cartFrag.isAdded()){
+        	getSupportFragmentManager().beginTransaction().add(R.id.container,cartFrag ).detach(cartFrag).commit();
+        	
+        }
 	
 		
     }
@@ -870,19 +919,14 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 	public void mapShopContinue(View v)
 	{
 		
-		if(!conFrag.isAdded()){
-        	getSupportFragmentManager().beginTransaction().add(R.id.fragment_container,conFrag ).commit();
-        	Controls.show_loading_dialog(this, "Initializing...");
-        }
+		
+		
         
-        getSupportFragmentManager().executePendingTransactions();
-        conFrag.getChildFragmentManager().executePendingTransactions();
+        
+       // conFrag.getChildFragmentManager().executePendingTransactions();
         
       
-        if(!cartFrag.isAdded()){
-        	getSupportFragmentManager().beginTransaction().add(R.id.container,cartFrag ).detach(cartFrag).commit();
-        	
-        }
+        
         
         getSupportFragmentManager().executePendingTransactions();
         
@@ -897,7 +941,7 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 		MenuItem shopSearch = (MenuItem) MenuReference.findItem(R.id.search);
 		shopSearch.collapseActionView();
 		setCurrentShopping(1); 
-		Controls.dismiss_progress_dialog();
+		
 	}
 	
 	@Override
@@ -945,7 +989,10 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 	public void showCart(View v)
     {
 		MenuItem shopSearch = (MenuItem) MenuReference.findItem(R.id.search);
-    		if(cartFrag.isAdded()){
+    	
+			
+			
+			if(!cartFrag.isDetached()){
         		getSupportFragmentManager().beginTransaction().detach(cartFrag).commit();
         		getSupportFragmentManager().executePendingTransactions();
         		if(conFrag.mViewPager.getCurrentItem() == 0){
@@ -958,6 +1005,7 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
         		shopSearch.setVisible(true);
         	}
     		else{
+    			
     			getSupportFragmentManager().beginTransaction().attach(cartFrag ).addToBackStack(null).commit();
         		getSupportFragmentManager().executePendingTransactions();
         		getActionBar().setDisplayHomeAsUpEnabled(false);
@@ -999,6 +1047,10 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 		//expand(shop_details_container);
 		//AnimatedLinearLayout fullShopDetailsView = (AnimatedLinearLayout) getLayoutInflater().inflate(R.layout.full_detail_layout, shop_details_container, false);
 		//shop_details_container.addView(fullShopDetailsView);
+		if(Globals.connected_to_shop_success){
+			MapUI.move_map_camera(new LatLng(Globals.connected_shop_location.getLatitude(),
+					Globals.connected_shop_location.getLongitude()));
+		}
 	}
 		
 
@@ -1030,6 +1082,17 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 		Shop shopObj = new Shop();
 		shopObj.get_shop_list(this,areaLocation);
 	}
+	public void connect_to_shop(Shop shopObj) {
+		
+		String shopURL =shopObj.getUrl();
+		String shopName = shopObj.getName();
+		com.shoplite.models.Location shopLoc = shopObj.getLocation();
+		shopObj.connect_to_shop(this,shopURL,shopName,shopLoc);
+		
+		shop_detail_heading.setText("Connecting to " + shopName);
+		
+	}
+	
 
 	@Override
 	public void shop_list_success(Location areaLocation,ArrayList<Shop> shopList) {
@@ -1037,41 +1100,73 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 	
 			
 			if( shopList != null && shopList.size()>0){
-				
+				double cur_lat = Globals.current_location.getLatitude();     // current lat and lng to create a range for blue marker representing shop in the range of 200 mtr
+				double cur_lng = Globals.current_location.getLongitude();
 				for(int i = 0; i < shopList.size() ; i++ ){
-					double lat =  shopList.get(i).getLocation().getLatitude();
-					double lng =  shopList.get(i).getLocation().getLongitude();
+					double shopLat =  shopList.get(i).getLocation().getLatitude();
+					double shopLng =  shopList.get(i).getLocation().getLongitude();
 					
 					
 					// code to add blue marker for shops in the range of 200mts
-					double cur_lat = Globals.current_location.getLatitude();     // current lat and lng to create a range for blue marker representing shop in the range of 200 mtr
-					double cur_lng = Globals.current_location.getLongitude();
+					
 					Marker shop_marker = null;
 					
-					if(Globals.current_location == areaLocation){
-						if((cur_lat<lat+0.0009) && (cur_lng > lat-0.0009)){
-							if((cur_lng < lng+0.0009) && (cur_lng > lng - 0.0009)){
-								LatLng coordinate = new LatLng(lat, lng);
-								Globals.add_to_sd_matrix(shopList.get(i),lat,lng);
-								shop_marker = MapUI.mMap.addMarker(new MarkerOptions().position(coordinate).draggable(false).title(shopList.get(i).getName()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-								continue;
-							}
+					
+					if((cur_lat<shopLat+0.02) && (cur_lng > shopLat-0.02)){
+						if((cur_lng < shopLng+0.02) && (cur_lng > shopLng - 0.02)){
+							LatLng coordinate = new LatLng(shopLat, shopLng);
+							Globals.add_to_sd_matrix(shopList.get(i),shopLat,shopLng);
+							shop_marker = MapUI.mMap.addMarker(new MarkerOptions().position(coordinate).draggable(false).title(shopList.get(i).getName()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+							continue;
 						}
 					}
-					LatLng coordinate = new LatLng(lat, lng);
+					
+					LatLng coordinate = new LatLng(shopLat, shopLng);
 					
 					shop_marker = MapUI.mMap.addMarker(new MarkerOptions().position(coordinate).draggable(false).title(shopList.get(i).getName()));
     	    
 				}
-				if(Globals.current_location == areaLocation){
-					Shop shpObject = Globals.min_sd_matrix();
-					if(!Globals.connected_to_shop_success && shpObject != null)
-						connect_to_shop(shpObject);
+				
+				
+
+				if((cur_lat<areaLocation.getLatitude()+0.02) && (cur_lng > areaLocation.getLatitude()-0.02)){
+					if((cur_lng < areaLocation.getLongitude()+0.02) && (cur_lng > areaLocation.getLongitude() - 0.02)){
+					
+						Shop shpObject = Globals.min_sd_matrix();
+						if(!Globals.connected_to_shop_success ){
+							if( shpObject != null)
+							connect_to_shop(shpObject);
+						}
+						else{
+							shop_detail_heading.setText("Welcome to " + Globals.connected_shop_name);
+							
+							shop_detail_description.setText("You can shop various " +
+									"products through your cam scanner " +
+									"or through the list at an affordable prices.\nHappy Shopping!");
+							
+							startShop.setVisibility(View.VISIBLE);
+							
+						}
+					}
+					else{
+						shop_detail_heading.setText("Tap Marker to Connect to  a Shop");
+						shop_detail_description.setText("");
+						startShop.setVisibility(View.INVISIBLE);
+					}
 				}
+				else{
+					shop_detail_heading.setText("Tap Marker to Connect to  a Shop");
+					shop_detail_description.setText("");
+					startShop.setVisibility(View.INVISIBLE);
+				}
+				
+				
 			}
 			else{
-				TextView shop_detail_heading = (TextView)findViewById(R.id.shop_details_heading);
+				
 				shop_detail_heading.setText("No Shops in this Area");
+				shop_detail_description.setText("");
+				startShop.setVisibility(View.INVISIBLE);
 			}
 			
 			double lat = areaLocation.getLatitude();
@@ -1090,16 +1185,6 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 		
 	}
 
-	protected void connect_to_shop(Shop shopObj) {
-		
-		String shopURL =shopObj.getUrl();
-		String shopName = shopObj.getName();
-		com.shoplite.models.Location shopLoc = shopObj.getLocation();
-		shopObj.connect_to_shop(this,shopURL,shopName,shopLoc);
-		TextView shop_detail_heading = (TextView)findViewById(R.id.shop_details_heading);
-		shop_detail_heading.setText("Connecting to " + shopName);
-		
-	}
 	
 	@Override
 	public void shop_connected() {
@@ -1110,13 +1195,13 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 		
 		LatLng coordinate = new LatLng(lat, lng);
 		MapUI.mMap.addMarker(new MarkerOptions().position(coordinate).draggable(false).title(Globals.connected_shop_name).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-		TextView shop_detail_heading = (TextView)findViewById(R.id.shop_details_heading);
+		
 		shop_detail_heading.setText("Welcome to " + Globals.connected_shop_name);
-		TextView shop_detail_description = (TextView)findViewById(R.id.shop_details_description);
+		
 		shop_detail_description.setText("You can shop various " +
 				"products through your cam scanner " +
 				"or through the list at an affordable prices.\nHappy Shopping!");
-		Button startShop = (Button)findViewById(R.id.startShop);
+		
 		startShop.setVisibility(View.VISIBLE);
 	}
 
@@ -1149,6 +1234,9 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 
 	@Override
 	public void ItemListGetSuccess() {
+		
+		FrameLayout itemDrawer = (FrameLayout)AddDialog.findViewById(R.id.simmilar_item_container);
+    	itemDrawer.removeView(prgBar);
 			ArrayList<Card> cards = new ArrayList<Card>();
 		
 			for(int i = 0 ; i < Globals.simmilar_item_list.size();i++){
@@ -1195,9 +1283,18 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 	{
 	    	
 	    	DrawerLayout itemDrawerLayout = (DrawerLayout)AddDialog.findViewById(R.id.drawer_add_item);
-	    	ListView itemDrawer = (ListView)AddDialog.findViewById(R.id.left_drawer_add_item);
+	    	FrameLayout itemDrawer = (FrameLayout)AddDialog.findViewById(R.id.simmilar_item_container);
+	    	
+	    	prgBar = new ProgressBar(this);
+	    	FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
+	    	lp.gravity = Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL;
+	    	
+	    			
+	    	itemDrawer.addView(prgBar,lp);
+	    	
 	    	itemDrawerLayout.openDrawer(itemDrawer);
-	    	handler.getItemList(Globals.fetched_item_category.getBrandId());
+	    	Item itm = new Item(0, null, 0, 0);
+	    	itm.getItems(this,Globals.fetched_item_category.getBrandId());
 	}
 
 	

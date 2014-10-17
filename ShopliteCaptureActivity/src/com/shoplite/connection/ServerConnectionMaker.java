@@ -3,6 +3,7 @@ package com.shoplite.connection;
 
 import java.util.List;
 
+import com.google.zxing.client.android.CaptureActivity;
 import com.shoplite.UI.Controls;
 import com.shoplite.Utils.util;
 import android.util.Log;
@@ -51,8 +52,9 @@ public class ServerConnectionMaker  {
 		.setLogLevel(RestAdapter.LogLevel.FULL)
 		.build();
 		
-		
-		
+		if(CaptureActivity.decorView != null){
+			CaptureActivity.decorView.addView(CaptureActivity.progressBar);
+		}
 		serviceProvider = restAdapter.create(ServiceProvider.class);
 		
 		ci.sendRequest(serviceProvider);
@@ -86,6 +88,9 @@ public class ServerConnectionMaker  {
 			}
 		}
 		//progress dialog removal
+		if(CaptureActivity.decorView != null){
+			CaptureActivity.decorView.removeView(CaptureActivity.progressBar);
+		}
 		Controls.dismiss_progress_dialog();
 		
 	}

@@ -39,5 +39,10 @@
     <color name="zx_viewfinder_mask">#60000000</color>
      <color name="app_color">#816687</color>
      <color name="white">#ffffff</color>
-     <color name="dark_app_color">#413344</color>
+     <color name="dark_app_color">#4F597F</color>
+     <!-- <color name="dark_app_color">#413344</color>-->
+     <color name="orange_peel">#FF9F00</color>
+      <color name="orange_tea_rose">#FF9F00</color>
+       <color name="orange_atomic_tangerine">#FF9966</color>
+        <color name="orange_carrot">#ED9121</color>
 </resources>

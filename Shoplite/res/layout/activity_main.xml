@@ -12,17 +12,17 @@
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:layout_gravity="bottom"
-        android:background="#fff" >
+        android:background="@color/white" >
 		   <Button 
 		       android:id="@+id/start_signup_button"
 		       android:layout_width="match_parent"
 		       android:layout_height="60dp"
 		       android:layout_margin="20dp"
 		        android:layout_gravity="bottom"
-		       android:text="Get Started"
+		       android:text="@string/get_started"
 		       android:onClick="start_signup"
 		  		android:background="@drawable/button"
-		  		android:textColor="#816687"
+		  		android:textColor="@color/dark_app_color"
 		       />
   
    </RelativeLayout>

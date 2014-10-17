@@ -6,7 +6,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:background="#fff"
+    android:background="@color/white"
     tools:context="com.example.shoplite.Verification" >
 
      <TextView 
@@ -14,9 +14,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="44sp"
-            android:textAlignment="viewEnd"
-            android:textColor="#816687"
-            android:text="Verify"
+            android:textColor="@color/dark_app_color"
+            android:text="@string/verify"
             android:typeface="sans"
      />
     <TextView
@@ -53,8 +52,8 @@
         android:id="@+id/verify"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Verify"
-       	 android:textColor="#816687"
+        android:text="@string/verify"
+       	 android:textColor="@color/dark_app_color"
         android:onClick="verify"
         android:background="@drawable/button"
         android:layout_marginTop="20dp"
@@ -64,8 +63,8 @@
         android:id="@+id/resend"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Resend"
-       	 android:textColor="#816687"
+        android:text="@string/resend"
+       	 android:textColor="@color/dark_app_color"
         android:onClick="resend"
         android:background="@drawable/button"
         android:layout_marginTop="20dp"
@@ -75,8 +74,8 @@
         android:id="@+id/sign_up_again"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sign Up Again"
-      	 android:textColor="#816687"
+        android:text="@string/signup_again"
+      	 android:textColor="@color/dark_app_color"
         android:onClick="signup_again"
         android:background="@drawable/button"
         android:layout_marginTop="20dp"

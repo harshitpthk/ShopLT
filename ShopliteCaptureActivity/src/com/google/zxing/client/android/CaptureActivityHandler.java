@@ -141,6 +141,8 @@ public final class CaptureActivityHandler extends Handler implements ItemInterfa
             	Controls.show_single_action_dialog("Item Not Found","This Code doesn't contain any product information.\nFor any other use the value is \n"+ QRCValue,"Okay" ,this,activity );
                 
             	Toast.makeText(activity.getBaseContext(), "", Toast.LENGTH_LONG).show();
+            	e.printStackTrace();
+            	Log.e("Dialog Error",e.getMessage());
             	
             }
            
