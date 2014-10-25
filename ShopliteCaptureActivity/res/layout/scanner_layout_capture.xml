@@ -35,16 +35,18 @@
            android:layout_width="30dp"
            android:layout_height="30dp"
            android:layout_margin="15dp"
-           android:background="@drawable/cart"
+          
+           android:background="@drawable/selector_shop_by_list"
            android:contentDescription="@string/shop_offline"
            android:layout_gravity="bottom|left"
            android:onClick="shopOutsideStore"/>
        
         <ImageButton android:id="@+id/shop_at_store"
-           android:layout_width="30dp"
+            android:layout_width="30dp"
            android:layout_height="30dp"
            android:layout_margin="15dp"
-           android:background="@drawable/scan"
+            android:background="@drawable/selector_shop_at_store"
+           
            android:layout_gravity="bottom|center"
            android:contentDescription="@string/shop_at_store"
            android:onClick="shopAtStore"/>
@@ -54,7 +56,7 @@
            android:layout_height="30dp"
            android:layout_margin="15dp"
            android:layout_gravity="bottom|right"
-           android:background="@drawable/orders"
+           android:background="@drawable/selector_orders"
            android:contentDescription="@string/order_history"
            android:onClick="showOrderHistory"/>
      
@@ -70,7 +72,7 @@
 	        android:id="@+id/mapFragment"
 	        android:layout_width="fill_parent"
 	        android:layout_height="fill_parent" 
-	        android:background="@drawable/dropshadow_roundborder"           
+	              
 	        />	
 	        
 			
@@ -122,7 +124,7 @@
 	                     android:layout_width="fill_parent"
 	                     android:layout_height="wrap_content"
 	                     android:textSize="16sp"
-	                     android:textColor="#999"
+	                     android:textColor="#707070"
 	                    
 	                    ></TextView>
 	                <!-- <RatingBar android:id="@+id/ratingBar"

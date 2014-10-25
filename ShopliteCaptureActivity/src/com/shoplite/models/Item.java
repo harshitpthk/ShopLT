@@ -111,7 +111,7 @@ public class Item implements ConnectionInterface {
 					
 					ServerConnectionMaker.recieveResponse(response);
 					Globals.simmilar_item_list = itemFamily;
-					Item.calling_class_object.ItemListGetSuccess();
+					Item.calling_class_object.ItemListGetSuccess(itemFamily);
 				}
 				
 			});
@@ -138,7 +138,7 @@ public class Item implements ConnectionInterface {
 					ServerConnectionMaker.recieveResponse(response);
 					Globals.fetched_item_category = item;
 								//Currently calling all the products at the same time of the item fetch, have to move it to demand based fetching
-					Item.calling_class_object.ItemGetSuccess();
+					Item.calling_class_object.ItemGetSuccess(item);
 					
 				}
 				

@@ -147,7 +147,7 @@ public class location implements ConnectionInterface {
 	public void onActivityResult(int requestCode)
 	{
 		if(requestCode == 1){
-			if(lm.isProviderEnabled(lm.NETWORK_PROVIDER)){
+			if(lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
 				lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
 				
 			}

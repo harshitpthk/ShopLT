@@ -52,7 +52,7 @@ public class ServerConnectionMaker  {
 		.setLogLevel(RestAdapter.LogLevel.FULL)
 		.build();
 		
-		if(CaptureActivity.decorView != null){
+		if(CaptureActivity.decorView != null && CaptureActivity.decorView.findViewById(CaptureActivity.progressBar.getId()) == null){
 			CaptureActivity.decorView.addView(CaptureActivity.progressBar);
 		}
 		serviceProvider = restAdapter.create(ServiceProvider.class);

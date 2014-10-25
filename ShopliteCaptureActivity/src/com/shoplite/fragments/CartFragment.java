@@ -1,13 +1,9 @@
 package com.shoplite.fragments;
 
-import it.gmariotti.cardslib.library.internal.Card;
-import it.gmariotti.cardslib.library.internal.CardArrayAdapter;
-import it.gmariotti.cardslib.library.internal.CardHeader;
-import it.gmariotti.cardslib.library.internal.Card.OnUndoSwipeListListener;
-import it.gmariotti.cardslib.library.view.CardListView;
 
 import java.util.ArrayList;
 
+import com.shoplite.UI.BaseItemCard;
 import com.shoplite.Utils.CartGlobals;
 import com.shoplite.Utils.Globals;
 import com.shoplite.Utils.Constants.DBState;
@@ -34,33 +30,21 @@ import android.widget.Toast;
 
 public class CartFragment extends Fragment implements PackListInterface{
 
-	private  Card card;
-	private ArrayList<Card> cards = new ArrayList<Card>();
-	private CardArrayAdapter mCardArrayAdapter;
-	CardHeader header ;
+	
 	private TextView empty_cart_view ;
-	ArrayList<ItemCategory> recent_deleted_items = new ArrayList<ItemCategory>();
-	private CardListView cartlistView;
+	ArrayList<BaseItemCard> recent_deleted_items = new ArrayList<BaseItemCard>();
+
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//setContentView(R.layout.activity_cart);
-		//getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,        
-          //      WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		
 	}
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
         Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        
 		View root = inflater.inflate(R.layout.activity_cart, container, false);
-		Button saveCartButton = (Button) root.findViewById(R.id.save_cart_list);
-		saveCartButton.setOnClickListener(new OnClickListener() {
-	          public void onClick(View v) {
-
-	          }
-	       });
-		
 		root.setOnTouchListener(new OnTouchListener()
 	    {
 	       
@@ -71,6 +55,17 @@ public class CartFragment extends Fragment implements PackListInterface{
 				return true;
 			}
 	    });
+		
+		
+		
+		Button saveCartButton = (Button) root.findViewById(R.id.save_cart_list);
+		saveCartButton.setOnClickListener(new OnClickListener() {
+	          public void onClick(View v) {
+
+	          }
+	       });
+		
+		
 			
 		Button orderButton = (Button) root.findViewById(R.id.order_button);
 		orderButton.setOnClickListener(new OnClickListener() {
@@ -88,13 +83,6 @@ public class CartFragment extends Fragment implements PackListInterface{
 	public void onResume()
 	{
 		super.onResume();	
-		mCardArrayAdapter = new CardArrayAdapter(this.getActivity(),cards);
-		mCardArrayAdapter.setEnableUndo(true);
-		
-		cartlistView = (CardListView) this.getActivity().findViewById(R.id.cart_items);
-		if (cartlistView!=null){
-            cartlistView.setAdapter(mCardArrayAdapter);
-        }
 		empty_cart_view = (TextView)this.getActivity().findViewById(R.id.empty_cart_textview);
 		
 		if(Globals.item_order_list.size() == 0){
@@ -114,52 +102,6 @@ public class CartFragment extends Fragment implements PackListInterface{
 			empty_cart_view.setVisibility(-1);
 		}
 		
-		 //Create a Card
-			
-			 card = new Card(this.getActivity());
-			 card.setId(Integer.toString(Globals.item_order_list.size()-1));
-			 header = new CardHeader(this.getActivity());
-			 header.setTitle(Globals.item_order_list.get(Globals.item_order_list.size()-1).getName());
-			 card.addCardHeader(header);
-			 card.setSwipeable(true);
-			 card.setClickable(true);
-			 card.setOnClickListener(new Card.OnCardClickListener() {
-				
-				@Override
-				public void onClick(Card card, View view) {
-					// TODO Auto-generated method stub
-					Toast.makeText(Globals.ApplicationContext, "Card Clicked",2000 ).show();
-				}
-			});
-			 //cards.add(card);
-			
-			 card.setOnSwipeListener(new Card.OnSwipeListener() {
-		            @Override
-		            public void onSwipe(Card card) {
-		                //Do something
-		            	int remove_index = Globals.find_item_index_from_title(card.getCardHeader().getTitle());
-		            	
-		            	remove_scanned_item("cart_fragment",remove_index);
-		            	
-		            }
-		        });
-			
-			 card.setOnUndoSwipeListListener(new OnUndoSwipeListListener() {
-	                @Override
-	                public void onUndoSwipe(Card card) {
-	                    //Do something
-	                	//have to do undo swipe listener with adding items back to the queue and creating a send request again
-	                	//Globals.item_order_list.add(recent_deleted_item);
-	                	for(int i = 0 ; i < recent_deleted_items.size();i++ ){
-	                		
-	                	}
-	                	if(Globals.item_order_list.size()>0){
-	                		empty_cart_view.setVisibility(-1);
-	                	}
-	                }
-	          });
-			 mCardArrayAdapter.add(card);
-		 
 					
 			
 		        
@@ -170,10 +112,10 @@ public class CartFragment extends Fragment implements PackListInterface{
 	{
 		if(Globals.item_order_list != null && Globals.item_order_list.size() > 0){
 			if(calling_activity.equals("capture_activity")){
-				mCardArrayAdapter.remove(mCardArrayAdapter.getItem(position));
+				//mCardArrayAdapter.remove(mCardArrayAdapter.getItem(position));
 			}
 			
-			OrderItemDetail itemToDelete = new OrderItemDetail(Globals.item_order_list.get(position).getItemList().get(0).getId(),Globals.item_order_list.get(position).getItemList().get(0).getQuantity());
+			OrderItemDetail itemToDelete = new OrderItemDetail(Globals.item_order_list.get(position).getCurrentItemId(),Globals.item_order_list.get(position).getCurrentQty());
 			
 			recent_deleted_items.add(Globals.item_order_list.get(position));
 			Globals.item_order_list.remove(position);
@@ -212,54 +154,55 @@ public class CartFragment extends Fragment implements PackListInterface{
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
+		
 		return true;
 		//return super.onOptionsItemSelected(item);
 	}
-@Override
-public void sendPackList() {
-	// TODO Auto-generated method stub
 	
-}
-
-@Override
-public void editPackList() {
-	// TODO Auto-generated method stub
 	
-}
-
-@Override
-public void PackListSuccess(PackList obj) {
-	// TODO Auto-generated method stub
-	if(obj.state==DBState.DELETE){
-		for(int i = 0 ;i < obj.items.size() ; i++){
-			if(CartGlobals.cartList.contains(obj.items.get(i)))
-				CartGlobals.cartList.remove(obj.items.get(i));
-			if(recent_deleted_items.contains(obj.items.get(i)))
-				recent_deleted_items.remove(obj.items.get(i));
-		}
+	//PackListInterface
+	
+	@Override
+	public void sendPackList() {
+		// TODO Auto-generated method stub
 		
 	}
-	else if (obj.state == DBState.INSERT){
-		for(int i = 0 ;i < obj.items.size() ; i++){
-			CartGlobals.cartList.add(obj.items.get(i));
-		}
-	}
-	else{
+	
+	@Override
+	public void editPackList() {
+		// TODO Auto-generated method stub
 		
 	}
-}
-@Override
-public void deletePackList(OrderItemDetail itemToDelete) {
-	// TODO Auto-generated method stub
-	PackList pl = new PackList();
-	pl.items = new ArrayList<OrderItemDetail>();
-	pl.items.add(itemToDelete);
-	pl.state = DBState.DELETE;
-	CartGlobals.CartServerRequestQueue.add(pl);
-	pl.sendPackList(this);
-}
+	
+	@Override
+	public void PackListSuccess(PackList obj) {
+		// TODO Auto-generated method stub
+		if(obj.state==DBState.DELETE){
+			for(int i = 0 ;i < obj.orderedItems.size() ; i++){
+				if(CartGlobals.cartList.contains(obj.orderedItems.get(i)))
+					CartGlobals.cartList.remove(obj.orderedItems.get(i));
+				if(recent_deleted_items.contains(obj.orderedItems.get(i)))
+					recent_deleted_items.remove(obj.orderedItems.get(i));
+			}
+			
+		}
+		else if (obj.state == DBState.INSERT){
+			for(int i = 0 ;i < obj.orderedItems.size() ; i++){
+				CartGlobals.cartList.add(obj.orderedItems.get(i));
+			}
+		}
+		else{
+			
+		}
+	}
+	@Override
+	public void deletePackList(OrderItemDetail itemToDelete) {
+		// TODO Auto-generated method stub
+		PackList pl = new PackList();
+		pl.orderedItems = new ArrayList<OrderItemDetail>();
+		pl.orderedItems.add(itemToDelete);
+		pl.state = DBState.DELETE;
+		CartGlobals.CartServerRequestQueue.add(pl);
+		pl.sendPackList(this);
+	}
 }

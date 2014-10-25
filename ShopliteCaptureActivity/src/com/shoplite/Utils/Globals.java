@@ -5,16 +5,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import android.content.Context;
+
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.shoplite.UI.BaseItemCard;
 import com.shoplite.database.DbHelper;
 import com.shoplite.models.ItemCategory;
 import com.shoplite.models.Shop;
-
-import android.content.Context;
 
 
 public class Globals {
@@ -32,7 +29,7 @@ public class Globals {
 
 	public static ItemCategory fetched_item_category;
 	public static ArrayList<ItemCategory> simmilar_item_list = new ArrayList<ItemCategory>();
-	public static ArrayList<ItemCategory> item_order_list = new ArrayList<ItemCategory>();
+	public static ArrayList<BaseItemCard> item_order_list = new ArrayList<BaseItemCard>();
 	
 	
 	//Method to Return Shop object which is at minimum distance from current location inside the 200 meters radius
@@ -71,17 +68,5 @@ public class Globals {
 			return null;
 		}
 	}
-	public static int find_item_index_from_title(String name) {
-		// TODO Auto-generated method stub
-		int remove_index = -1;
-		for(int i = 0 ; i < Globals.item_order_list.size();i++){
-			if(Globals.item_order_list.get(i).getName().equals(name)){
-				remove_index = i;
-				break;
-			}
-			
-		}
-		return remove_index;
-		
-	}
+	
 }

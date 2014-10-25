@@ -7,7 +7,6 @@ import android.preference.PreferenceActivity;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import android.view.WindowManager;
-import eu.livotov.zxscan.R;
 
 
 public class SettingsActivity extends PreferenceActivity {

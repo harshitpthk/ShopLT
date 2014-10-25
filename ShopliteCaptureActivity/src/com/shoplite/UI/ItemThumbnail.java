@@ -6,14 +6,14 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import it.gmariotti.cardslib.library.internal.CardThumbnail;
 
-public class ItemThumbnail extends CardThumbnail {
+
+public class ItemThumbnail  {
 
 	private String itemThumbnailURL = null;
 
 	 public ItemThumbnail(Context context,String Url) {
-		super(context);
+		
 		this.itemThumbnailURL = Url;
 		// TODO Auto-generated constructor stub
 	}
@@ -38,16 +38,16 @@ public class ItemThumbnail extends CardThumbnail {
 
 
 
-	@Override
-    public void setupInnerViewElements(ViewGroup parent, View viewImage) {
-
-        //Here you have to set your image with an external library
-		
-        Picasso.with(getContext())
-               .load(itemThumbnailURL)
-               .resize(96, 96)
-               .into((ImageView)viewImage);
-        
-       
-    }
+//	@Override
+//    public void setupInnerViewElements(ViewGroup parent, View viewImage) {
+//
+//        //Here you have to set your image with an external library
+//		
+//        Picasso.with(getContext())
+//               .load(itemThumbnailURL)
+//               .resize(96, 96)
+//               .into((ImageView)viewImage);
+//        
+//       
+//    }
 }

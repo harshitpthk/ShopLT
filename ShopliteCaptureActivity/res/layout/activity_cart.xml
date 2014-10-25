@@ -26,7 +26,7 @@
      >
      
 
-    <it.gmariotti.cardslib.library.view.CardListView
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/cart_items"/>
@@ -71,6 +71,6 @@
        />
 	</LinearLayout>
 	
-	<include layout="@layout/list_card_undo_message"/>
+	
 
  </FrameLayout>

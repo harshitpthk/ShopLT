@@ -1,6 +1,5 @@
 package com.example.shoplite;
 
-
 import java.util.regex.Pattern;
 
 import retrofit.Callback;
@@ -95,7 +94,7 @@ public class MainActivity extends Activity implements ConnectionInterface  {
     	   
        }
         
-
+       
     	
     }
     

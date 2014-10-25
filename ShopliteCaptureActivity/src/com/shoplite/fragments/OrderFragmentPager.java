@@ -3,18 +3,17 @@ package com.shoplite.fragments;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
 
 public class OrderFragmentPager extends FragmentPagerAdapter {
 
 	public OrderFragmentPager(FragmentManager fm) {
 		super(fm);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	@Override
 	public Fragment getItem(int i) {
-		// TODO Auto-generated method stub
+		
 		Fragment fragment ;
 		
 		switch(i){
@@ -33,7 +32,7 @@ public class OrderFragmentPager extends FragmentPagerAdapter {
 
 	@Override
 	public int getCount() {
-		// TODO Auto-generated method stub
+		
 		return 2;
 	}
 

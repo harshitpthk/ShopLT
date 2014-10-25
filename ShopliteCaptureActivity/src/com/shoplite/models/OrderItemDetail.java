@@ -2,6 +2,19 @@ package com.shoplite.models;
 
 
 public class OrderItemDetail {
+	
+	int orderId;
+	int itemId;
+	int quantity;
+	double price;
+	public boolean isSent;
+	
+	public boolean isSent() {
+		return isSent;
+	}
+	public void setSent(boolean isSent) {
+		this.isSent = isSent;
+	}
 	public int getOrderId() {
 		return orderId;
 	}
@@ -25,18 +38,6 @@ public class OrderItemDetail {
 	}
 	public void setPrice(double price) {
 		this.price = price;
-	}
-	int orderId;
-	int itemId;
-	int quantity;
-	double price;
-	public boolean isSent;
-	
-	public boolean isSent() {
-		return isSent;
-	}
-	public void setSent(boolean isSent) {
-		this.isSent = isSent;
 	}
 	public OrderItemDetail(int orderId, int itemId, int quantity, int price) {
 		super();

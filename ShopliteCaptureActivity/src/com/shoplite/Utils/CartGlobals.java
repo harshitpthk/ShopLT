@@ -3,8 +3,6 @@ package com.shoplite.Utils;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import com.shoplite.connection.ServerConnectionMaker;
-import com.shoplite.models.ItemCategory;
 import com.shoplite.models.OrderItemDetail;
 import com.shoplite.models.PackList;
 
@@ -18,13 +16,6 @@ public class CartGlobals {
 	
 	public static int sentItemCount = 0;
 	
-	public static void incSetItemCount(){
-		CartGlobals.sentItemCount++;
-	}
-	public static void decSetItemCount(){
-		if(CartGlobals.sentItemCount > 0)
-			CartGlobals.sentItemCount--;
-		
-	}
+	
 
 }

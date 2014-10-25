@@ -11,7 +11,7 @@
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
         -->
-           <item name="android:activatedBackgroundIndicator">@drawable/activated_text</item>
+           <item name="android:activatedBackgroundIndicator">@drawable/activated_background</item>
       
     </style>
 

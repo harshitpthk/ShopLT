@@ -1,18 +1,16 @@
 package com.shoplite.models;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-
 import android.util.Log;
 
 import com.google.gson.JsonObject;
 import com.shoplite.Utils.CartGlobals;
-import com.shoplite.Utils.Globals;
 import com.shoplite.Utils.Constants.DBState;
+import com.shoplite.Utils.Globals;
 import com.shoplite.connection.ConnectionInterface;
 import com.shoplite.connection.ServerConnectionMaker;
 import com.shoplite.connection.ServiceProvider;
@@ -21,7 +19,7 @@ import com.shoplite.interfaces.PackListInterface;
 public class PackList implements ConnectionInterface {
 
     public DBState state;
-	public ArrayList<OrderItemDetail> items;
+	public ArrayList<OrderItemDetail> orderedItems;
 	public  PackListInterface calling_class_object;
 	static boolean delete_pack_list_boolean = false;
 	
@@ -48,17 +46,18 @@ public class PackList implements ConnectionInterface {
 
 	@Override
 	public void sendRequest(ServiceProvider serviceProvider) {
-		// TODO Auto-generated method stub
-			final PackList obj = this;
-			final  PackListInterface calling_class_object_internal = obj.calling_class_object;
-			obj.calling_class_object = null;
-			serviceProvider.packList(obj,new Callback<JsonObject>(){
+		
+			final PackList packlist = this;
+			final  PackListInterface calling_class_object_internal = packlist.calling_class_object;
+			packlist.calling_class_object = null;
+			
+			serviceProvider.packList(packlist,new Callback<JsonObject>(){
 				
 				@Override
 				public void failure(RetrofitError response) {
-					// TODO Auto-generated method stub
+					
 					if (response.isNetworkError()) {
-						Log.e("Packlist error", "503"); // Use another code if you'd prefer
+						Log.e("Packlist error", "503"); 
 				    }
 					//Toast.makeText(getBaseContext(), arg0.toString(), Toast.LENGTH_LONG).show();
 					//Log.e("Retrofit error", response.getUrl());
@@ -78,10 +77,10 @@ public class PackList implements ConnectionInterface {
 
 				@Override
 				public void success(JsonObject message, Response response) {
-					// TODO Auto-generated method stub
+					
 					ServerConnectionMaker.recieveResponse(response);
 					Log.e("PackList", response.toString());
-					calling_class_object_internal.PackListSuccess(obj);
+					calling_class_object_internal.PackListSuccess(packlist);
 					CartGlobals.CartServerRequestQueue.removeFirst();
 					if(!CartGlobals.CartServerRequestQueue.isEmpty()){
 						String shopURL = null;

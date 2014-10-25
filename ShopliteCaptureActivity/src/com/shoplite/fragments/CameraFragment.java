@@ -1,20 +1,15 @@
 package com.shoplite.fragments;
 
-import com.google.zxing.client.android.CaptureActivity;
-
-import eu.livotov.zxscan.R;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
-import android.view.Window;
-import android.view.WindowManager;
+import com.google.zxing.client.android.CaptureActivity;
+
+import eu.livotov.zxscan.R;
 
 public class CameraFragment extends Fragment {
 	View rootView;
@@ -39,7 +34,7 @@ public class CameraFragment extends Fragment {
 		CaptureActivity act = (CaptureActivity)getActivity();
 		SurfaceView surfaceView = (SurfaceView)rootView.findViewById(R.id.preview_view);
 		
-		act.initiateCamera(surfaceView);
+		act.startQRScanner(surfaceView);
 		
 		super.onResume();
 		

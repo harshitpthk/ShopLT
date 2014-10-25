@@ -1,10 +1,15 @@
 package com.shoplite.interfaces;
 
+import java.util.ArrayList;
+
+import com.shoplite.models.ItemCategory;
+
 public interface ItemInterface {
 
-	public void ItemAdded();
 	
-	public void ItemGetSuccess();
+	public void getItemList(ItemCategory item);
 	
-	public void ItemListGetSuccess();
+	public void ItemGetSuccess(ItemCategory item);
+	
+	public void ItemListGetSuccess(ArrayList<ItemCategory> itemFamily);
 }

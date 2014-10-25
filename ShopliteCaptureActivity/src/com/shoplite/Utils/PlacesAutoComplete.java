@@ -36,7 +36,7 @@ public class PlacesAutoComplete {
 	public static MatrixCursor suggestionCursor  ;
 	
 	public void autocomplete(String input) {
-		if(CaptureActivity.decorView != null && CaptureActivity.decorView.findViewById(CaptureActivity.progressBar.getId()) != null ){
+		if(CaptureActivity.decorView != null && CaptureActivity.decorView.findViewById(CaptureActivity.progressBar.getId()) == null ){
 			CaptureActivity.decorView.addView(CaptureActivity.progressBar);
 		}
 		placesList = new ArrayList<PlacePrediction>();

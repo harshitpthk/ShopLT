@@ -55,7 +55,7 @@ import java.util.Collection;
  *
  * @author dswitkin@google.com (Daniel Switkin)
  */
-public final class CaptureActivityHandler extends Handler implements ItemInterface,ControlsInterface,PackListInterface
+public final class CaptureActivityHandler extends Handler 
 {
 
     private static final String TAG = CaptureActivityHandler.class.getSimpleName();
@@ -134,15 +134,13 @@ public final class CaptureActivityHandler extends Handler implements ItemInterfa
             Item QRItem = null;
             try{
             	 QRItem =  gson.fromJson(QRCValue, Item.class);
-            	 Controls.show_alert_dialog("Add Item",QRItem.getName() ,"Add Item","Cancel" ,this,activity, R.layout.activity_add_item);
-                 getItem(QRItem);
+            	  getItem(QRItem);
             }
             catch(Exception e){
-            	Controls.show_single_action_dialog("Item Not Found","This Code doesn't contain any product information.\nFor any other use the value is \n"+ QRCValue,"Okay" ,this,activity );
-                
-            	Toast.makeText(activity.getBaseContext(), "", Toast.LENGTH_LONG).show();
+            	Controls.show_single_action_dialog("Item Not Found","This Code doesn't contain any product information.","Okay" ,activity,activity );
+               	Toast.makeText(activity.getBaseContext(), e.toString(), Toast.LENGTH_LONG).show();
             	e.printStackTrace();
-            	Log.e("Dialog Error",e.getMessage());
+            	//Log.e("Dialog Error",e.getMessage());	
             	
             }
            
@@ -200,138 +198,10 @@ public final class CaptureActivityHandler extends Handler implements ItemInterfa
     	
     }
     
-    public  void getItemList(int BrandId)
-    {
-    	
-    }
+ 
     
-    
-    //interface methods
-	@Override
-	public void ItemAdded() {
-		
-		
-	}
+ 
 
-	
-
-	@Override
-	public void ItemGetSuccess() {
-		
-		
-	}
-
-	@Override
-	public void ItemListGetSuccess() {
-		
-		
-	}
-	
-	//Controls Interface
-
-	@Override
-	public void positive_button_alert_method() {
-		String selected_measure = Controls.get_spinner_selected_item(activity.AddDialog);
-		int variant_list_size = Globals.fetched_item_category.getItemList().size();
-		for(int i = 0 ; i <variant_list_size ;i++ ){
-			if(!Globals.fetched_item_category.getItemList().get(i).getName().equals(selected_measure)){
-				Globals.fetched_item_category.getItemList().remove(i);
-				i--;
-				variant_list_size--;
-			}
-			
-		}
-		Globals.fetched_item_category.getItemList().trimToSize();
-		if(!Globals.item_order_list.contains(Globals.fetched_item_category)){
-			Globals.item_order_list.add(Globals.fetched_item_category);
-			sendPackList();
-			
-		}
-		else{
-			Toast.makeText(activity.getApplicationContext(), "Item Already Added in your Cart", Toast.LENGTH_SHORT 	).show();
-		}
-		activity.cartFrag.add_scanned_items();
-		restartPreviewAndDecode();
-	}
-
-	@Override
-	public void negative_button_alert_method() {
-		
-		 restartPreviewAndDecode();
-	}
-
-	@Override
-	public void save_alert_dialog(AlertDialog add_item_alert) {
-		// TODO Auto-generated method stub
-		activity.AddDialog = add_item_alert;
-	}
-
-	//Pack List Interface
-
-	@Override
-	public void sendPackList() {
-		// TODO Auto-generated method stub
-		int count = ItemCategory.countNotSent(Globals.item_order_list);
-		
-		if(count == 1){
-			
-		
-			PackList pl = new PackList();
-			pl.items = ItemCategory.getToSendList(Globals.item_order_list);
-			pl.state = DBState.INSERT;
-		
-			ItemCategory.setSentList(Globals.item_order_list);
-			
-			if(CartGlobals.CartServerRequestQueue.size() == 0){
-				CartGlobals.CartServerRequestQueue.add(pl);
-				pl.sendPackList(this);
-			}
-			else{
-				CartGlobals.CartServerRequestQueue.add(pl);
-			}
-				
-		}
-	}
-	
-	@Override
-	public void editPackList() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void deletePackList(OrderItemDetail itemToDelete) {
-		// TODO Auto-generated method stub
-		
-		
-	}
-	
-	
-	@Override
-	public void PackListSuccess(PackList obj) {
-		// TODO Auto-generated method stub
-		if(obj.state==DBState.DELETE){
-			
-		}
-		else if (obj.state == DBState.INSERT){
-			for(int i = 0 ;i < obj.items.size() ; i++){
-				CartGlobals.cartList.add(obj.items.get(i));
-			}
-		}
-		else{
-			
-		}
-		
-		
-	}
-
-
-
-	@Override
-	public void neutral_button_alert_method() {
-		// TODO Auto-generated method stub
-		restartPreviewAndDecode();
-	}
 
 	
 

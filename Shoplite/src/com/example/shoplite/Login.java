@@ -1,22 +1,17 @@
 package com.example.shoplite;
 
-import java.net.HttpURLConnection;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.sholite.R;
 import com.shoplite.UI.Controls;
-import com.shoplite.Utils.location;
 import com.shoplite.Utils.util;
 import com.shoplite.connection.ConnectionInterface;
 import com.shoplite.connection.ServerConnectionMaker;

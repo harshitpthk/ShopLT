@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-     <color name="app_color">#816687</color>
+     <color name="app_color">#225378</color>
      <color name="white">#ffffff</color>
+     <color name="friendfoeyellow">#FFFFA6</color>
+     <color name="text_color">#707070</color>
+     <color name="friendfoegreen">#BDF271</color>
 </resources>

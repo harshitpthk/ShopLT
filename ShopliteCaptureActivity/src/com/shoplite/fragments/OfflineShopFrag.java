@@ -1,18 +1,12 @@
 package com.shoplite.fragments;
 
 
-import com.google.zxing.client.android.CaptureActivity;
-
-import eu.livotov.zxscan.R;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.LayoutInflater;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import eu.livotov.zxscan.R;
 
 public class OfflineShopFrag extends Fragment {
 		View rootView;

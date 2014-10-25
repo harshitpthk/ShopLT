@@ -36,7 +36,14 @@
          <string name="drawer_open">OpenDrawer</string>
          <string name="drawer_close">CloseDrawer</string>
          <string name="map_search_text">Find Shops </string>
-        
+        <string name="more">More</string>
+         <string name="measures">Measures</string>
+         <string name="quantity">Quantity</string>
+          <string name="cancel">Cancel</string>
+          <string name="add_item">Add Item</string>
+          <string name="desc_image">Item Image</string>
+          <string name="desc_image_button">Item Image</string>
+           <string name="select">Select</string>
        
 
 </resources>

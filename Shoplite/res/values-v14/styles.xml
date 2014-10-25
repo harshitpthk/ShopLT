@@ -7,14 +7,18 @@
     -->
     <style name="AppBaseTheme" parent="android:Theme.Holo.Light.NoActionBar.Fullscreen">
         <!-- API 14 theme customizations can go here. -->
-          <item name="android:activatedBackgroundIndicator"> @drawable/activated_text </item>
+          <item name="android:activatedBackgroundIndicator"> @drawable/activated_background</item>
       
     </style>
     <!-- Application theme. -->
     <style name="AppTheme" parent="@android:style/Theme.Holo.Light.DarkActionBar">
            <item name="android:actionBarStyle">@style/ActionBar</item>
-          
+         <item name="android:activatedBackgroundIndicator">@drawable/activated_background</item>
+      	
     </style>
+    
+   
+    
     <style name="ActionBar"
            parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
         <item name="android:background">@color/dark_app_color</item>
