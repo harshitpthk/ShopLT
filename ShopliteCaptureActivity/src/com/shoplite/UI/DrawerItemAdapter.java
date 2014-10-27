@@ -5,11 +5,6 @@ package com.shoplite.UI;
 
 import java.util.ArrayList;
 
-import com.google.zxing.client.android.CaptureActivity;
-import com.shoplite.UI.BaseItemCard.OnClickActionButtonListener;
-import com.shoplite.models.ItemCategory;
-
-import eu.livotov.zxscan.R;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.support.v4.widget.DrawerLayout;
@@ -18,7 +13,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
-import android.widget.TextView;
+
+import com.google.zxing.client.android.CaptureActivity;
+import com.shoplite.UI.BaseItemCard.OnClickActionButtonListener;
+import com.shoplite.models.ItemCategory;
+
+import eu.livotov.zxscan.R;
 
 /**
  * @author I300291
@@ -41,12 +41,11 @@ public class DrawerItemAdapter extends ArrayAdapter<ItemCategory>{
 
 	private AlertDialog AddDialog;
 
-	public DrawerItemAdapter(Context context,
-			ArrayList<ItemCategory> itemSimmilarFamily) {
+	public DrawerItemAdapter(Context context,ArrayList<ItemCategory> itemSimmilarFamily) {
 			super(context,R.layout.drawer_item_container , itemSimmilarFamily);
 			mContext = context;
 			this.drawerItemList = itemSimmilarFamily;
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	 @Override

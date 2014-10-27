@@ -4,16 +4,7 @@
                android:layout_height="match_parent"
                android:background="#fff">
     
-	<TextView 
-         android:layout_width="fill_parent"
-         android:layout_height="wrap_content"
-         android:textColor="#999"
-         android:textSize="18sp"
-         android:text="@string/empty_cart_message"
-         android:padding="15dp"
-        
-         android:visibility="invisible"
-         android:id="@+id/empty_cart_textview"/>
+	
 	<RelativeLayout 
    	 	android:layout_width="match_parent"
     	android:layout_height="match_parent"
@@ -21,20 +12,45 @@
     	android:paddingLeft="@dimen/activity_horizontal_margin"
     	android:paddingRight="@dimen/activity_horizontal_margin"
     	android:paddingTop="@dimen/activity_vertical_margin"
-    	
-    	android:layout_marginBottom="44dp"
-     >
+    	android:layout_marginBottom="44dp">
      
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/cart_items"/>
+    	<ListView
+    	    android:id="@+id/cart_item_list_view"
+	        android:layout_height="match_parent"
+	        android:layout_width="match_parent"
+	        android:choiceMode="singleChoice"
+	        android:background="#fff"/>
     
 	</RelativeLayout>
+	<LinearLayout 
+	     android:id="@+id/empty_cart_view"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_marginTop="-20dp"
+         android:orientation="vertical"
+         android:layout_gravity="center"
+         android:padding="15dp"
+         android:visibility="gone"
+        >
+	    <TextView 
+	        android:text="@string/empty_cart_message"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textColor="#777"
+	        android:textSize="22sp"/>
+	    <Button 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_margin="20dp"
+	        android:background="@android:color/transparent"
+	        android:src="@drawable/cart_grey"/>
+	</LinearLayout>
 	
 	
-
+	
+	
+	
 	
 	
 	<LinearLayout 
@@ -56,6 +72,7 @@
         android:background="@drawable/button"
         android:layout_marginTop="20dp"
          android:layout_marginRight="10dp"
+         android:layout_marginEnd="10dp"
          android:fontFamily="sans-serif-light"
        />
     <Button android:layout_weight="1"
@@ -63,8 +80,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/order_string"
-      	 android:textColor="@color/app_color"
-       
+      	android:textColor="@color/app_color"
         android:background="@drawable/button"
         android:layout_marginTop="20dp"
         android:fontFamily="sans-serif-light"

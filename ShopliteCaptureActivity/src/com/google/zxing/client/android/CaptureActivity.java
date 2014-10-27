@@ -8,13 +8,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.content.res.XmlResourceParser;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -22,6 +22,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -29,12 +30,9 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.text.format.Formatter;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -55,9 +53,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
@@ -82,19 +78,16 @@ import com.shoplite.UI.AddItemCard;
 import com.shoplite.UI.BaseCardView;
 import com.shoplite.UI.BaseItemCard;
 import com.shoplite.UI.BaseItemCard.OnClickActionButtonListener;
-import com.shoplite.UI.CartItemCard;
 import com.shoplite.UI.ButteryProgressBar;
 import com.shoplite.UI.Controls;
 import com.shoplite.UI.DrawerItemAdapter;
-import com.shoplite.UI.DrawerItemCard;
-
 import com.shoplite.UI.MapUI;
 import com.shoplite.Utils.CartGlobals;
 import com.shoplite.Utils.Constants;
+import com.shoplite.Utils.Constants.DBState;
 import com.shoplite.Utils.Globals;
 import com.shoplite.Utils.PlacesAutoComplete;
 import com.shoplite.Utils.location;
-import com.shoplite.Utils.Constants.DBState;
 import com.shoplite.fragments.CameraFragment;
 import com.shoplite.fragments.CartFragment;
 import com.shoplite.fragments.ContainerFragment;
@@ -835,6 +828,7 @@ ControlsInterface,PackListInterface
 					
 				}
 
+				@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 				@Override
 				public void onPageSelected(int position) {
 					// TODO Auto-generated method stub
@@ -845,7 +839,10 @@ ControlsInterface,PackListInterface
 				    	shopByListButton.setBackground(getResources().getDrawable(R.drawable.cart_blue));
 				    	orderListButton.setBackground(getResources().getDrawable(R.drawable.purchase_order_grey));
 						
-			            CartMenuItem.setVisible(true);
+			           
+				    	
+				    	
+				    	 CartMenuItem.setVisible(true);
 			            ShopMap.setVisible(true);
 						getActionBar().setDisplayHomeAsUpEnabled(true);
 			            getActionBar().setHomeButtonEnabled(true);
@@ -949,6 +946,7 @@ ControlsInterface,PackListInterface
 		}
 	    	
 	}
+	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	public void mapShopContinue(View v)
 	{
 		
@@ -1059,7 +1057,20 @@ ControlsInterface,PackListInterface
     {
     	final Animation animScale = AnimationUtils.loadAnimation(this, R.anim.buttonscale);
     	v.startAnimation(animScale);
-    	cartFrag.remove_scanned_item("capture_activity",Globals.item_order_list.size()-1);
+    	if(Globals.item_order_list != null && Globals.item_order_list.size() > 0){
+    		
+	    	OrderItemDetail itemToDelete = new OrderItemDetail(Globals.item_order_list.get(Globals.item_order_list.size()-1).getCurrentItemId(),Globals.item_order_list.get(Globals.item_order_list.size()-1).getCurrentQty());
+	    	CartGlobals.recentDeletedItems.add(Globals.item_order_list.get(Globals.item_order_list.size()-1));
+	    	Globals.item_order_list.remove(Globals.item_order_list.get(Globals.item_order_list.size()-1));
+			deletePackList(itemToDelete);
+			Toast.makeText(this, "Last Scanned Item Removed", Toast.LENGTH_SHORT).show();
+			
+    	}
+    	else{
+    		Toast.makeText(Globals.ApplicationContext, "Your Cart is Empty", Toast.LENGTH_SHORT).show();
+    		
+    	}
+    		
     }
     public void shopAtStore(View v)
     {
@@ -1239,7 +1250,6 @@ ControlsInterface,PackListInterface
 	@Override
 	public void shop_connected() {
 		
-		//Toast.makeText(Globals.ApplicationContext, ("Welcome to " + Globals.connected_shop_name), Toast.LENGTH_LONG).show();
 		double lat =  Globals.connected_shop_location.getLatitude();
 		double lng =  Globals.connected_shop_location.getLongitude();
 		
@@ -1267,12 +1277,13 @@ ControlsInterface,PackListInterface
     	itm.getItems(this,item.getBrandId());
 	}
 
+	
 	@Override
 	public void ItemGetSuccess(final ItemCategory itemFetched) {
 		
-		Controls.show_alert_dialog("Add Item",null ,"Add Item","Cancel" ,this,this, R.layout.activity_add_item);
+		Controls.show_alert_dialog("Add Item",null ,"Add Item","Cancel" , this, this, R.layout.activity_add_item);
         
-		BaseCardView itemContainer =(BaseCardView)AddDialog.findViewById(R.id.itemView);
+		BaseCardView itemContainer = (BaseCardView) AddDialog.findViewById(R.id.itemView);
 		 addToItem = new AddItemCard(this, itemFetched);
 		 addToItem.setParentView(this, itemContainer);
 		 addToItem.setActionButtonOnClick(new OnClickActionButtonListener() {
@@ -1314,11 +1325,15 @@ ControlsInterface,PackListInterface
 	@Override
 	public void positive_button_alert_method() {
 		// TODO Auto-generated method stub
-		Globals.item_order_list.add(addToItem);   /*addToItem is the current item in the add dialog, we add this in the
-													the Globals item order list which is connected to the UI interface of the 
-													cart fragment
-													*/
-		sendPackList();
+		/*addToItem is the current item in the add dialog, we add this in the
+		*the Globals item order list which is connected to the UI interface of the 
+		*cart fragment
+		*/
+		//for(int i = 0 ; i <40 ; i++){
+			Globals.item_order_list.add(addToItem);   
+		//}
+			sendPackList();
+				
 		handler.restartPreviewAndDecode();
 		
 	}
@@ -1381,16 +1396,20 @@ ControlsInterface,PackListInterface
 	 * @see com.shoplite.interfaces.PackListInterface#PackListSuccess(com.shoplite.models.PackList)
 	 */
 	@Override
-	public void PackListSuccess(PackList packlist) {
+	public void PackListSuccess(PackList obj) {
 		// TODO Auto-generated method stub
-		if(packlist.state==DBState.DELETE){
-			for(int i = 0 ;i < packlist.orderedItems.size() ; i++){
-				CartGlobals.cartList.remove(packlist.orderedItems.get(i));
+		if(obj.state==DBState.DELETE){
+			for(int i = 0 ;i < obj.orderedItems.size() ; i++){
+				if(CartGlobals.cartList.contains(obj.orderedItems.get(i)))
+					CartGlobals.cartList.remove(obj.orderedItems.get(i));
+				if(CartGlobals.recentDeletedItems.contains(obj.orderedItems.get(i)))
+					CartGlobals.recentDeletedItems.remove(obj.orderedItems.get(i));
 			}
+			
 		}
-		else if (packlist.state == DBState.INSERT){
-			for(int i = 0 ;i < packlist.orderedItems.size() ; i++){
-				CartGlobals.cartList.add(packlist.orderedItems.get(i));
+		else if (obj.state == DBState.INSERT){
+			for(int i = 0 ;i < obj.orderedItems.size() ; i++){
+				CartGlobals.cartList.add(obj.orderedItems.get(i));
 			}
 		}
 		else{
@@ -1413,7 +1432,12 @@ ControlsInterface,PackListInterface
 	@Override
 	public void deletePackList(OrderItemDetail itemToDelete) {
 		// TODO Auto-generated method stub
-		
+		PackList pl = new PackList();
+		pl.orderedItems = new ArrayList<OrderItemDetail>();
+		pl.orderedItems.add(itemToDelete);
+		pl.state = DBState.DELETE;
+		CartGlobals.CartServerRequestQueue.add(pl);
+		pl.sendPackList(this);
 	}
 
 	

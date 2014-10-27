@@ -44,6 +44,7 @@
           <string name="desc_image">Item Image</string>
           <string name="desc_image_button">Item Image</string>
            <string name="select">Select</string>
+            <string name="edit">Edit</string>
        
 
 </resources>

@@ -8,5 +8,5 @@ public class Constants {
 	
 	public enum PAYMENTMode {CASH,ONLINE,SWIPE};
 	
-	public static int MAX_NOT_SENT_ITEMS = 4;
+	public static int MAX_NOT_SENT_ITEMS = 10;
 }

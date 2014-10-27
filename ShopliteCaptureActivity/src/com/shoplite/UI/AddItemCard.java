@@ -49,30 +49,30 @@ public class AddItemCard extends BaseItemCard {
 	
 	public void initMeasurePicker(){
 		try{
-		measurePicker.setMinValue(0);
-		measurePicker.setMaxValue(item.getItemList().size()-1);
-		measurePicker.setFormatter(new NumberPicker.Formatter() {
-			
-			@Override
-			public String format(int value) {
+			measurePicker.setMinValue(0);
+			measurePicker.setMaxValue(item.getItemList().size()-1);
+			measurePicker.setFormatter(new NumberPicker.Formatter() {
 				
-				return item.getItemList().get(value).getName();
-			}
-		});
-		measurePicker.setOnValueChangedListener(new OnValueChangeListener() {
-			
-			@Override
-			public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-				// TODO Auto-generated method stub
-				setCurrentItemId(item.getItemList().get(newVal).getId());
-				setCurrentMeasure(item.getItemList().get(newVal).getName());
-				setCurrentMsrPrice( item.getItemList().get(newVal).getPrice());
-				setTotalPrice( (double) Math.round((getCurrentQty()*getCurrentMsrPrice() * 100.0)/100.0));
+				@Override
+				public String format(int value) {
+					
+					return item.getItemList().get(value).getName();
+				}
+			});
+			measurePicker.setOnValueChangedListener(new OnValueChangeListener() {
 				
-				updateView();
-			}
-		});
-		measurePicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+				@Override
+				public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+					// TODO Auto-generated method stub
+					setCurrentItemId(item.getItemList().get(newVal).getId());
+					setCurrentMeasure(item.getItemList().get(newVal).getName());
+					setCurrentMsrPrice( item.getItemList().get(newVal).getPrice());
+					setTotalPrice( (double) Math.round((getCurrentQty()*getCurrentMsrPrice() * 100.0)/100.0));
+					
+					updateView();
+				}
+			});
+			measurePicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -83,28 +83,28 @@ public class AddItemCard extends BaseItemCard {
 		try{
 			
 		
-		qtyPicker.setMaxValue(quantity);
-		qtyPicker.setMinValue(1);
-		qtyPicker.setFormatter(new NumberPicker.Formatter() {
-			
-			@Override
-			public String format(int value) {
-				// TODO Auto-generated method stub
+			qtyPicker.setMaxValue(quantity);
+			qtyPicker.setMinValue(1);
+			qtyPicker.setFormatter(new NumberPicker.Formatter() {
 				
-				return Integer.toString(value) + " Qty";
-			}
-		});
-		qtyPicker.setOnValueChangedListener(new OnValueChangeListener() {
-			
-			@Override
-			public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-				// TODO Auto-generated method stub
-				setCurrentQty( newVal);
-				setTotalPrice( (double) Math.round((getCurrentQty()*getCurrentMsrPrice() * 100.0)/100.0));
-				updateView();
-			}
-		});
-		qtyPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+				@Override
+				public String format(int value) {
+					// TODO Auto-generated method stub
+					
+					return Integer.toString(value) + " Qty";
+				}
+			});
+			qtyPicker.setOnValueChangedListener(new OnValueChangeListener() {
+				
+				@Override
+				public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+					// TODO Auto-generated method stub
+					setCurrentQty( newVal);
+					setTotalPrice( (double) Math.round((getCurrentQty()*getCurrentMsrPrice() * 100.0)/100.0));
+					updateView();
+				}
+			});
+			qtyPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
 		}
 		catch(Exception e)
 		{

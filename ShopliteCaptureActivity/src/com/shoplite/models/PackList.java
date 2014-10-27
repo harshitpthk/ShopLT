@@ -21,7 +21,6 @@ public class PackList implements ConnectionInterface {
     public DBState state;
 	public ArrayList<OrderItemDetail> orderedItems;
 	public  PackListInterface calling_class_object;
-	static boolean delete_pack_list_boolean = false;
 	
 	public  void sendPackList(PackListInterface calling_class_object)
 	{
