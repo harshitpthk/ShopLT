@@ -1281,7 +1281,7 @@ ControlsInterface,PackListInterface
 	@Override
 	public void ItemGetSuccess(final ItemCategory itemFetched) {
 		
-		Controls.show_alert_dialog("Add Item",null ,"Add Item","Cancel" , this, this, R.layout.activity_add_item);
+		Controls.show_alert_dialog(this, this, R.layout.activity_add_item,450);
         
 		BaseCardView itemContainer = (BaseCardView) AddDialog.findViewById(R.id.itemView);
 		 addToItem = new AddItemCard(this, itemFetched);
@@ -1290,7 +1290,6 @@ ControlsInterface,PackListInterface
 			
 			@Override
 			public void onClick(ItemCategory item, View view) {
-				// TODO Auto-generated method stub
 				show_item_siblings(view,itemFetched);
 			}
 		});
@@ -1329,8 +1328,9 @@ ControlsInterface,PackListInterface
 		*the Globals item order list which is connected to the UI interface of the 
 		*cart fragment
 		*/
+		AddDialog.dismiss();
 		//for(int i = 0 ; i <40 ; i++){
-			Globals.item_order_list.add(addToItem);   
+			Globals.item_order_list.add(addToItem.getItem());   
 		//}
 			sendPackList();
 				
@@ -1343,6 +1343,7 @@ ControlsInterface,PackListInterface
 	@Override
 	public void negative_button_alert_method() {
 		// TODO Auto-generated method stub
+		AddDialog.dismiss();
 		 handler.restartPreviewAndDecode();
 	}
 
@@ -1371,15 +1372,15 @@ ControlsInterface,PackListInterface
 	@Override
 	public void sendPackList() {
 		// TODO Auto-generated method stub
-		int count = BaseItemCard.countNotSent(Globals.item_order_list);
+		int count = ItemCategory.countNotSent(Globals.item_order_list);
 		
 		if(count >= Constants.MAX_NOT_SENT_ITEMS){
 					
 			PackList pl = new PackList();
-			pl.orderedItems = BaseItemCard.getToSendList(Globals.item_order_list);
+			pl.orderedItems = ItemCategory.getToSendList(Globals.item_order_list);
 			pl.state = DBState.INSERT;
 		
-			BaseItemCard.setSentList(Globals.item_order_list);
+			ItemCategory.setSentList(Globals.item_order_list);
 			
 			if(CartGlobals.CartServerRequestQueue.size() == 0){
 				CartGlobals.CartServerRequestQueue.add(pl);

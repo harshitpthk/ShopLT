@@ -1,7 +1,11 @@
 package com.shoplite.database;
 
 import java.util.ArrayList;
+import java.util.Date;
 
+import com.google.gson.Gson;
+import com.shoplite.UI.BaseItemCard;
+import com.shoplite.Utils.Globals;
 import com.shoplite.models.Shop;
 
 import android.content.ContentValues;
@@ -24,6 +28,14 @@ public class DbHelper extends  SQLiteOpenHelper{
     private static final String SHOP_LAT = "SHOP_LAT";
     private static final String SHOP_LNG = "SHOP_LNG";
     
+    //SHOPPING LIST COLUMNS
+    private static final String SHOPPING_LIST_TABLE="SHOPPING_LIST_TABLE";
+    private static final String LIST_ID = "LIST_ID";
+    private static final String LIST_NAME="LIST_NAME";
+    private static final String LIST_ENTRIES="LIST_ENTRIES";
+    private static final String TOTAL_ITEMS = "TOTAL_ITEMS";
+    private static final String SAVED_DATE="SAVED_DATE";
+    
     private static final String DICTIONARY_TABLE_CREATE =
                 "CREATE TABLE " + TABLE_NAME + " (" +
                 KEY + " TEXT PRIMARY KEY NOT NULL, " +
@@ -36,7 +48,15 @@ public class DbHelper extends  SQLiteOpenHelper{
             		SHOP_LAT + " REAL NOT NULL," +
             		SHOP_LNG +" REAL NOT NULL" +
             		");";
-
+    private static final String SHOPPING_LIST_TABLE_CREATE =
+    		"CREATE TABLE " + SHOPPING_LIST_TABLE +" ( "+
+    				LIST_ID + " INTEGER  PRIMARY KEY AUTOINCREMENT NOT NULL, " + 
+    				LIST_NAME + " TEXT NOT NULL, " + 
+    				TOTAL_ITEMS + " INTEGER NOT NULL, " +
+    				SAVED_DATE+ " TEXT NOT NULL," +
+    				LIST_ENTRIES +" BLOB NOT NULL "+ 
+    				");";
+    				
     public DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -45,6 +65,7 @@ public class DbHelper extends  SQLiteOpenHelper{
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(DICTIONARY_TABLE_CREATE);
         db.execSQL(SHOP_LOCATION_TABLE_CREATE);
+        db.execSQL(SHOPPING_LIST_TABLE_CREATE);
     }
 
 
@@ -216,6 +237,42 @@ public class DbHelper extends  SQLiteOpenHelper{
 	{
 		
 		return null;
+		
+	}
+
+
+	public  boolean  storeShoppingList(String listName ,ArrayList<BaseItemCard> shoppingList)
+	{
+		String listEntries = new Gson().toJson(shoppingList);
+		int totalItems = shoppingList.size();
+		Date dt = new Date();
+		
+		try {
+			
+			SQLiteDatabase database=  this.getWritableDatabase();
+			
+			ContentValues values = new ContentValues();
+			values.put(LIST_NAME, listName);
+		    values.put(TOTAL_ITEMS, totalItems );
+		    values.put(SAVED_DATE,dt.toString());
+		    values.put(LIST_ENTRIES,listEntries);
+		    
+		    
+		      
+		    long id = database.insertWithOnConflict(SHOPPING_LIST_TABLE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+		  
+	    	
+	    	if(id != -1)
+	    		return true;
+	    	else
+	    		return false;
+	    	
+			
+		} catch (Exception e) {
+			return false;
+			
+		}
+		
 		
 	}
 }

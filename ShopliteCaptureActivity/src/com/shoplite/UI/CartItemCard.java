@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.nfc.cardemulation.CardEmulation;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -23,9 +22,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
-import android.widget.Toast;
 import android.widget.NumberPicker.OnValueChangeListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.shoplite.Utils.CartGlobals;
 import com.shoplite.Utils.Constants;
@@ -41,9 +40,6 @@ import eu.livotov.zxscan.R;
 
 public class CartItemCard extends BaseItemCard implements PackListInterface{
 
-		
-	
-
 	protected TextView itemNameView;
 	protected ImageView itemImageView ;
 	protected TextView currentMeasureView;
@@ -56,11 +52,31 @@ public class CartItemCard extends BaseItemCard implements PackListInterface{
 	protected CustomNumberPicker qtyPicker;
 	protected View containerView;
 	protected View innerView;
+	protected ImageButton delete_button;
 	
-	float previouspoint = 0 ;
-    float startPoint=0;
-    Resources r = mContext.getResources();
-	float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60, r.getDisplayMetrics());
+	//members to notify change in the List view
+	protected ArrayList<ItemCategory> cartItemList;
+	protected CartItemAdapter cartItemAdapter;
+	
+	//Animation COntrol Members
+	protected float previouspoint = 0 ;
+	protected float startPoint = 0;
+	protected Resources r = mContext.getResources();
+	protected float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60, r.getDisplayMetrics());
+	protected int SWIPE_MIN_DISTANCE = 50;
+	protected boolean animationMode = false;
+	   
+	
+	public CartItemCard(Context context,ItemCategory addedItem){
+		super(addedItem,context);
+	}
+	public void setParentView(Context context,ViewGroup container, ArrayList<ItemCategory> cartItemListRecieved,
+			 CartItemAdapter cartItemAdapter)
+	{
+		this.cartItemList = cartItemListRecieved;
+		this.cartItemAdapter = cartItemAdapter;
+		setUpView(context, container);
+	}
 	
 	public View getInnerView() {
 		return innerView;
@@ -68,20 +84,10 @@ public class CartItemCard extends BaseItemCard implements PackListInterface{
 	public void setInnerView(View innerView) {
 		this.innerView = innerView;
 	}
-
-	private static final int SWIPE_MIN_DISTANCE = 50;
-    private boolean animationMode = false;
-	private ArrayList<BaseItemCard> cartItemList;
-	private BaseItemCard baseItem;
-	private CartItemAdapter cartItemAdapter;
-	
-    
-    
-    
-    public ArrayList<BaseItemCard> getCartItemAdapter() {
+    public ArrayList<ItemCategory> getCartItemAdapter() {
 		return cartItemList;
 	}
-	public void setCartItemAdapter(ArrayList<BaseItemCard> cartItemAdapter) {
+	public void setCartItemAdapter(ArrayList<ItemCategory> cartItemAdapter) {
 		this.cartItemList = cartItemAdapter;
 	}
 	public boolean isAnimationMode() {
@@ -90,15 +96,7 @@ public class CartItemCard extends BaseItemCard implements PackListInterface{
 	public void setAnimationMode(boolean animationMode) {
 		this.animationMode = animationMode;
 	}
-	public CartItemCard(Context context,BaseItemCard addedItem){
-		super(addedItem.getItem(),context);
-		setCurrentMsrPrice( addedItem.getCurrentMsrPrice());
-		setCurrentMeasure(addedItem.getCurrentMeasure());
-		setTotalPrice(addedItem.getTotalPrice());
-		setCurrentItemId(addedItem.getCurrentItemId());
-		setCurrentQty(addedItem.getCurrentQty());
-			
-	}
+		
 	public TextView getItemNameView() {
 		return itemNameView;
 	}
@@ -147,25 +145,11 @@ public class CartItemCard extends BaseItemCard implements PackListInterface{
 	public void setItemEditView(LinearLayout itemEditView) {
 		this.itemEditView = itemEditView;
 	}
-	
-	public void setParentView(Context context,ViewGroup container, ArrayList<BaseItemCard> cartItemList,
-			BaseItemCard baseItem, CartItemAdapter cartItemAdapter)
-	{
-		this.cartItemList = cartItemList;
-		this.baseItem = baseItem;
-		this.cartItemAdapter = cartItemAdapter;
-		setUpView(context, container);
-	}
-	
+		
 	public void setCartItemAdapter(CartItemAdapter cartItemAdapter) {
 		this.cartItemAdapter = cartItemAdapter;
 	}
-	public BaseItemCard getBaseItem() {
-		return baseItem;
-	}
-	public void setBaseItem(BaseItemCard baseItem) {
-		this.baseItem = baseItem;
-	}
+	
 	public NumberPicker getMeasurePicker() {
 		return measurePicker;
 	}
@@ -183,137 +167,11 @@ public class CartItemCard extends BaseItemCard implements PackListInterface{
 	}
 
 	
-
 	
 	
 	
-
-	public void initMeasurePicker(){
-		try{
-			measurePicker.setMinValue(0);
-			measurePicker.setMaxValue(item.getItemList().size()-1);
-			measurePicker.setFormatter(new NumberPicker.Formatter() {
-				
-				@Override
-				public String format(int value) {
-					// TODO Auto-generated method stub
-					return item.getItemList().get(value).getName();
-					
-				}
-			});
-			measurePicker.setOnValueChangedListener(new OnValueChangeListener() {
-				
-				@Override
-				public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-					// TODO Auto-generated method stub
-					setCurrentItemId(item.getItemList().get(newVal).getId());
-					setCurrentMeasure(item.getItemList().get(newVal).getName());
-					setCurrentMsrPrice( item.getItemList().get(newVal).getPrice());
-					setTotalPrice( (double) Math.round((getCurrentQty()*getCurrentMsrPrice() * 100.0)/100.0));
-					
-					updateView();
-				}
-			});
-			measurePicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-		}
-		catch(Exception e){
-			e.printStackTrace();
-		}
-	}
-	
-	
-	public void initQtyPicker(){
-		try{
-			qtyPicker.setMaxValue(quantity);
-			qtyPicker.setMinValue(1);
-			qtyPicker.setFormatter(new NumberPicker.Formatter() {
-				
-				@Override
-				public String format(int value) {
-					// TODO Auto-generated method stub
-					
-					return Integer.toString(value) + " Qty";
-				}
-			});
-			qtyPicker.setOnValueChangedListener(new OnValueChangeListener() {
-				
-				@Override
-				public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-					// TODO Auto-generated method stub
-					setCurrentQty( newVal);
-					setTotalPrice( (double) Math.round((getCurrentQty()*getCurrentMsrPrice() * 100.0)/100.0));
-					updateView();
-				}
-			});
-			qtyPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-		}
-		catch(Exception e){
-			e.printStackTrace();
-		}
-	}
-	
-	
-
-	@Override
-	public void updateView(){
-		itemNameView.setText(item.getName());
-		currentMeasureView.setText(currentMeasure);
-		currentPriceView.setText("Price:"+currentMsrPrice.toString());
-		quantityView.setText(Integer.toString(quantity));
-		totalPriceView.setText("Total Price:"+totalPrice.toString());
-	}
-	
-	
-
-	
-
-	/* (non-Javadoc)
-	 * @see com.shoplite.UI.BaseItemCard#getActionButtonOnClick()
-	 */
-	@Override
-	public OnClickActionButtonListener getActionButtonOnClick() {
-		// TODO Auto-generated method stub
-		return super.getOnClickActionButtonListener();
-		 
-	}
-
-	/* (non-Javadoc)
-	 * @see com.shoplite.UI.BaseItemCard#setActionButtonText()
-	 */
-	@Override
-	public void setActionButtonText(String text) {
-		// TODO Auto-generated method stub
-		itemButton.setText(text);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.shoplite.UI.BaseItemCard#intImage()
-	 */
-	/* (non-Javadoc)
-	 * @see com.shoplite.UI.BaseItemCard#setActionButtonOnClick(com.shoplite.UI.BaseItemCard.OnClickActionButtonListener)
-	 */
-	@Override
-	public void setActionButtonOnClick(	OnClickActionButtonListener actionButtonListener) {
-		// TODO Auto-generated method stub
-		super.setOnClickActionButtonListener(actionButtonListener);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.shoplite.UI.BaseItemCard#fetchItemImage()
-	 */
-	@Override
-	public void fetchItemImage(String url) {
-		// TODO Auto-generated method stub
-		 url = "http://cadbury.screaminteractive.com.my/images/products/CADBURY%20DAIRY%20MILK/Cadbury%20Dairy%20Milk/Cadbury-Dairy-Milk75.png";
-		 Picasso.with(getmContext()).load(url).into(itemImageView);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.shoplite.UI.BaseItemCard#setUpView()
-	 */
 	@Override
 	public void setUpView(Context context , ViewGroup container) {
-		// TODO Auto-generated method stub
 		LayoutInflater lp = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View view;
 		if(container.findViewById(R.id.cart_item_view) == null){
@@ -324,22 +182,25 @@ public class CartItemCard extends BaseItemCard implements PackListInterface{
 		}
 		this.containerView = view;
 		super.setViewLayout(view.getId());
-		innerView = containerView.findViewById(R.id.cart_item_view);
+		
+		innerView = (View)containerView.findViewById(R.id.cart_item_view);
 		itemNameView = (TextView) containerView.findViewById(R.id.item_name);
 		itemImageView = (ImageView) containerView.findViewById(R.id.item_image);
 		currentMeasureView = (TextView) containerView.findViewById(R.id.current_measure);
 		currentPriceView = (TextView) containerView.findViewById(R.id.current_measure_price);
 		quantityView = (TextView)containerView.findViewById(R.id.current_quantity);
 		totalPriceView = (TextView)containerView.findViewById(R.id.total_price);
+		itemEditView =(LinearLayout)view.findViewById(R.id.item_edit_view);
+		itemEditView.setVisibility(View.GONE);
+		
 		setMeasurePicker((CustomNumberPicker)containerView.findViewById(R.id.item_measure_picker));
 		setQtyPicker((CustomNumberPicker)containerView.findViewById(R.id.item_quantity_picker));
-		itemButton = (Button)containerView.findViewById(R.id.item_button);
-		ImageButton delete_button = (ImageButton)containerView.findViewById(R.id.delete_cart_item);
-        delete_button.setOnClickListener(new OnClickListener() {
+		
+		delete_button = (ImageButton)containerView.findViewById(R.id.delete_cart_item);
+      	delete_button.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				if(isAnimationMode()){
 					
 					Toast.makeText(mContext, "Cart Array Adapter delete", Toast.LENGTH_SHORT).show();
@@ -361,18 +222,18 @@ public class CartItemCard extends BaseItemCard implements PackListInterface{
 				    containerView.startAnimation(animation);
 				    
 					
-					//notifyDataSetChanged();
+					
 				}
 				
-				//packlist to be sent for item deleted
+				
 			}
 		});
+	
+		itemButton = (Button)containerView.findViewById(R.id.item_button);
 		itemButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				//getActionButtonOnClick().onClick(null, v);
 				Animation animFadeOut = AnimationUtils.loadAnimation(mContext, android.R.anim.fade_out);
 		    	 Animation animFadeIn = AnimationUtils.loadAnimation(mContext, android.R.anim.fade_in);
 		    	 
@@ -392,15 +253,8 @@ public class CartItemCard extends BaseItemCard implements PackListInterface{
 					}
 			}
 		});
-		itemEditView =(LinearLayout)view.findViewById(R.id.item_edit_view);
-		itemEditView.setVisibility(View.GONE);
-		updateView();
 		
-		initMeasurePicker();
-		initQtyPicker();
-		fetchItemImage(null);
-				
-		view.setOnTouchListener(new OnTouchListener() {
+		containerView.setOnTouchListener(new OnTouchListener() {
 			
 			
 			@Override
@@ -456,13 +310,116 @@ public class CartItemCard extends BaseItemCard implements PackListInterface{
 			}
 		});
 		
+		initMeasurePicker();
+		initQtyPicker();
+		updateView();
+		
+		String  url = "http://cadbury.screaminteractive.com.my/images/products/CADBURY%20DAIRY%20MILK/Cadbury%20Dairy%20Milk/Cadbury-Dairy-Milk75.png";
+		fetchItemImage(url);
+				
+		
+		
 		
 		
 		
 	}
-	/**
-	 * 
-	 */
+
+	public void initMeasurePicker(){
+		try{
+			measurePicker.setMinValue(0);
+			measurePicker.setMaxValue(item.getItemList().size()-1);
+			measurePicker.setFormatter(new NumberPicker.Formatter() {
+				
+				@Override
+				public String format(int value) {
+					return item.getItemList().get(value).getName();
+					
+				}
+			});
+			measurePicker.setOnValueChangedListener(new OnValueChangeListener() {
+				
+				@Override
+				public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+					item.setCurrentItemId(item.getItemList().get(newVal).getId());
+					item.setCurrentMeasure(item.getItemList().get(newVal).getName());
+					item.setCurrentMsrPrice( item.getItemList().get(newVal).getPrice());
+					item.setTotalPrice( (double) Math.round((item.getCurrentQty()* item.getCurrentMsrPrice() * 100.0)/100.0));
+					
+					updateView();
+				}
+			});
+			measurePicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	
+	public void initQtyPicker(){
+		try{
+			qtyPicker.setMaxValue(5);
+			qtyPicker.setMinValue(1);
+			qtyPicker.setFormatter(new NumberPicker.Formatter() {
+				
+				@Override
+				public String format(int value) {
+					
+					return Integer.toString(value) + " Qty";
+				}
+			});
+			qtyPicker.setOnValueChangedListener(new OnValueChangeListener() {
+				
+				@Override
+				public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+					item.setCurrentQty( newVal);
+					item.setTotalPrice( (double) Math.round((item.getCurrentQty()*item.getCurrentMsrPrice() * 100.0)/100.0));
+					updateView();
+				}
+			});
+			qtyPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	
+
+	@Override
+	public void updateView(){
+		itemNameView.setText(item.getName());
+		currentMeasureView.setText(item.getCurrentMeasure());
+		currentPriceView.setText("Price:"+item.getCurrentMsrPrice().toString());
+		quantityView.setText(Integer.toString(item.getCurrentQty()));
+		totalPriceView.setText("Total Price:"+item.getTotalPrice().toString());
+	}
+			
+	@Override
+	public OnClickActionButtonListener getActionButtonOnClick() {
+		return super.getOnClickActionButtonListener();
+		 
+	}
+	
+	@Override
+	public void setActionButtonText(String text) {
+		itemButton.setText(text);
+	}
+
+	@Override
+	public void setActionButtonOnClick(	OnClickActionButtonListener actionButtonListener) {
+		super.setOnClickActionButtonListener(actionButtonListener);
+	}
+	
+	@Override
+	public void fetchItemImage(String url) {
+		 Picasso.with(getmContext()).load(url).into(itemImageView);
+	}
+
+	
+	
+	//Packlist Interface Methods
+	
 	protected void delete_from_list() {
 		
 		TranslateAnimation Anim = new TranslateAnimation(-px, 0, 0, 0);
@@ -471,31 +428,22 @@ public class CartItemCard extends BaseItemCard implements PackListInterface{
 	 	innerView.startAnimation(Anim);
 	 	animationMode = false;
 	 	getItemButton().setEnabled(true);
-	 	
-		// TODO Auto-generated method stub
-	 	
-		cartItemList.remove(getBaseItem());
-		if(getBaseItem().isSent()){
-			OrderItemDetail itemToDelete = new OrderItemDetail(getCurrentItemId(), getCurrentQty());
+	 	cartItemList.remove(getItem());
+		if(getItem().isSent()){
+			OrderItemDetail itemToDelete = new OrderItemDetail(item.getCurrentItemId(), item.getCurrentQty());
 			deletePackList(itemToDelete);
 		}
 		cartItemAdapter.updateCart(cartItemList);
 		
 	}
-	/* (non-Javadoc)
-	 * @see com.shoplite.interfaces.PackListInterface#sendPackList()
-	 */
+	
 	@Override
 	public void sendPackList() {
-		// TODO Auto-generated method stub
 		
 	}
-	/* (non-Javadoc)
-	 * @see com.shoplite.interfaces.PackListInterface#PackListSuccess(com.shoplite.models.PackList)
-	 */
+	
 	@Override
 	public void PackListSuccess(PackList obj) {
-		// TODO Auto-generated method stub
 		if(obj.state==DBState.DELETE){
 			for(int i = 0 ;i < obj.orderedItems.size() ; i++){
 				if(CartGlobals.cartList.contains(obj.orderedItems.get(i)))
@@ -514,23 +462,17 @@ public class CartItemCard extends BaseItemCard implements PackListInterface{
 			
 		}
 	}
-	/* (non-Javadoc)
-	 * @see com.shoplite.interfaces.PackListInterface#editPackList()
-	 */
+	
 	@Override
 	public void editPackList() {
-		// TODO Auto-generated method stub
-		if(getBaseItem().isSent()){
-			OrderItemDetail itemToDelete = new OrderItemDetail(getCurrentItemId(), getCurrentQty());
+		if(item.isSent()){
+			OrderItemDetail itemToDelete = new OrderItemDetail(item.getCurrentItemId(), item.getCurrentQty());
 			PackList pl = new PackList();
 		}
 	}
-	/* (non-Javadoc)
-	 * @see com.shoplite.interfaces.PackListInterface#deletePackList(com.shoplite.models.OrderItemDetail)
-	 */
+	
 	@Override
 	public void deletePackList(OrderItemDetail itemToDelete) {
-		// TODO Auto-generated method stub
 		ArrayList<OrderItemDetail> deleteList = new ArrayList<OrderItemDetail>();
 		deleteList.add(itemToDelete);
 		PackList pl = new PackList();

@@ -1,29 +1,17 @@
-/**
- * 
- */
+
 package com.shoplite.UI;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import com.google.zxing.client.android.CaptureActivity;
-import com.shoplite.UI.BaseItemCard.OnClickActionButtonListener;
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+
 import com.shoplite.Utils.ThreadPreconditions;
 import com.shoplite.models.ItemCategory;
 
-import android.content.Context;
-import android.support.v4.widget.DrawerLayout;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.Toast;
 import eu.livotov.zxscan.R;
 
 /**
@@ -32,7 +20,7 @@ import eu.livotov.zxscan.R;
  */
 public class CartItemAdapter extends BaseAdapter {
 
-	protected ArrayList<BaseItemCard> cartItemList;
+	protected ArrayList<ItemCategory> cartItemList;
 	protected Context mContext;
 	 
 	/**
@@ -40,10 +28,9 @@ public class CartItemAdapter extends BaseAdapter {
 	 * @param resource
 	 * @param objects
 	 */
-	public CartItemAdapter(Context context, ArrayList<BaseItemCard> cartItemList) {
+	public CartItemAdapter(Context context, ArrayList<ItemCategory> item_order_list) {
 		super();
-		// TODO Auto-generated constructor stub
-		this.cartItemList = cartItemList;
+		this.cartItemList = item_order_list;
 		this.mContext = context;
 		
 	}
@@ -54,11 +41,12 @@ public class CartItemAdapter extends BaseAdapter {
      }
 	 
 	 @Override
-    public BaseItemCard getItem(int position) {
+    public ItemCategory getItem(int position) {
         return cartItemList.get(position);
     }
 	 
-	 public void updateCart(ArrayList<BaseItemCard> cartItemList) {
+	 //update method to ask view to redraw themselves in the list view
+	 public void updateCart(ArrayList<ItemCategory> cartItemList) {
 		 ThreadPreconditions.checkOnMainThread();   
 		 this.cartItemList = cartItemList;
 	     notifyDataSetChanged();
@@ -67,30 +55,26 @@ public class CartItemAdapter extends BaseAdapter {
 	 
 	 @Override
 	public long getItemId(int position) {
-		// TODO Auto-generated method stub
 		return position;
 	}
 	
 	 @Override
      public View getView( int position,  View convertView, final ViewGroup parent)
      {
-		  BaseItemCard baseItem = cartItemList.get(position);
-		  CartItemCard cartItem = new CartItemCard(mContext,baseItem);
+		  ItemCategory itemAdded = cartItemList.get(position);
+		  CartItemCard cartItem = new CartItemCard(mContext,itemAdded);
 		   
 		  if (convertView == null) {
-		     // inflate if not recycled
-			 convertView = LayoutInflater.from(mContext).inflate(R.layout.cart_item_container, parent, false);
+		      convertView = LayoutInflater.from(mContext).inflate(R.layout.cart_item_container, parent, false);  //inflating if convert view is not present to be recycled
 			       	 	       
 		  }
-		  cartItem.setParentView(mContext, (ViewGroup) convertView,cartItemList,baseItem,this);		 // populate the views
+		  cartItem.setParentView(mContext, (ViewGroup) convertView,cartItemList,this);		 // populate the views by sending convert view as parent to the cart Item card
 		
 		   
 		 return convertView;
          
      }
-	/* (non-Javadoc)
-	 * @see android.widget.Adapter#getItemId(int)
-	 */
+	
 	
 	 
 	

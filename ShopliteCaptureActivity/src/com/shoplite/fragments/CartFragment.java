@@ -1,6 +1,9 @@
 package com.shoplite.fragments;
 
 
+import java.util.Date;
+
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -11,22 +14,32 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.shoplite.UI.AddItemCard;
 import com.shoplite.UI.CartItemAdapter;
+import com.shoplite.UI.Controls;
 import com.shoplite.Utils.Globals;
+import com.shoplite.database.DbHelper;
+import com.shoplite.interfaces.ControlsInterface;
+
 import eu.livotov.zxscan.R;
 
 
 
 
-public class CartFragment extends Fragment {
+public class CartFragment extends Fragment implements ControlsInterface {
 
 	
 	protected ListView cartItemsListView;
 	protected CartItemAdapter cartAdapter;
 	protected LinearLayout emptyCartView;
+	private AlertDialog alertDialog;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -54,7 +67,9 @@ public class CartFragment extends Fragment {
 		Button saveCartButton = (Button) root.findViewById(R.id.save_cart_list);
 		saveCartButton.setOnClickListener(new OnClickListener() {
 	          public void onClick(View v) {
-
+	        	  if(Globals.item_order_list.size() >0){
+	        		  show_save_list_dialog();
+	        	  }
 	          }
 	       });
 		
@@ -108,6 +123,63 @@ public class CartFragment extends Fragment {
 		
 		return true;
 		//return super.onOptionsItemSelected(item);
+	}
+	
+	protected void show_save_list_dialog()
+	{
+		Controls.show_alert_dialog( this, getActivity(), R.layout.save_list_layout,200);
+	}
+	
+	
+	
+	/* (non-Javadoc)
+	 * @see com.shoplite.interfaces.ControlsInterface#positive_button_alert_method()
+	 */
+	@Override
+	public void positive_button_alert_method() {
+		// TODO Auto-generated method stub
+		EditText listNameInput = (EditText) this.alertDialog.findViewById(R.id.list_save_name_input);
+		listNameInput.setError(null);
+		if(listNameInput.getText().toString().length() <= 0){
+			listNameInput.setError(getString(R.string.error_field_required));
+		}
+		else{
+			//boolean result = DbHelper.storeShoppingList(Globals.item_order_list);
+			try{
+			
+				AddItemCard ad = new AddItemCard(getActivity(),Globals.fetched_item_category);
+				String jsonString = new Gson().toJson(ad);
+				Toast.makeText(getActivity(), jsonString, Toast.LENGTH_LONG).show();
+//			Toast.makeText(getActivity()," list:    " + new Gson().toJson(Globals.item_order_list.get(0)).toString()
+//			, Toast.LENGTH_SHORT).show();
+			}
+			catch(Exception e){
+				e.printStackTrace();
+				
+			}
+
+		}
+		Toast.makeText(getActivity(), "positive button", Toast.LENGTH_SHORT).show();
+	}
+	
+	@Override
+	public void negative_button_alert_method() {
+		// TODO Auto-generated method stub
+		this.alertDialog.dismiss();
+		Toast.makeText(getActivity(), "negative button", Toast.LENGTH_SHORT).show();
+		
+	}
+	
+	@Override
+	public void save_alert_dialog(AlertDialog alertDialog) {
+		// TODO Auto-generated method stub
+		this.alertDialog = alertDialog;
+	}
+	
+	@Override
+	public void neutral_button_alert_method() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	

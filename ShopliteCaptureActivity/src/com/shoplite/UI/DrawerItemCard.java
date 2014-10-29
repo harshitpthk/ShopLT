@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.shoplite.UI.BaseItemCard.OnClickActionButtonListener;
 import com.shoplite.models.ItemCategory;
 import com.squareup.picasso.Picasso;
 
@@ -36,8 +35,7 @@ public class DrawerItemCard extends BaseItemCard {
 	 */
 	public DrawerItemCard(Context context,ItemCategory item) {
 		super(item,context);
-		
-		// TODO Auto-generated constructor stub
+				
 	}
 	public void setParentView(Context context,ViewGroup container)
 	{
@@ -79,7 +77,7 @@ public class DrawerItemCard extends BaseItemCard {
 	@Override
 	public void updateView(){
 		itemNameView.setText(item.getName());
-		itemPriceView.setText(currentMsrPrice.toString());
+		itemPriceView.setText(item.getCurrentMsrPrice().toString());
 		fetchItemImage(null);
 		
 	}
@@ -87,44 +85,32 @@ public class DrawerItemCard extends BaseItemCard {
 	
 	
 
-	/* (non-Javadoc)
-	 * @see com.shoplite.UI.BaseItemCard#setActionButtonOnClick(com.shoplite.UI.BaseItemCard.OnClickActionButtonListener)
-	 */
+	
 	@Override
 	public void setActionButtonOnClick(
 			OnClickActionButtonListener actionButtonListener) {
-		// TODO Auto-generated method stub
 		super.setOnClickActionButtonListener(actionButtonListener);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.shoplite.UI.BaseItemCard#fetchItemImage()
-	 */
+	
 	@Override
 	public void fetchItemImage(String url) {
-		// TODO Auto-generated method stub
 		url = "http://cadbury.screaminteractive.com.my/images/products/CADBURY%20DAIRY%20MILK/Cadbury%20Dairy%20Milk/Cadbury-Dairy-Milk75.png";
 		 Picasso.with(getmContext()).load(url).into(itemImageView);
 	}
 
 
 
-	/* (non-Javadoc)
-	 * @see com.shoplite.UI.BaseItemCard#getActionButtonOnClick()
-	 */
+	
 	@Override
 	public OnClickActionButtonListener getActionButtonOnClick() {
-		// TODO Auto-generated method stub
 		return  super.getOnClickActionButtonListener();
 		 
 	}
 
-	/* (non-Javadoc)
-	 * @see com.shoplite.UI.BaseItemCard#setUpView(android.content.Context, android.view.ViewGroup, com.shoplite.models.ItemCategory)
-	 */
+	
 	@Override
 	public void setUpView(Context context, ViewGroup container) {
-		// TODO Auto-generated method stub
 		LayoutInflater lp = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View view = lp.inflate(R.layout.drawer_item_card, container);
 		super.setViewLayout(view.getId());
@@ -136,7 +122,6 @@ public class DrawerItemCard extends BaseItemCard {
 			
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				getActionButtonOnClick().onClick(getItem(), v);
 			}
 		});
@@ -146,19 +131,10 @@ public class DrawerItemCard extends BaseItemCard {
 	}
 	
 
-	/**
-	 * 
-	 */
 	
-
-
-	/* (non-Javadoc)
-	 * @see com.shoplite.UI.BaseItemCard#setActionButtonText(java.lang.String)
-	 */
 	@Override
 	public void setActionButtonText(String text) {
-		// TODO Auto-generated method stub
-		
+			
 	}
 
 }

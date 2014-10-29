@@ -29,7 +29,7 @@ public class Globals {
 
 	public static ItemCategory fetched_item_category;
 	public static ArrayList<ItemCategory> simmilar_item_list = new ArrayList<ItemCategory>();
-	public static ArrayList<BaseItemCard> item_order_list = new ArrayList<BaseItemCard>();
+	public static ArrayList<ItemCategory> item_order_list = new ArrayList<ItemCategory>();
 	
 	
 	//Method to Return Shop object which is at minimum distance from current location inside the 200 meters radius

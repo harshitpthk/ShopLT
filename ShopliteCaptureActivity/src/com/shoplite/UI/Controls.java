@@ -24,7 +24,8 @@ public class Controls {
 	private static ControlsInterface calling_class_object = null;
 	
 	
-	public static void show_alert_dialog(String Title,String Message,String positive_button_caption,String negative_button_caption,ControlsInterface calling_class_object,Context context,int LayoutName)
+	
+	public static void show_alert_dialog(ControlsInterface calling_class_object,Context context,int LayoutName, float size)
 	{
 		Controls.calling_class_object = calling_class_object;
 		
@@ -46,7 +47,7 @@ public class Controls {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				alertDialog.dismiss();
+				//alertDialog.dismiss();      //should be taken care by the callee methods
 				Controls.calling_class_object.positive_button_alert_method();
 			}
 		});
@@ -56,7 +57,7 @@ public class Controls {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				alertDialog.dismiss();
+				//alertDialog.dismiss();    //should be taken care by the callee methods
 				Controls.calling_class_object.negative_button_alert_method();
 			}
 		});
@@ -64,9 +65,7 @@ public class Controls {
 		
 		alertDialog.setCancelable(false);
 		DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-		
-		//alertDialog.getWindow().setLayout(600,1000);
-		alertDialog.getWindow().setLayout(LayoutParams.MATCH_PARENT,(int) (metrics.density * 450));
+		alertDialog.getWindow().setLayout(LayoutParams.MATCH_PARENT,(int) (metrics.density * size));
 		calling_class_object.save_alert_dialog(alertDialog);
 	}
 
@@ -118,4 +117,6 @@ public class Controls {
 		alertDialog.setCancelable(false);
 	}
 
+	
+	
 }
