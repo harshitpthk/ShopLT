@@ -1,8 +1,6 @@
 package com.shoplite.fragments;
 
 
-import java.util.Date;
-
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,15 +15,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.shoplite.UI.AddItemCard;
 import com.shoplite.UI.CartItemAdapter;
 import com.shoplite.UI.Controls;
 import com.shoplite.Utils.Globals;
-import com.shoplite.database.DbHelper;
 import com.shoplite.interfaces.ControlsInterface;
 
 import eu.livotov.zxscan.R;
@@ -53,11 +47,8 @@ public class CartFragment extends Fragment implements ControlsInterface {
 		View root = inflater.inflate(R.layout.activity_cart, container, false);
 		root.setOnTouchListener(new OnTouchListener()
 	    {
-	       
-
 			@Override
 			public boolean onTouch(View v, MotionEvent arg1) {
-				// TODO Auto-generated method stub
 				return true;
 			}
 	    });
@@ -90,6 +81,7 @@ public class CartFragment extends Fragment implements ControlsInterface {
 	       
         return root;
     }
+	
 	@Override
 	public void onResume()
 	{
@@ -137,21 +129,20 @@ public class CartFragment extends Fragment implements ControlsInterface {
 	 */
 	@Override
 	public void positive_button_alert_method() {
-		// TODO Auto-generated method stub
 		EditText listNameInput = (EditText) this.alertDialog.findViewById(R.id.list_save_name_input);
 		listNameInput.setError(null);
 		if(listNameInput.getText().toString().length() <= 0){
 			listNameInput.setError(getString(R.string.error_field_required));
 		}
 		else{
-			//boolean result = DbHelper.storeShoppingList(Globals.item_order_list);
 			try{
-			
-				AddItemCard ad = new AddItemCard(getActivity(),Globals.fetched_item_category);
-				String jsonString = new Gson().toJson(ad);
-				Toast.makeText(getActivity(), jsonString, Toast.LENGTH_LONG).show();
-//			Toast.makeText(getActivity()," list:    " + new Gson().toJson(Globals.item_order_list.get(0)).toString()
-//			, Toast.LENGTH_SHORT).show();
+				
+				boolean result = Globals.dbhelper.storeShoppingList(listNameInput.getText().toString(),Globals.item_order_list);
+				if(result){
+					alertDialog.dismiss();
+					Toast.makeText(getActivity(), "Shopping List saved successfully as "+listNameInput.getText().toString(), Toast.LENGTH_LONG).show();
+				}
+					
 			}
 			catch(Exception e){
 				e.printStackTrace();
@@ -159,26 +150,21 @@ public class CartFragment extends Fragment implements ControlsInterface {
 			}
 
 		}
-		Toast.makeText(getActivity(), "positive button", Toast.LENGTH_SHORT).show();
 	}
 	
 	@Override
 	public void negative_button_alert_method() {
-		// TODO Auto-generated method stub
 		this.alertDialog.dismiss();
-		Toast.makeText(getActivity(), "negative button", Toast.LENGTH_SHORT).show();
-		
+			
 	}
 	
 	@Override
 	public void save_alert_dialog(AlertDialog alertDialog) {
-		// TODO Auto-generated method stub
 		this.alertDialog = alertDialog;
 	}
 	
 	@Override
 	public void neutral_button_alert_method() {
-		// TODO Auto-generated method stub
 		
 	}
 	

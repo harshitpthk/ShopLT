@@ -5,19 +5,6 @@ import java.util.ArrayList;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-
-import com.shoplite.UI.Controls;
-import com.example.sholite.R;
-import com.example.shoplite.Login;
-import com.google.gson.JsonObject;
-import com.shoplite.Utils.Globals;
-import com.shoplite.Utils.util;
-import com.shoplite.connection.ServerConnectionMaker;
-import com.shoplite.connection.ServiceProvider;
-import com.shoplite.connection.ConnectionInterface;
-import com.shoplite.database.DbHelper;
-import com.shoplite.models.User;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -28,6 +15,15 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.sholite.R;
+import com.shoplite.UI.Controls;
+import com.shoplite.Utils.Globals;
+import com.shoplite.Utils.util;
+import com.shoplite.connection.ConnectionInterface;
+import com.shoplite.connection.ServerConnectionMaker;
+import com.shoplite.connection.ServiceProvider;
+import com.shoplite.models.User;
 
 public class Verification extends Activity implements ConnectionInterface {
 

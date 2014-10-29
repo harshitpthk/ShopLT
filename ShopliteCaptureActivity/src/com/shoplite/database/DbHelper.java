@@ -3,16 +3,15 @@ package com.shoplite.database;
 import java.util.ArrayList;
 import java.util.Date;
 
-import com.google.gson.Gson;
-import com.shoplite.UI.BaseItemCard;
-import com.shoplite.Utils.Globals;
-import com.shoplite.models.Shop;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import com.google.gson.Gson;
+import com.shoplite.models.ItemCategory;
+import com.shoplite.models.Shop;
 
 public class DbHelper extends  SQLiteOpenHelper{
 	
@@ -50,7 +49,6 @@ public class DbHelper extends  SQLiteOpenHelper{
             		");";
     private static final String SHOPPING_LIST_TABLE_CREATE =
     		"CREATE TABLE " + SHOPPING_LIST_TABLE +" ( "+
-    				LIST_ID + " INTEGER  PRIMARY KEY AUTOINCREMENT NOT NULL, " + 
     				LIST_NAME + " TEXT NOT NULL, " + 
     				TOTAL_ITEMS + " INTEGER NOT NULL, " +
     				SAVED_DATE+ " TEXT NOT NULL," +
@@ -241,7 +239,7 @@ public class DbHelper extends  SQLiteOpenHelper{
 	}
 
 
-	public  boolean  storeShoppingList(String listName ,ArrayList<BaseItemCard> shoppingList)
+	public  boolean  storeShoppingList(String listName ,ArrayList<ItemCategory> shoppingList)
 	{
 		String listEntries = new Gson().toJson(shoppingList);
 		int totalItems = shoppingList.size();
@@ -250,7 +248,6 @@ public class DbHelper extends  SQLiteOpenHelper{
 		try {
 			
 			SQLiteDatabase database=  this.getWritableDatabase();
-			
 			ContentValues values = new ContentValues();
 			values.put(LIST_NAME, listName);
 		    values.put(TOTAL_ITEMS, totalItems );
@@ -259,7 +256,7 @@ public class DbHelper extends  SQLiteOpenHelper{
 		    
 		    
 		      
-		    long id = database.insertWithOnConflict(SHOPPING_LIST_TABLE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+		    long id = database.insertWithOnConflict(SHOPPING_LIST_TABLE, null, values, SQLiteDatabase.CONFLICT_FAIL);
 		  
 	    	
 	    	if(id != -1)
