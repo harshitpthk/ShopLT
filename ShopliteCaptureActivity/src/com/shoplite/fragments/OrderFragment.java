@@ -1,18 +1,23 @@
 package com.shoplite.fragments;
 
-import eu.livotov.zxscan.R;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import eu.livotov.zxscan.R;
 
 public class OrderFragment extends Fragment {
 
 	public OrderFragmentPager mOrderPagerAdapter;
 	
 	public ViewPager mViewPager;
+	
+	
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -21,11 +26,14 @@ public class OrderFragment extends Fragment {
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
         Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-		
-		View rootView = inflater.inflate(R.layout.order_layout, container, false);
+      	View rootView = inflater.inflate(R.layout.order_layout, container, false);
 		mOrderPagerAdapter = new OrderFragmentPager(getChildFragmentManager());
 		mViewPager = (ViewPager) rootView.findViewById(R.id.pager);
+		final PagerTabStrip strip = PagerTabStrip.class.cast(rootView.findViewById(R.id.pager_title_strip));
+		strip.setDrawFullUnderline(true);
+		strip.setNonPrimaryAlpha(0.5f);
+		strip.setTextSpacing(25);
+		strip.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
     	mViewPager.setAdapter(mOrderPagerAdapter);
         return rootView;
     }

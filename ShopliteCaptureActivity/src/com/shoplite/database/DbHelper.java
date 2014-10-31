@@ -1,5 +1,6 @@
 package com.shoplite.database;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -8,9 +9,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.text.format.DateFormat;
 
 import com.google.gson.Gson;
 import com.shoplite.models.ItemCategory;
+import com.shoplite.models.SaveList;
 import com.shoplite.models.Shop;
 
 public class DbHelper extends  SQLiteOpenHelper{
@@ -18,9 +21,11 @@ public class DbHelper extends  SQLiteOpenHelper{
     private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME="storage.db";
     private static final String TABLE_NAME = "dictionary";
-     private static final String KEY="KEY";
+    private static final String KEY="KEY";
     private static final String VALUE ="VALUE";
     private String cols[]={KEY,VALUE};
+    
+    private static final String SHOP_ID = "_ID";
     private static final String SHOP_LOCATION_TABLE = "connected_shop_location";
     private static final String SHOP_NAME = "SHOP_NAME";
     private static final String SHOP_URL = "SHOP_URL";
@@ -29,7 +34,7 @@ public class DbHelper extends  SQLiteOpenHelper{
     
     //SHOPPING LIST COLUMNS
     private static final String SHOPPING_LIST_TABLE="SHOPPING_LIST_TABLE";
-    private static final String LIST_ID = "LIST_ID";
+    private static final String LIST_ID = "_ID";
     private static final String LIST_NAME="LIST_NAME";
     private static final String LIST_ENTRIES="LIST_ENTRIES";
     private static final String TOTAL_ITEMS = "TOTAL_ITEMS";
@@ -42,14 +47,14 @@ public class DbHelper extends  SQLiteOpenHelper{
     
     private static final String SHOP_LOCATION_TABLE_CREATE =
             "CREATE TABLE " + SHOP_LOCATION_TABLE + " (" +
-            SHOP_NAME + " TEXT  NOT NULL, " +
-            SHOP_URL + " TEXT PRIMARY KEY NOT NULL," +
-            		SHOP_LAT + " REAL NOT NULL," +
+            		SHOP_NAME + " TEXT  NOT NULL, " +
+            		SHOP_URL + " TEXT PRIMARY KEY NOT NULL, " +
+            		SHOP_LAT + " REAL NOT NULL, " +
             		SHOP_LNG +" REAL NOT NULL" +
             		");";
     private static final String SHOPPING_LIST_TABLE_CREATE =
     		"CREATE TABLE " + SHOPPING_LIST_TABLE +" ( "+
-    				LIST_NAME + " TEXT NOT NULL, " + 
+    				LIST_NAME + " TEXT  UNIQUE NOT NULL , " + 
     				TOTAL_ITEMS + " INTEGER NOT NULL, " +
     				SAVED_DATE+ " TEXT NOT NULL," +
     				LIST_ENTRIES +" BLOB NOT NULL "+ 
@@ -244,14 +249,17 @@ public class DbHelper extends  SQLiteOpenHelper{
 		String listEntries = new Gson().toJson(shoppingList);
 		int totalItems = shoppingList.size();
 		Date dt = new Date();
+		SimpleDateFormat dtformat = (SimpleDateFormat) SimpleDateFormat.getDateInstance();
+		String date =  dtformat.format(dt);
 		
 		try {
 			
 			SQLiteDatabase database=  this.getWritableDatabase();
 			ContentValues values = new ContentValues();
+			
 			values.put(LIST_NAME, listName);
 		    values.put(TOTAL_ITEMS, totalItems );
-		    values.put(SAVED_DATE,dt.toString());
+		    values.put(SAVED_DATE,date);
 		    values.put(LIST_ENTRIES,listEntries);
 		    
 		    
@@ -270,6 +278,66 @@ public class DbHelper extends  SQLiteOpenHelper{
 			
 		}
 		
+		
+	}
+	
+	public SaveList getSavedShopList(String listName)
+	{
+		SaveList savedList = new SaveList();
+		SQLiteDatabase database = this.getReadableDatabase();
+		Cursor cursor=null;
+		try{
+			cursor = database.query(SHOPPING_LIST_TABLE,new String[]{LIST_NAME,TOTAL_ITEMS,SAVED_DATE,LIST_ENTRIES},LIST_NAME + "=?",new String[]{listName},null,null,null);
+			cursor.moveToFirst();
+			if(!cursor.isAfterLast()){
+				savedList.setSaveListName(cursor.getString(0));
+				savedList.setTotalItems(cursor.getInt(1));
+				savedList.setSavedDate(cursor.getString(2));
+				savedList.setListEntries(cursor.getString(3));
+			}
+		}
+		catch(Exception e)
+		{
+			return null;
+		}
+		finally 
+        {
+			if(cursor!=null)
+      	  		cursor.close(); 
+        }
+		return savedList;
+		
+	}
+	public ArrayList<SaveList> getAllSavedShopList()
+	{
+		ArrayList<SaveList>  allSavedLists = new ArrayList<SaveList>();
+		SQLiteDatabase database = this.getReadableDatabase();
+		Cursor cursor = null;
+		try{
+			cursor = database.query(SHOPPING_LIST_TABLE,new String[]{LIST_NAME,TOTAL_ITEMS,SAVED_DATE,LIST_ENTRIES},null,null,null,null,SAVED_DATE);
+			cursor.moveToFirst();
+		
+			while(cursor.isAfterLast() == false){
+				SaveList savedList = new SaveList();
+				savedList.setSaveListName(cursor.getString(0));
+				savedList.setTotalItems(cursor.getInt(1));
+				savedList.setSavedDate(cursor.getString(2));
+				savedList.setListEntries(cursor.getString(3));
+				allSavedLists.add(savedList);
+				cursor.moveToNext();
+			}
+		}
+		catch(Exception e)
+		{
+			return null;
+		}
+		finally 
+        {
+			if(cursor!=null)
+      	  		cursor.close(); 
+        }
+		
+		return allSavedLists;
 		
 	}
 }

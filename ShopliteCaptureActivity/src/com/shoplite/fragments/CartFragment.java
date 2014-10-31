@@ -21,6 +21,7 @@ import com.shoplite.UI.CartItemAdapter;
 import com.shoplite.UI.Controls;
 import com.shoplite.Utils.Globals;
 import com.shoplite.interfaces.ControlsInterface;
+import com.shoplite.models.SaveList;
 
 import eu.livotov.zxscan.R;
 
@@ -141,6 +142,16 @@ public class CartFragment extends Fragment implements ControlsInterface {
 				if(result){
 					alertDialog.dismiss();
 					Toast.makeText(getActivity(), "Shopping List saved successfully as "+listNameInput.getText().toString(), Toast.LENGTH_LONG).show();
+					SaveList recentlySavedList = Globals.dbhelper.getSavedShopList(listNameInput.getText().toString());
+					if(recentlySavedList != null){
+						SavedListsFragment.getSavedLists().add(recentlySavedList);
+						SavedListsFragment.getSaveListAdapter().updateSavedLists(SavedListsFragment.getSavedLists());
+					}
+					
+				}
+				else{
+					listNameInput.setError("Shopping List already exist with the name "+listNameInput.getText().toString());
+					
 				}
 					
 			}

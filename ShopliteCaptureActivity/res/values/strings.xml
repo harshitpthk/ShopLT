@@ -12,7 +12,7 @@
  distributed under the License is distributed on an "AS IS" BASIS,
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
- limitations under the License.
+ limitations under the License.
 -->
 <resources>
     <string name="zx_msg_default_status">Place a barcode inside the viewfinder rectangle to scan it.</string>
@@ -46,7 +46,8 @@
     <string name="edit">Edit</string>
     <string name="title_activity_order">OrderActivity</string>
     <string name="list_save_input_hint">Enter List Name to be Saved</string>
-      <string name="error_field_required">This field is required</string>
-	
-    
+    <string name="shop">Shop</string>
+    <string name="current_order_heading">Current Orders</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="title_activity_items_display">ItemsDisplayActivity</string>
 </resources>

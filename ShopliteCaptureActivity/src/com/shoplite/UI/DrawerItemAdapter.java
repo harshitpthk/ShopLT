@@ -71,7 +71,6 @@ public class DrawerItemAdapter extends ArrayAdapter<ItemCategory>{
 							
 							@Override
 							public void onClick(ItemCategory itemCategory, View view) {
-								// TODO Auto-generated method stub
 								itemDrawerLayout.openDrawer(itemDrawer);
 							}
 						});

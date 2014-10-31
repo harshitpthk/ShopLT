@@ -76,7 +76,6 @@ import com.google.zxing.ResultPoint;
 import com.google.zxing.client.android.camera.CameraManager;
 import com.shoplite.UI.AddItemCard;
 import com.shoplite.UI.BaseCardView;
-import com.shoplite.UI.BaseItemCard;
 import com.shoplite.UI.BaseItemCard.OnClickActionButtonListener;
 import com.shoplite.UI.ButteryProgressBar;
 import com.shoplite.UI.Controls;
@@ -400,7 +399,6 @@ ControlsInterface,PackListInterface
 
 			@Override
 			public boolean onQueryTextChange(String newText) {
-				// TODO Auto-generated method stub
 				PlacesAutoComplete pl = new PlacesAutoComplete();
 				pl.autocomplete(newText);
 				return true;
@@ -417,7 +415,6 @@ ControlsInterface,PackListInterface
 
 			@Override
 			public boolean onSuggestionClick(int index) {
-				// TODO Auto-generated method stub
 				
 				if(Geocoder.isPresent()) {
 
@@ -452,7 +449,6 @@ ControlsInterface,PackListInterface
 
 			@Override
 			public boolean onSuggestionSelect(int arg0) {
-				// TODO Auto-generated method stub
 				Toast.makeText(getApplicationContext(), Integer.toString(arg0), Toast.LENGTH_SHORT).show();
 				return true;
 			}});
@@ -791,10 +787,7 @@ ControlsInterface,PackListInterface
         return cameraManager;
     }
 
-    
-    
-    
-    
+      
     
   
    
@@ -818,31 +811,23 @@ ControlsInterface,PackListInterface
 
 				@Override
 				public void onPageScrollStateChanged(int position) {
-					// TODO Auto-generated method stub
 					
 				}
 
 				@Override
 				public void onPageScrolled(int position, float arg1, int arg2) {
-					// TODO Auto-generated method stub
 					
 				}
 
-				@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 				@Override
 				public void onPageSelected(int position) {
-					// TODO Auto-generated method stub
 					MenuItem CartMenuItem = (MenuItem) MenuReference.findItem(R.id.shopping_cart);
 					 MenuItem ShopMap = (MenuItem) MenuReference.findItem(R.id.search);
 					if(position == 0){
-						shopAtStoreButton.setBackground(getResources().getDrawable(R.drawable.scan_grey));
-				    	shopByListButton.setBackground(getResources().getDrawable(R.drawable.cart_blue));
-				    	orderListButton.setBackground(getResources().getDrawable(R.drawable.purchase_order_grey));
-						
-			           
-				    	
-				    	
-				    	 CartMenuItem.setVisible(true);
+						shopAtStoreButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.scan_grey));
+				    	shopByListButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.cart_blue));
+				    	orderListButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.purchase_order_grey));
+						CartMenuItem.setVisible(true);
 			            ShopMap.setVisible(true);
 						getActionBar().setDisplayHomeAsUpEnabled(true);
 			            getActionBar().setHomeButtonEnabled(true);
@@ -852,9 +837,9 @@ ControlsInterface,PackListInterface
 						
 					}
 					else if(position == 1){
-						shopAtStoreButton.setBackground(getResources().getDrawable(R.drawable.scan_blue));
-				    	shopByListButton.setBackground(getResources().getDrawable(R.drawable.cart_grey));
-				    	orderListButton.setBackground(getResources().getDrawable(R.drawable.purchase_order_grey));
+						shopAtStoreButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.scan_blue));
+				    	shopByListButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.cart_grey));
+				    	orderListButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.purchase_order_grey));
 						CartMenuItem.setVisible(true);
 				        ShopMap.setVisible(true);
 						getActionBar().setDisplayHomeAsUpEnabled(false);
@@ -865,9 +850,9 @@ ControlsInterface,PackListInterface
 					   
 					}
 					else{
-						shopAtStoreButton.setBackground(getResources().getDrawable(R.drawable.scan_grey));
-				    	shopByListButton.setBackground(getResources().getDrawable(R.drawable.cart_grey));
-				    	orderListButton.setBackground(getResources().getDrawable(R.drawable.purchase_order_blue));
+						shopAtStoreButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.scan_grey));
+				    	shopByListButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.cart_grey));
+				    	orderListButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.purchase_order_blue));
 						CartMenuItem.setVisible(false);
 				        ShopMap.setVisible(false);
 						window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -1238,11 +1223,11 @@ ControlsInterface,PackListInterface
 			
     	       
 		
-		Shop shpObject =new Shop();
-		shpObject.setName("CIty FOod Center");
-		shpObject.setUrl("planetp1940097436trial.hanatrial.ondemand.com/shop-sys/");
-		shpObject.setLocation(Globals.current_location);
-		connect_to_shop(shpObject);
+//		Shop shpObject =new Shop();
+//		shpObject.setName("CIty FOod Center");
+//		shpObject.setUrl("planetp1940097436trial.hanatrial.ondemand.com/shop-sys/");
+//		shpObject.setLocation(Globals.current_location);
+//		connect_to_shop(shpObject);
 		
 		
 	}
@@ -1323,17 +1308,15 @@ ControlsInterface,PackListInterface
 	
 	@Override
 	public void positive_button_alert_method() {
-		// TODO Auto-generated method stub
 		/*addToItem is the current item in the add dialog, we add this in the
 		*the Globals item order list which is connected to the UI interface of the 
 		*cart fragment
 		*/
 		AddDialog.dismiss();
-		//for(int i = 0 ; i <40 ; i++){
+		for(int i = 0 ; i < 10 ; i++){
 			Globals.item_order_list.add(addToItem.getItem());   
-		//}
-			sendPackList();
-				
+		}
+		sendPackList();
 		handler.restartPreviewAndDecode();
 		
 	}
@@ -1342,21 +1325,18 @@ ControlsInterface,PackListInterface
 
 	@Override
 	public void negative_button_alert_method() {
-		// TODO Auto-generated method stub
 		AddDialog.dismiss();
-		 handler.restartPreviewAndDecode();
+		handler.restartPreviewAndDecode();
 	}
 
 
 
 	@Override
 	public void save_alert_dialog(AlertDialog alertDialog) {
-		// TODO Auto-generated method stub
-		CaptureActivity.AddDialog = alertDialog;
+			CaptureActivity.AddDialog = alertDialog;
 	}
 	@Override
 	public void neutral_button_alert_method() {
-		// TODO Auto-generated method stub
 		handler.restartPreviewAndDecode();
 	}
 
@@ -1371,8 +1351,7 @@ ControlsInterface,PackListInterface
 	 */
 	@Override
 	public void sendPackList() {
-		// TODO Auto-generated method stub
-		int count = ItemCategory.countNotSent(Globals.item_order_list);
+			int count = ItemCategory.countNotSent(Globals.item_order_list);
 		
 		if(count >= Constants.MAX_NOT_SENT_ITEMS){
 					

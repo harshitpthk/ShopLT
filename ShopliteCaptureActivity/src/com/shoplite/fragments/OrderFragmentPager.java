@@ -6,6 +6,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 public class OrderFragmentPager extends FragmentPagerAdapter {
 
+	private static final String[] titles = { "Previous Orders"," Saved Lists" };
+	
 	public OrderFragmentPager(FragmentManager fm) {
 		super(fm);
 		
@@ -14,20 +16,21 @@ public class OrderFragmentPager extends FragmentPagerAdapter {
 	@Override
 	public Fragment getItem(int i) {
 		
-		Fragment fragment ;
-		
+			
 		switch(i){
 			case 0:
-				return fragment = new PreviousOrderFragment();
-	       case 1:
-	    	   return fragment = new CurrentOrderFragment();
-	       case 2:
-	    	   return fragment = new PreviousOrderFragment();
-	
+				 return new OrderHistoryFragment();
+		   	case 1:
+	    	    return  new SavedListsFragment();
+	    	   
 	        
 		}
         return null;
 		
+	}
+	@Override
+	public CharSequence getPageTitle(int position) {
+	    return titles[position];
 	}
 
 	@Override
