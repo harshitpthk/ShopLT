@@ -22,8 +22,10 @@ import android.widget.NumberPicker;
 import android.widget.NumberPicker.OnValueChangeListener;
 import android.widget.Toast;
 
+import com.google.zxing.client.android.CaptureActivity;
 import com.shoplite.Utils.CartGlobals;
 import com.shoplite.Utils.Constants;
+import com.shoplite.Utils.Globals;
 import com.shoplite.Utils.Constants.DBState;
 import com.shoplite.fragments.CartFragment;
 import com.shoplite.interfaces.PackListInterface;
@@ -43,7 +45,7 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 	protected ImageButton delete_button;
 	
 	
-	//Animation COntrol Members
+	//Animation Control Members
 	protected float previouspoint = 0 ;
 	protected float startPoint = 0;
 	protected Resources r = mContext.getResources();
@@ -148,15 +150,20 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 				Animation animFadeOut = AnimationUtils.loadAnimation(mContext, android.R.anim.fade_out);
 		    	 Animation animFadeIn = AnimationUtils.loadAnimation(mContext, android.R.anim.fade_in);
 		    	 
-		    	 
+		    	 //initiate edit
 					if(getItemEditView().getVisibility() == View.GONE){
 						getItemEditView().setAnimation(animFadeIn);
 					    getItemEditView().setVisibility(View.VISIBLE);
 						setActionButtonText("Done");
-						
+						if(Globals.cartTotalPrice>0)
+							Globals.cartTotalPrice -= item.getTotalPrice();
 						// Packlist to be sent for item edited
 					}
+				//finalize edit
 					else{
+						Globals.cartTotalPrice += item.getTotalPrice();
+						CaptureActivity.actionBar.setTitle(r.getText(R.string.shopping_cart)+
+        				"    " + Globals.cartTotalPrice.toString() +" "+ r.getText(R.string.currency));
 						getItemEditView().setAnimation(animFadeOut);
 				    	getItemEditView().setVisibility(View.GONE);
 						setActionButtonText("Edit");
@@ -283,6 +290,7 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 				
 				@Override
 				public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+					
 					item.setCurrentQty( newVal);
 					item.setTotalPrice( (double) Math.round((item.getCurrentQty()*item.getCurrentMsrPrice() * 100.0)/100.0));
 					updateView();
@@ -300,6 +308,7 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 	@Override
 	public void updateView(){
 		super.updateView();
+		
 	}
 			
 	@Override
@@ -336,6 +345,10 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 	 	animationMode = false;
 	 	getItemButton().setEnabled(true);
 	 	cartItemList.remove(getItem());
+	 	Globals.cartTotalPrice -= item.getTotalPrice();
+	 	CaptureActivity.actionBar.setTitle(r.getText(R.string.shopping_cart)+
+				 "    "+ Globals.cartTotalPrice.toString() +" " + r.getText(R.string.currency));
+	 	
 		if(getItem().isSent()){
 			OrderItemDetail itemToDelete = new OrderItemDetail(item.getCurrentItemId(), item.getCurrentQty());
 			deletePackList(itemToDelete);

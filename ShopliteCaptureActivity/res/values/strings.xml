@@ -29,7 +29,7 @@
     <string name="shop_at_store">Shop at store</string>
     <string name="shop_offline">Shop outside store</string>
     <string name="shops_near_you">Shops near your location</string>
-    <string name="shopping_cart">Shopping cart</string>
+    <string name="shopping_cart">Cart</string>
     <string name="order_history">Orders history</string>
     <string name="delete_last_scanned">Delete Last Scanned Item</string>
     <string name="drawer_open">OpenDrawer</string>
@@ -50,4 +50,6 @@
     <string name="current_order_heading">Current Orders</string>
     <string name="error_field_required">This field is required</string>
     <string name="title_activity_items_display">ItemsDisplayActivity</string>
+    <string name="app_name">shoplite</string>
+    <string name="currency">\u20B9</string>
 </resources>

@@ -18,8 +18,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.shoplite.UI.ItemListAdapter;
 import com.shoplite.UI.Controls;
+import com.shoplite.UI.ItemListAdapter;
 import com.shoplite.Utils.Globals;
 import com.shoplite.activities.CheckoutActivity;
 import com.shoplite.interfaces.ControlsInterface;
@@ -133,7 +133,6 @@ public class CartFragment extends Fragment implements ControlsInterface {
 		Controls.show_alert_dialog( this, getActivity(), R.layout.save_list_layout,200);
 	}
 	private void checkout() {
-		// TODO Auto-generated method stub
 		Intent i = new Intent(getActivity(),CheckoutActivity.class);
 		getActivity().startActivity(i);
 	}

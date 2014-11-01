@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
@@ -158,6 +159,7 @@ ControlsInterface,PackListInterface
    private ImageButton shopAtStoreButton;
    private ImageButton orderListButton;
    public static AddItemCard addToItem;
+   public static ActionBar actionBar;
     
        
    //activity methods
@@ -178,10 +180,12 @@ ControlsInterface,PackListInterface
         int scanner_layout = R.layout.scanner_layout_capture;                 	// setting the custom layout on top of capture activity
 		setContentView(scanner_layout);
         
+		//action Bar
+		 actionBar = getActionBar();
+	       
      // create new ProgressBar and style it
         progressBar = new ButteryProgressBar(this);
         progressBar.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 24));
-       
        
 
         // retrieve the top view of our application
@@ -1010,7 +1014,7 @@ ControlsInterface,PackListInterface
 		MenuItem shopSearch = (MenuItem) MenuReference.findItem(R.id.search);
     	
 			
-			
+			//hiding cart
 			if(!cartFrag.isDetached()){
         		getSupportFragmentManager().beginTransaction().detach(cartFrag).commit();
         		getSupportFragmentManager().executePendingTransactions();
@@ -1021,16 +1025,19 @@ ControlsInterface,PackListInterface
         		else if(conFrag.mViewPager.getCurrentItem() == 1){
         			handler.resumeDecodeThread();
         		}
+        		actionBar.setTitle(getResources().getText(R.string.app_name));
         		shopSearch.setVisible(true);
         	}
+			//showing cart
     		else{
     			
     			getSupportFragmentManager().beginTransaction().attach(cartFrag ).addToBackStack(null).commit();
         		getSupportFragmentManager().executePendingTransactions();
         		getActionBar().setDisplayHomeAsUpEnabled(false);
     			getActionBar().setHomeButtonEnabled(false);
-    			
-        		shopSearch.setVisible(false);
+    			shopSearch.setVisible(false);
+    			actionBar.setTitle(getResources().getText(R.string.shopping_cart)+
+        				"    " + Globals.cartTotalPrice.toString() + " " +getResources().getText(R.string.currency));
         		
     		}
     		mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, ldrawer);
@@ -1314,8 +1321,10 @@ ControlsInterface,PackListInterface
 		*/
 		AddDialog.dismiss();
 		//for(int i = 0 ; i < 10 ; i++){
-			Globals.item_order_list.add(addToItem.getItem());   
+			Globals.item_order_list.add(addToItem.getItem()); 
+			Globals.cartTotalPrice += addToItem.getItem().getTotalPrice();
 		//}
+		
 		sendPackList();
 		handler.restartPreviewAndDecode();
 		
