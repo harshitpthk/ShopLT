@@ -40,7 +40,7 @@ public class AddItemCard extends BaseItemCard {
 		
 	}
 	public AddItemCard(Context context,ItemCategory item) {
-		super(item,context);
+		super(context,item);
 		item.setCurrentItemId(item.getItemList().get(0).getId());
 		item.setCurrentMeasure(item.getItemList().get(0).getName());
 		item.setCurrentQty(1);

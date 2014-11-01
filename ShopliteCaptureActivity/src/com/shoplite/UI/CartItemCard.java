@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -19,11 +18,8 @@ import android.view.animation.BounceInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.NumberPicker.OnValueChangeListener;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.shoplite.Utils.CartGlobals;
@@ -33,30 +29,18 @@ import com.shoplite.interfaces.PackListInterface;
 import com.shoplite.models.ItemCategory;
 import com.shoplite.models.OrderItemDetail;
 import com.shoplite.models.PackList;
-import com.squareup.picasso.Picasso;
 
 import eu.livotov.zxscan.R;
 
 
-public class CartItemCard extends BaseItemCard implements PackListInterface{
+public class CartItemCard extends BasicCartItemCard implements PackListInterface{
 
-	protected TextView itemNameView;
-	protected ImageView itemImageView ;
-	protected TextView currentMeasureView;
-	protected TextView currentPriceView;
-	protected TextView quantityView;
-	protected TextView totalPriceView;
+	
 	protected Button itemButton;
-	protected LinearLayout itemEditView;
 	protected CustomNumberPicker measurePicker;
 	protected CustomNumberPicker qtyPicker;
-	protected View containerView;
-	protected View innerView;
 	protected ImageButton delete_button;
 	
-	//members to notify change in the List view
-	protected ArrayList<ItemCategory> cartItemList;
-	protected CartItemAdapter cartItemAdapter;
 	
 	//Animation COntrol Members
 	protected float previouspoint = 0 ;
@@ -68,28 +52,17 @@ public class CartItemCard extends BaseItemCard implements PackListInterface{
 	   
 	
 	public CartItemCard(Context context,ItemCategory addedItem){
-		super(addedItem,context);
+		super(context,addedItem);
 	}
 	public void setParentView(Context context,ViewGroup container, ArrayList<ItemCategory> cartItemListRecieved,
-			 CartItemAdapter cartItemAdapter)
+			 ItemListAdapter cartItemAdapter)
 	{
 		this.cartItemList = cartItemListRecieved;
-		this.cartItemAdapter = cartItemAdapter;
+		this.itemListAdapter = cartItemAdapter;
 		setUpView(context, container);
 	}
 	
-	public View getInnerView() {
-		return innerView;
-	}
-	public void setInnerView(View innerView) {
-		this.innerView = innerView;
-	}
-    public ArrayList<ItemCategory> getCartItemAdapter() {
-		return cartItemList;
-	}
-	public void setCartItemAdapter(ArrayList<ItemCategory> cartItemAdapter) {
-		this.cartItemList = cartItemAdapter;
-	}
+	
 	public boolean isAnimationMode() {
 		return animationMode;
 	}
@@ -97,59 +70,14 @@ public class CartItemCard extends BaseItemCard implements PackListInterface{
 		this.animationMode = animationMode;
 	}
 		
-	public TextView getItemNameView() {
-		return itemNameView;
-	}
-	public void setItemNameView(TextView itemNameView) {
-		this.itemNameView = itemNameView;
-	}
-	public ImageView getItemImageView() {
-		return itemImageView;
-	}
-	public void setItemImageView(ImageView itemImageView) {
-		this.itemImageView = itemImageView;
-	}
-	public TextView getCurrentMeasureView() {
-		return currentMeasureView;
-	}
-	public void setCurrentMeasureView(TextView currentMeasureView) {
-		this.currentMeasureView = currentMeasureView;
-	}
-	public TextView getCurrentPriceView() {
-		return currentPriceView;
-	}
-	public void setCurrentPriceView(TextView currentPriceView) {
-		this.currentPriceView = currentPriceView;
-	}
-	public TextView getQuantityView() {
-		return quantityView;
-	}
-	public void setQuantityView(TextView quantityView) {
-		this.quantityView = quantityView;
-	}
-	public TextView getTotalPriceView() {
-		return totalPriceView;
-	}
-	public void setTotalPriceView(TextView totalPriceView) {
-		this.totalPriceView = totalPriceView;
-	}
+	
 	public Button getItemButton() {
 		return itemButton;
 	}
 	public void setItemButton(Button itemButton) {
 		this.itemButton = itemButton;
 	}
-	public LinearLayout getItemEditView() {
-		return itemEditView;
-	}
-	public void setItemEditView(LinearLayout itemEditView) {
-		this.itemEditView = itemEditView;
-	}
 		
-	public void setCartItemAdapter(CartItemAdapter cartItemAdapter) {
-		this.cartItemAdapter = cartItemAdapter;
-	}
-	
 	public NumberPicker getMeasurePicker() {
 		return measurePicker;
 	}
@@ -172,26 +100,7 @@ public class CartItemCard extends BaseItemCard implements PackListInterface{
 	
 	@Override
 	public void setUpView(Context context , ViewGroup container) {
-		LayoutInflater lp = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View view;
-		if(container.findViewById(R.id.cart_item_view) == null){
-			view = lp.inflate(R.layout.cart_item_card, container);
-		}
-		else{
-			view = container;
-		}
-		this.containerView = view;
-		super.setViewLayout(view.getId());
-		
-		innerView = (View)containerView.findViewById(R.id.cart_item_view);
-		itemNameView = (TextView) containerView.findViewById(R.id.item_name);
-		itemImageView = (ImageView) containerView.findViewById(R.id.item_image);
-		currentMeasureView = (TextView) containerView.findViewById(R.id.current_measure);
-		currentPriceView = (TextView) containerView.findViewById(R.id.current_measure_price);
-		quantityView = (TextView)containerView.findViewById(R.id.current_quantity);
-		totalPriceView = (TextView)containerView.findViewById(R.id.total_price);
-		itemEditView =(LinearLayout)view.findViewById(R.id.item_edit_view);
-		itemEditView.setVisibility(View.GONE);
+		super.setUpView(context, container);
 		
 		setMeasurePicker((CustomNumberPicker)containerView.findViewById(R.id.item_measure_picker));
 		setQtyPicker((CustomNumberPicker)containerView.findViewById(R.id.item_quantity_picker));
@@ -230,6 +139,7 @@ public class CartItemCard extends BaseItemCard implements PackListInterface{
 		});
 	
 		itemButton = (Button)containerView.findViewById(R.id.item_button);
+		itemButton.setVisibility(View.VISIBLE);
 		itemButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -388,11 +298,7 @@ public class CartItemCard extends BaseItemCard implements PackListInterface{
 
 	@Override
 	public void updateView(){
-		itemNameView.setText(item.getName());
-		currentMeasureView.setText(item.getCurrentMeasure());
-		currentPriceView.setText("Price:"+item.getCurrentMsrPrice().toString());
-		quantityView.setText(Integer.toString(item.getCurrentQty()));
-		totalPriceView.setText("Total Price:"+item.getTotalPrice().toString());
+		super.updateView();
 	}
 			
 	@Override
@@ -413,7 +319,7 @@ public class CartItemCard extends BaseItemCard implements PackListInterface{
 	
 	@Override
 	public void fetchItemImage(String url) {
-		 Picasso.with(getmContext()).load(url).into(itemImageView);
+		super.fetchItemImage(url);
 	}
 
 	
@@ -433,7 +339,7 @@ public class CartItemCard extends BaseItemCard implements PackListInterface{
 			OrderItemDetail itemToDelete = new OrderItemDetail(item.getCurrentItemId(), item.getCurrentQty());
 			deletePackList(itemToDelete);
 		}
-		cartItemAdapter.updateCart(cartItemList);
+		itemListAdapter.updateCart(cartItemList);
 		
 	}
 	

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.shoplite.UI.ItemListAdapter;
+import com.shoplite.UI.SaveListAdapter;
 import com.shoplite.models.ItemCategory;
 
 import android.app.Activity;
@@ -20,13 +22,13 @@ public class ItemsDisplayActivity extends Activity {
 	private String listName;
 	private Type listType = new TypeToken<ArrayList<ItemCategory>>() {
     }.getType();
-    
+    private ItemListAdapter itemAdapter;
     private ListView itemsListView;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		getActionBar().setHomeButtonEnabled(true);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		setContentView(R.layout.activity_items_display);
 		itemsListView = (ListView) findViewById(R.id.items_display_list);
 		
@@ -41,6 +43,9 @@ public class ItemsDisplayActivity extends Activity {
 	@Override
 	public void onResume()
 	{
+		super.onResume();
+		itemAdapter = new ItemListAdapter(this, itemList, "basiccartitem");
+		itemsListView.setAdapter(itemAdapter);
 		
 	}
 
@@ -58,6 +63,10 @@ public class ItemsDisplayActivity extends Activity {
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
+			return true;
+		}
+		else if (id == android.R.id.home){
+			finish();
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

@@ -3,6 +3,8 @@
  */
 package com.shoplite.UI;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +36,7 @@ public class DrawerItemCard extends BaseItemCard {
 	 * @param container 
 	 */
 	public DrawerItemCard(Context context,ItemCategory item) {
-		super(item,context);
+		super(context,item);
 				
 	}
 	public void setParentView(Context context,ViewGroup container)
@@ -135,6 +137,17 @@ public class DrawerItemCard extends BaseItemCard {
 	@Override
 	public void setActionButtonText(String text) {
 			
+	}
+	/**
+	 * @param convertView
+	 * @param cartItemList
+	 * @param itemListAdapter
+	 */
+	public void setParentView(ViewGroup convertView,
+			ArrayList<ItemCategory> cartItemList,
+			ItemListAdapter itemListAdapter) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

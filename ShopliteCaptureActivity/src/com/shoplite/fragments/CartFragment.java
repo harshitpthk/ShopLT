@@ -17,7 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.shoplite.UI.CartItemAdapter;
+import com.shoplite.UI.ItemListAdapter;
 import com.shoplite.UI.Controls;
 import com.shoplite.Utils.Globals;
 import com.shoplite.interfaces.ControlsInterface;
@@ -32,7 +32,7 @@ public class CartFragment extends Fragment implements ControlsInterface {
 
 	
 	protected ListView cartItemsListView;
-	protected CartItemAdapter cartAdapter;
+	protected ItemListAdapter cartAdapter;
 	protected LinearLayout emptyCartView;
 	private AlertDialog alertDialog;
 	
@@ -93,7 +93,7 @@ public class CartFragment extends Fragment implements ControlsInterface {
 		}
 		else{
 			emptyCartView.setVisibility(View.GONE);
-			cartAdapter = new CartItemAdapter(getActivity(), Globals.item_order_list);
+			cartAdapter = new ItemListAdapter(getActivity(), Globals.item_order_list,"cartItem");
 			cartItemsListView.setAdapter(cartAdapter);
 		}
 		

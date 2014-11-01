@@ -21,7 +21,7 @@ public abstract class BaseItemCard {
 		
 	}
 	
-	public BaseItemCard(ItemCategory item,Context context){
+	public BaseItemCard(Context context,ItemCategory item){
 		setItem(item);
 		setmContext(context);
 	}

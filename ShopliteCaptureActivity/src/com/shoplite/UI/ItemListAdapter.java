@@ -18,20 +18,22 @@ import eu.livotov.zxscan.R;
  * @author I300291
  *
  */
-public class CartItemAdapter extends BaseAdapter {
+public class ItemListAdapter extends BaseAdapter {
 
 	protected ArrayList<ItemCategory> cartItemList;
 	protected Context mContext;
+	protected String type;
 	 
 	/**
 	 * @param context
 	 * @param resource
 	 * @param objects
 	 */
-	public CartItemAdapter(Context context, ArrayList<ItemCategory> item_order_list) {
+	public ItemListAdapter(Context context, ArrayList<ItemCategory> item_order_list,String type) {
 		super();
 		this.cartItemList = item_order_list;
 		this.mContext = context;
+		this.type = type;
 		
 	}
 	 @Override
@@ -61,15 +63,31 @@ public class CartItemAdapter extends BaseAdapter {
 	 @Override
      public View getView( int position,  View convertView, final ViewGroup parent)
      {
-		  ItemCategory itemAdded = cartItemList.get(position);
-		  CartItemCard cartItem = new CartItemCard(mContext,itemAdded);
-		   
 		  if (convertView == null) {
 		      convertView = LayoutInflater.from(mContext).inflate(R.layout.cart_item_container, parent, false);  //inflating if convert view is not present to be recycled
 			       	 	       
 		  }
-		  cartItem.setParentView(mContext, (ViewGroup) convertView,cartItemList,this);		 // populate the views by sending convert view as parent to the cart Item card
-		
+		 
+		  ItemCategory itemAdded = cartItemList.get(position);
+		 
+		  if(type.equalsIgnoreCase("cartItem")){
+			  CartItemCard itemCard = new CartItemCard(mContext,itemAdded);
+			  itemCard.setParentView((ViewGroup) convertView,cartItemList,this);		 // populate the views by sending convert view as parent to the cart Item card
+				
+		  }
+		  else if(type.equalsIgnoreCase("drawerItem")){
+			  DrawerItemCard itemCard = new DrawerItemCard(mContext, itemAdded);
+			  itemCard.setParentView((ViewGroup) convertView,cartItemList,this);		 // populate the views by sending convert view as parent to the cart Item card
+				
+		  }
+		  else if(type.equalsIgnoreCase("basicCartItem")){
+			  BasicCartItemCard itemCard = new BasicCartItemCard( mContext,itemAdded);
+			  itemCard.setParentView((ViewGroup) convertView,cartItemList,this);		 // populate the views by sending convert view as parent to the cart Item card
+				
+				
+		  }
+		  //add other cards if necessary 
+		    
 		   
 		 return convertView;
          
