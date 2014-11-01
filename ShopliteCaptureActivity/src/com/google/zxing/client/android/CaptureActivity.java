@@ -1313,9 +1313,9 @@ ControlsInterface,PackListInterface
 		*cart fragment
 		*/
 		AddDialog.dismiss();
-		for(int i = 0 ; i < 10 ; i++){
+		//for(int i = 0 ; i < 10 ; i++){
 			Globals.item_order_list.add(addToItem.getItem());   
-		}
+		//}
 		sendPackList();
 		handler.restartPreviewAndDecode();
 		

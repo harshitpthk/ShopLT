@@ -2,6 +2,7 @@ package com.shoplite.fragments;
 
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 import com.shoplite.UI.ItemListAdapter;
 import com.shoplite.UI.Controls;
 import com.shoplite.Utils.Globals;
+import com.shoplite.activities.CheckoutActivity;
 import com.shoplite.interfaces.ControlsInterface;
 import com.shoplite.models.SaveList;
 
@@ -33,8 +35,10 @@ public class CartFragment extends Fragment implements ControlsInterface {
 	
 	protected ListView cartItemsListView;
 	protected ItemListAdapter cartAdapter;
-	protected LinearLayout emptyCartView;
+	protected static LinearLayout emptyCartView;
 	private AlertDialog alertDialog;
+	private static Button saveListButton;
+	private static Button checkoutButton;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -53,35 +57,14 @@ public class CartFragment extends Fragment implements ControlsInterface {
 				return true;
 			}
 	    });
-		
-		
-		
-		Button saveCartButton = (Button) root.findViewById(R.id.save_cart_list);
-		saveCartButton.setOnClickListener(new OnClickListener() {
-	          public void onClick(View v) {
-	        	  if(Globals.item_order_list.size() >0){
-	        		  show_save_list_dialog();
-	        	  }
-	          }
-	       });
-		
-		
-			
-		Button orderButton = (Button) root.findViewById(R.id.order_button);
-		orderButton.setOnClickListener(new OnClickListener() {
-	          public void onClick(View v) {
-
-	          }
-	       });
-		
-		
+		saveListButton = (Button) root.findViewById(R.id.save_cart_list);
+		checkoutButton = (Button) root.findViewById(R.id.checkout_button);
 		cartItemsListView = (ListView)root.findViewById(R.id.cart_item_list_view);
-		
 		emptyCartView = (LinearLayout)root.findViewById(R.id.empty_cart_view);
-		
-	       
+		       
         return root;
     }
+		
 	
 	@Override
 	public void onResume()
@@ -89,15 +72,42 @@ public class CartFragment extends Fragment implements ControlsInterface {
 		super.onResume();	
 		
 		if(Globals.item_order_list.size() == 0){
-			emptyCartView.setVisibility(View.VISIBLE);
+			emptyCartState();
 		}
 		else{
-			emptyCartView.setVisibility(View.GONE);
+			filledCartState();
+			saveListButton.setOnClickListener(new OnClickListener() {
+		          public void onClick(View v) {
+		        	  if(Globals.item_order_list.size() >0){
+		        		  show_save_list_dialog();
+		        	  }
+		          }
+		       });
+			checkoutButton.setOnClickListener(new OnClickListener() {
+		          public void onClick(View v) {
+		        	  	checkout();
+		          }			
+		       });
+			
+			
 			cartAdapter = new ItemListAdapter(getActivity(), Globals.item_order_list,"cartItem");
 			cartItemsListView.setAdapter(cartAdapter);
 		}
 		
 		
+	}
+	
+	public static void emptyCartState()
+	{
+		emptyCartView.setVisibility(View.VISIBLE);
+		saveListButton.setVisibility(View.GONE);
+		checkoutButton.setVisibility(View.GONE);
+	}
+	public static void filledCartState()
+	{
+		saveListButton.setVisibility(View.VISIBLE);
+		checkoutButton.setVisibility(View.VISIBLE);
+		emptyCartView.setVisibility(View.GONE);
 	}
 	
 		
@@ -122,7 +132,11 @@ public class CartFragment extends Fragment implements ControlsInterface {
 	{
 		Controls.show_alert_dialog( this, getActivity(), R.layout.save_list_layout,200);
 	}
-	
+	private void checkout() {
+		// TODO Auto-generated method stub
+		Intent i = new Intent(getActivity(),CheckoutActivity.class);
+		getActivity().startActivity(i);
+	}
 	
 	
 	/* (non-Javadoc)

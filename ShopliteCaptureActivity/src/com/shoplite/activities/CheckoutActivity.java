@@ -58,7 +58,7 @@ public class CheckoutActivity extends Activity {
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_order,
+			View rootView = inflater.inflate(R.layout.fragment_checkout,
 					container, false);
 			return rootView;
 		}

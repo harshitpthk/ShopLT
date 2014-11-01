@@ -4,7 +4,7 @@ package com.shoplite.models;
 public class OrderItemDetail {
 	
 	int orderId;
-	int itemId;
+	int varianceId;
 	int quantity;
 	double price;
 	public boolean isSent;
@@ -22,10 +22,10 @@ public class OrderItemDetail {
 		this.orderId = orderId;
 	}
 	public int getItemId() {
-		return itemId;
+		return varianceId;
 	}
 	public void setItemId(int itemId) {
-		this.itemId = itemId;
+		this.varianceId = itemId;
 	}
 	public int getQuantity() {
 		return quantity;
@@ -42,14 +42,14 @@ public class OrderItemDetail {
 	public OrderItemDetail(int orderId, int itemId, int quantity, int price) {
 		super();
 		this.orderId = orderId;
-		this.itemId = itemId;
+		this.varianceId = itemId;
 		this.quantity = quantity;
 		this.price = price;
 	}
 	
 	public OrderItemDetail( int itemId, int quantity) {
 		super();
-		this.itemId = itemId;
+		this.varianceId = itemId;
 		this.quantity = quantity;
 		
 	}

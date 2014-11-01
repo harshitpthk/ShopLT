@@ -44,7 +44,7 @@
     <string name="desc_image_button">Item Image</string>
     <string name="select">Select</string>
     <string name="edit">Edit</string>
-    <string name="title_activity_order">OrderActivity</string>
+    <string name="title_activity_checkout">Checkout</string>
     <string name="list_save_input_hint">Enter List Name to be Saved</string>
     <string name="shop">Shop</string>
     <string name="current_order_heading">Current Orders</string>

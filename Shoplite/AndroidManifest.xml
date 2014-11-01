@@ -70,8 +70,8 @@
         </activity>
         
          <activity
-            android:name="com.shoplite.activities.OrderActivity"
-            android:label="@string/title_activity_order">
+            android:name="com.shoplite.activities.CheckoutActivity"
+            android:label="@string/title_activity_checkout">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.google.zxing.client.android.CaptureActivity" />

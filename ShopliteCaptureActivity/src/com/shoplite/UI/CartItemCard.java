@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.shoplite.Utils.CartGlobals;
 import com.shoplite.Utils.Constants;
 import com.shoplite.Utils.Constants.DBState;
+import com.shoplite.fragments.CartFragment;
 import com.shoplite.interfaces.PackListInterface;
 import com.shoplite.models.ItemCategory;
 import com.shoplite.models.OrderItemDetail;
@@ -338,6 +339,9 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 		if(getItem().isSent()){
 			OrderItemDetail itemToDelete = new OrderItemDetail(item.getCurrentItemId(), item.getCurrentQty());
 			deletePackList(itemToDelete);
+		}
+		if(cartItemList.isEmpty()){
+			CartFragment.emptyCartState();
 		}
 		itemListAdapter.updateCart(cartItemList);
 		
