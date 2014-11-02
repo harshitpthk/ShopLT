@@ -368,17 +368,17 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 	@Override
 	public void PackListSuccess(PackList obj) {
 		if(obj.state==DBState.DELETE){
-			for(int i = 0 ;i < obj.orderedItems.size() ; i++){
-				if(CartGlobals.cartList.contains(obj.orderedItems.get(i)))
-					CartGlobals.cartList.remove(obj.orderedItems.get(i));
-				if(CartGlobals.recentDeletedItems.contains(obj.orderedItems.get(i)))
-					CartGlobals.recentDeletedItems.remove(obj.orderedItems.get(i));
+			for(int i = 0 ;i < obj.items.size() ; i++){
+				if(CartGlobals.cartList.contains(obj.items.get(i)))
+					CartGlobals.cartList.remove(obj.items.get(i));
+				if(CartGlobals.recentDeletedItems.contains(obj.items.get(i)))
+					CartGlobals.recentDeletedItems.remove(obj.items.get(i));
 			}
 			
 		}
 		else if (obj.state == DBState.INSERT){
-			for(int i = 0 ;i < obj.orderedItems.size() ; i++){
-				CartGlobals.cartList.add(obj.orderedItems.get(i));
+			for(int i = 0 ;i < obj.items.size() ; i++){
+				CartGlobals.cartList.add(obj.items.get(i));
 			}
 		}
 		else{
@@ -400,7 +400,7 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 		deleteList.add(itemToDelete);
 		PackList pl = new PackList();
 		pl.state = Constants.DBState.DELETE;
-		pl.orderedItems = deleteList;
+		pl.items = deleteList;
 		CartGlobals.CartServerRequestQueue.add(pl);
 		pl.sendPackList(this);
 	}

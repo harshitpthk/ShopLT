@@ -19,7 +19,7 @@ import com.shoplite.interfaces.PackListInterface;
 public class PackList implements ConnectionInterface {
 
     public DBState state;
-	public ArrayList<OrderItemDetail> orderedItems;
+	public ArrayList<OrderItemDetail> items;
 	public  PackListInterface calling_class_object;
 	
 	public  void sendPackList(PackListInterface calling_class_object)
@@ -33,6 +33,7 @@ public class PackList implements ConnectionInterface {
 		
 		try {
 			ServerConnectionMaker.sendRequest(this, shopURL);
+			Log.e("sendPackList"," called");
 			}
 		catch (RetrofitError e) {
 			  System.out.println(e.getResponse().getStatus());
@@ -58,11 +59,9 @@ public class PackList implements ConnectionInterface {
 					if (response.isNetworkError()) {
 						Log.e("Packlist error", "503"); 
 				    }
-					//Toast.makeText(getBaseContext(), arg0.toString(), Toast.LENGTH_LONG).show();
-					//Log.e("Retrofit error", response.getUrl());
-					//Log.e("Retrofit error", response.getMessage());
-					//Log.e("Retrofit error", response.getStackTrace().toString());
-					//Controls.dismiss_progress_dialog();
+					Log.e("PackList error", response.getUrl());
+					Log.e("PackList error", response.getMessage());
+					Log.e("PackList error", response.getStackTrace().toString());
 					ServerConnectionMaker.recieveResponse(null);
 					String shopURL = null;
 					if(Globals.connected_shop_url != null)

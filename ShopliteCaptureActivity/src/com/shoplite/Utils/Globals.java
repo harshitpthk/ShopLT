@@ -32,6 +32,8 @@ public class Globals {
 	public static ArrayList<ItemCategory> item_order_list = new ArrayList<ItemCategory>();
 	public static Double cartTotalPrice = 0.00;
 	
+	public static boolean isInsideShop;
+	
 	//Method to Return Shop object which is at minimum distance from current location inside the 200 meters radius
 	public static Shop min_sd_matrix() {
 		 List distances = new ArrayList(near_shop_distance_matrix.keySet());
