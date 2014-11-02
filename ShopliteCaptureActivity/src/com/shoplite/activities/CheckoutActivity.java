@@ -1,5 +1,7 @@
 package com.shoplite.activities;
 
+import com.shoplite.Utils.Globals;
+
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
@@ -7,7 +9,15 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 import eu.livotov.zxscan.R;
 
 public class CheckoutActivity extends Activity {
@@ -61,15 +71,106 @@ public class CheckoutActivity extends Activity {
 	 */
 	public static class PlaceholderFragment extends Fragment {
 
+		
+		
+		private TextView totalPriceView;
+		private TextView totalItemsOrderedView;
+		
+		private LinearLayout addressContainer;
+		private TextView shopAddress;
+		private LinearLayout homeAddress;
+		private RadioButton shopPickupRadio;
+		private RadioButton homeDeliveryRadio;
+		
+		private RadioButton payOnlineRadio;
+		private RadioButton payCashRadio;
+		
+		private Button confirmOrderButton;
+		
+		boolean isOrderTakeAway;
+		boolean isPayOnline;
+		
+		
 		public PlaceholderFragment() {
 		}
 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_checkout,
-					container, false);
+			View rootView = inflater.inflate(R.layout.fragment_checkout,container, false);
+			
+			totalPriceView = (TextView) rootView.findViewById(R.id.order_total_price);
+			totalPriceView.setText(Globals.cartTotalPrice.toString() + getResources().getString(R.string.currency));
+			totalItemsOrderedView = (TextView) rootView.findViewById(R.id.order_total_items);
+			totalItemsOrderedView.setText(Integer.toString(Globals.item_order_list.size()));
+			
+			homeDeliveryRadio = (RadioButton) rootView.findViewById(R.id.radio_home_delivery);
+			shopPickupRadio = (RadioButton) rootView.findViewById(R.id.radio_shop_pickup);
+			
+			addressContainer = (LinearLayout) rootView.findViewById(R.id.address_details_view);
+			shopAddress = (TextView) rootView.findViewById(R.id.shop_address_details);
+			homeAddress = (LinearLayout) rootView.findViewById(R.id.home_address_details);
+			
+			payOnlineRadio = (RadioButton) rootView.findViewById(R.id.pay_by_card);
+			payCashRadio = (RadioButton) rootView.findViewById(R.id.pay_by_cash);
+			
+			
+			confirmOrderButton = (Button) rootView.findViewById(R.id.confirm_order_button);
+			
+			homeDeliveryRadio.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					addressContainer.setVisibility(View.VISIBLE);
+					homeAddress.setVisibility(View.VISIBLE);
+					
+					shopAddress.setVisibility(View.GONE);
+					isOrderTakeAway = false;
+				}
+			});
+			shopPickupRadio.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					
+					addressContainer.setVisibility(View.VISIBLE);
+					homeAddress.setVisibility(View.GONE);
+					shopAddress.setVisibility(View.VISIBLE);
+					isOrderTakeAway = true;
+				}
+			});
+			
+			payOnlineRadio.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					isPayOnline = true;
+					confirmOrderButton.setVisibility(View.VISIBLE);
+					
+				}
+			});
+			
+			payCashRadio.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					isPayOnline = false;
+					confirmOrderButton.setVisibility(View.VISIBLE);
+				}
+			});
+			
+			confirmOrderButton.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					Toast.makeText(getActivity(), "order to be confirmed", Toast.LENGTH_SHORT).show();
+					
+				}
+			});
+			
 			return rootView;
 		}
+		
 	}
 }

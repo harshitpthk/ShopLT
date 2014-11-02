@@ -52,8 +52,9 @@ public class ServerConnectionMaker  {
 		.setLogLevel(RestAdapter.LogLevel.FULL)
 		.build();
 		
-		if(CaptureActivity.decorView != null && CaptureActivity.decorView.findViewById(CaptureActivity.progressBar.getId()) == null){
-			//CaptureActivity.decorView.addView(CaptureActivity.progressBar);
+		if(CaptureActivity.decorView != null && !CaptureActivity.isProgressBarAdded){
+			CaptureActivity.isProgressBarAdded = true;
+			CaptureActivity.decorView.addView(CaptureActivity.progressBar);
 		}
 		serviceProvider = restAdapter.create(ServiceProvider.class);
 		
@@ -88,7 +89,8 @@ public class ServerConnectionMaker  {
 			}
 		}
 		//progress dialog removal
-		if(CaptureActivity.decorView != null){
+		if(CaptureActivity.decorView != null ){
+			CaptureActivity.isProgressBarAdded = false;
 			CaptureActivity.decorView.removeView(CaptureActivity.progressBar);
 		}
 		Controls.dismiss_progress_dialog();

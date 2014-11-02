@@ -155,6 +155,7 @@ ControlsInterface,PackListInterface
    public Button startShop;
    public static ButteryProgressBar progressBar;
    public static FrameLayout decorView;
+   public static boolean isProgressBarAdded;
    private ImageButton shopByListButton;
    private ImageButton shopAtStoreButton;
    private ImageButton orderListButton;
@@ -181,24 +182,19 @@ ControlsInterface,PackListInterface
 		setContentView(scanner_layout);
         
 		//action Bar
-		 actionBar = getActionBar();
-	       
-     // create new ProgressBar and style it
-        progressBar = new ButteryProgressBar(this);
-        progressBar.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 24));
-       
-
-        // retrieve the top view of our application
-       decorView = (FrameLayout) getWindow().getDecorView();
-        //decorView.addView(progressBar);
-
+		actionBar = getActionBar();
+	    progressBar = new ButteryProgressBar(this);
+        progressBar.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 24)); // create new ProgressBar and style it
+        decorView = (FrameLayout) getWindow().getDecorView();			// retrieve the top view of our application
+        
         // Here we try to position the ProgressBar to the correct position by looking
         // at the position where content area starts. But during creating time, sizes 
         // of the components are not set yet, so we have to wait until the components
         // has been laid out
         // Also note that doing progressBar.setY(136) will not work, because of different
         // screen densities and different sizes of actionBar
-        ViewTreeObserver observer = progressBar.getViewTreeObserver();
+        
+       ViewTreeObserver observer = progressBar.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -285,7 +281,7 @@ ControlsInterface,PackListInterface
         // first launch. That led to bugs where the scanning rectangle was the wrong size and partially
         // off screen.
         
-		// initially hide map;
+		
 		if(!conFrag.isAdded()){
         	getSupportFragmentManager().beginTransaction().add(R.id.fragment_container,conFrag ).commit();
         	
@@ -397,14 +393,17 @@ ControlsInterface,PackListInterface
         getApplicationContext();
 		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         shopSearchView = (SearchView)menu.findItem(R.id.search).getActionView();
-        shopSearchView.setQueryHint("Enter Locality to Search Shops");
+        shopSearchView.setQueryHint("Delivery Locality to find Shops");
+        shopSearchView.setSubmitButtonEnabled(false);
         shopSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         shopSearchView.setOnQueryTextListener(new OnQueryTextListener(){
 
 			@Override
 			public boolean onQueryTextChange(String newText) {
-				PlacesAutoComplete pl = new PlacesAutoComplete();
-				pl.autocomplete(newText);
+				if(newText.length()>= 3){
+					PlacesAutoComplete pl = new PlacesAutoComplete();
+					pl.autocomplete(newText);
+				}
 				return true;
 			}
 
@@ -428,10 +427,10 @@ ControlsInterface,PackListInterface
 				        addresses = geocoder.getFromLocationName(PlacesAutoComplete.placesList.get(index).getDescription(), 1);
 				        if (!addresses.isEmpty()) {
 				            Address address = addresses.get(0);
-				            //Toast.makeText(getApplicationContext(), Integer.toString(index)+address.toString(), Toast.LENGTH_SHORT).show();
 				            LatLng coordinate = new LatLng(address.getLatitude(),address.getLongitude());
-				            MapUI.move_map_camera(coordinate);
 				            
+				            //using converted address to latlng to query for shops
+				            MapUI.move_map_camera(coordinate);
 				            get_shop_list(new Location(coordinate.latitude,coordinate.longitude));
 				           
 				            //hide keyboard
@@ -440,7 +439,7 @@ ControlsInterface,PackListInterface
 				            inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
 				            InputMethodManager.HIDE_NOT_ALWAYS);
 	                   
-				            // do something with your address
+				            
 				        } else {
 				            // No results for your location
 				        }
@@ -935,7 +934,7 @@ ControlsInterface,PackListInterface
 		}
 	    	
 	}
-	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+	
 	public void mapShopContinue(View v)
 	{
 		
@@ -960,9 +959,9 @@ ControlsInterface,PackListInterface
 		CartMenuItem.setVisible(true);
 		MenuItem shopSearch = (MenuItem) MenuReference.findItem(R.id.search);
 		shopSearch.collapseActionView();
-		shopAtStoreButton.setBackground(getResources().getDrawable(R.drawable.scan_blue));
-    	shopByListButton.setBackground(getResources().getDrawable(R.drawable.cart_grey));
-    	orderListButton.setBackground(getResources().getDrawable(R.drawable.purchase_order_grey));
+		shopAtStoreButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.scan_blue));
+    	shopByListButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.cart_grey));
+    	orderListButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.purchase_order_grey));
 		setCurrentShopping(1); 
 		
 	}
@@ -970,8 +969,9 @@ ControlsInterface,PackListInterface
 	@Override
 	public void onCameraChange(CameraPosition arg0) {
 		
-		//FrameLayout connected_shop_details_view = (FrameLayout)findViewById(R.id.shop_details_container);
-		//ViewAnimation.slideToBottom(connected_shop_details_view);
+		
+		LatLng coordinate = MapUI.mMap.getCameraPosition().target;
+		get_shop_list(new Location(coordinate.latitude,coordinate.longitude));
 		
 		
 	}
@@ -997,7 +997,7 @@ ControlsInterface,PackListInterface
 				
 			}
 		}
-		return false;
+		return true;
 	}
 	
 	
@@ -1121,7 +1121,7 @@ ControlsInterface,PackListInterface
 		}
 		
 		else{
-						
+			get_shop_list(Globals.current_location);
 			shop_list_success(Globals.current_location,connectedNearShoplist);
 			
 		}
@@ -1130,12 +1130,6 @@ ControlsInterface,PackListInterface
 	}
 
 	
-	public void get_shop_list(Location areaLocation)
-	{
-		
-		Shop shopObj = new Shop();
-		shopObj.get_shop_list(this,areaLocation);
-	}
 	
 	public void connect_to_shop(Shop shopObj) {
 		
@@ -1147,7 +1141,31 @@ ControlsInterface,PackListInterface
 		shop_detail_heading.setText("Connecting to " + shopName);
 		
 	}
+	@Override
+	public void shop_connected() {
+		
+		double lat =  Globals.connected_shop_location.getLatitude();
+		double lng =  Globals.connected_shop_location.getLongitude();
+		
+		LatLng coordinate = new LatLng(lat, lng);
+		//MapUI.mMap.addMarker(new MarkerOptions().position(coordinate).draggable(false).title(Globals.connected_shop_name).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+		
+		shop_detail_heading.setText("Welcome to " + Globals.connected_shop_name);
+		
+		shop_detail_description.setText("You can shop various " +
+				"products through your cam scanner " +
+				"or through the list at an affordable prices.\nHappy Shopping!");
+		
+		startShop.setVisibility(View.VISIBLE);
+	}
 
+	public void get_shop_list(Location areaLocation)
+	{
+		
+		Shop shopObj = new Shop();
+		shopObj.get_shop_list(this,areaLocation);
+	}
+	
 	@Override
 	public void shop_list_success(Location areaLocation,ArrayList<Shop> shopList) {
 		
@@ -1170,26 +1188,32 @@ ControlsInterface,PackListInterface
 						if((cur_lng < shopLng+0.02) && (cur_lng > shopLng - 0.02)){
 							LatLng coordinate = new LatLng(shopLat, shopLng);
 							Globals.add_to_sd_matrix(shopList.get(i),shopLat,shopLng);
-							shop_marker = MapUI.mMap.addMarker(new MarkerOptions().position(coordinate).draggable(false).title(shopList.get(i).getName()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+							shop_marker = MapUI.mMap.addMarker(new MarkerOptions().position(coordinate)
+									.draggable(false).title(shopList.get(i).getName())
+									.icon(BitmapDescriptorFactory.fromResource(R.drawable.shop_small)));
 							continue;
 						}
 					}
 					
 					LatLng coordinate = new LatLng(shopLat, shopLng);
 					
-					shop_marker = MapUI.mMap.addMarker(new MarkerOptions().position(coordinate).draggable(false).title(shopList.get(i).getName()));
+					shop_marker = MapUI.mMap.addMarker(new MarkerOptions().position(coordinate)
+							.draggable(false).title(shopList.get(i).getName())
+							.icon(BitmapDescriptorFactory.fromResource(R.drawable.shop_small)));
     	    
 				}
 				
 				
 
 				if((cur_lat<areaLocation.getLatitude()+0.02) && (cur_lng > areaLocation.getLatitude()-0.02)){
-					if((cur_lng < areaLocation.getLongitude()+0.02) && (cur_lng > areaLocation.getLongitude() - 0.02)){
+					
+					if((cur_lng < areaLocation.getLongitude()+0.02) 
+							&&(cur_lng > areaLocation.getLongitude() - 0.02)){
 					
 						Shop shpObject = Globals.min_sd_matrix();
 						if(!Globals.connected_to_shop_success ){
-							if( shpObject != null)
-							connect_to_shop(shpObject);
+							if( shpObject != null);
+							//connect_to_shop(shpObject);
 						}
 						else{
 							shop_detail_heading.setText("Welcome to " + Globals.connected_shop_name);
@@ -1227,6 +1251,8 @@ ControlsInterface,PackListInterface
 			double lng = areaLocation.getLongitude();
 			LatLng coordinate = new LatLng(lat, lng);
 			MapUI.move_map_camera(coordinate);
+			//MapUI.mMap.addMarker(new MarkerOptions().position(coordinate).draggable(false)
+				//	.icon(BitmapDescriptorFactory.fromResource(R.drawable.home_small)));
 			
     	       
 		
@@ -1239,23 +1265,7 @@ ControlsInterface,PackListInterface
 		
 	}
 	
-	@Override
-	public void shop_connected() {
-		
-		double lat =  Globals.connected_shop_location.getLatitude();
-		double lng =  Globals.connected_shop_location.getLongitude();
-		
-		LatLng coordinate = new LatLng(lat, lng);
-		MapUI.mMap.addMarker(new MarkerOptions().position(coordinate).draggable(false).title(Globals.connected_shop_name).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-		
-		shop_detail_heading.setText("Welcome to " + Globals.connected_shop_name);
-		
-		shop_detail_description.setText("You can shop various " +
-				"products through your cam scanner " +
-				"or through the list at an affordable prices.\nHappy Shopping!");
-		
-		startShop.setVisibility(View.VISIBLE);
-	}
+	
 
 
 	

@@ -79,82 +79,84 @@
 	        <LinearLayout 
 	            android:id="@+id/shop_details_container"
 	            android:layout_width="fill_parent"
+	            android:background="@drawable/shadow"
 	            android:layout_height="wrap_content"
 	            android:orientation="vertical"
 	            android:layout_gravity="bottom"
 	            android:onClick="showFullShopDetails"
+	            android:layout_margin="@dimen/abc_action_bar_icon_vertical_padding"
 	            >
-	            <View
-        			android:layout_width="fill_parent"
-       				android:layout_height="5dp"
-       				android:background="@drawable/drop_shadow"
-       				android:layout_gravity="top"
-       				android:layout_marginTop="-3dp" >
-    				</View>
+	           
 	           		
-	        <LinearLayout 
-	            android:id="@+id/shop_details_primary"
-	            android:layout_width="fill_parent"
-	            android:layout_height="120dp"
-	            android:onClick="showFullShopDetails"
-	            android:orientation="horizontal"
-	            android:background="#fff"
-	            >
+		        <LinearLayout 
+		            android:id="@+id/shop_details_primary"
+		            android:layout_width="fill_parent"
+		            android:layout_height="120dp"
+		            android:onClick="showFullShopDetails"
+		            android:orientation="horizontal"
+		            android:background="#fff"
+		            >
 	            	
-	            <LinearLayout 
-	                android:id="@+id/shop_details_header"
-	                android:layout_height="fill_parent"
-	                android:layout_width="fill_parent"
-	                android:padding="10dp"
-	                android:layout_weight = "1"
-	                android:background="#fff"
-	                android:orientation="vertical">
-	                 
-	                <TextView
-	                    android:id="@+id/shop_details_heading"
-	                    android:layout_width="fill_parent"
-	                    android:layout_height="wrap_content"
-	                    android:textSize="19sp"
-	                    android:textColor="@color/app_color"
-	                    
-	                    >
-	                    </TextView>
-	                 <TextView
-	                     android:id="@+id/shop_details_description"
-	                     android:layout_width="fill_parent"
-	                     android:layout_height="wrap_content"
-	                     android:textSize="16sp"
-	                     android:textColor="#707070"
-	                    
-	                    ></TextView>
-	                <!-- <RatingBar android:id="@+id/ratingBar"
-	                     android:layout_width="60dp"
-	                     android:layout_height="10dp"
-	                     android:numStars="5"
-	                     android:rating="5"
-	                     android:isIndicator="true"
-	                    
-	                      /> --> 
-	                
-	            </LinearLayout>
-	            	
+		            <LinearLayout 
+		                android:id="@+id/shop_details_header"
+		                android:layout_height="fill_parent"
+		                android:layout_width="fill_parent"
+		                android:padding="10dp"
+		                android:layout_weight = "1"
+		                android:background="#fff"
+		                android:orientation="vertical">
+		                 
+		                <TextView
+		                    android:id="@+id/shop_details_heading"
+		                    android:layout_width="fill_parent"
+		                    android:layout_height="wrap_content"
+		                    android:textSize="19sp"
+		                    android:textColor="@color/app_color"
+		                    
+		                    >
+		                    </TextView>
+		                 <TextView
+		                     android:id="@+id/shop_details_description"
+		                     android:layout_width="fill_parent"
+		                     android:layout_height="wrap_content"
+		                     android:textSize="16sp"
+		                     android:textColor="#707070"
+		                    
+		                    ></TextView>
+		                <!-- <RatingBar android:id="@+id/ratingBar"
+		                     android:layout_width="60dp"
+		                     android:layout_height="10dp"
+		                     android:numStars="5"
+		                     android:rating="5"
+		                     android:isIndicator="true"
+		                    
+		                      /> --> 
+		                
+		            </LinearLayout>
+		            	
     			
-	           <Button android:id="@+id/startShop"
-	               android:layout_width="wrap_content"
-	               android:layout_height="wrap_content"
-	               android:layout_margin="10dp"
-	               android:text="@string/shop"
-	               android:layout_gravity="center_vertical"
-	              	android:textColor="@color/app_color"
-	               android:background="@drawable/button"
-	               android:visibility="invisible"
-	               android:onClick="mapShopContinue"></Button>
+		           <Button android:id="@+id/startShop"
+		               android:layout_width="wrap_content"
+		               android:layout_height="wrap_content"
+		               android:layout_margin="10dp"
+		               android:text="@string/shop"
+		               android:layout_gravity="center_vertical"
+		              	android:textColor="@color/app_color"
+		               android:background="@drawable/button"
+		               android:visibility="invisible"
+		               android:onClick="mapShopContinue"></Button>
 
 	           
 	            
-	        </LinearLayout>
+	        	</LinearLayout>
 	       </LinearLayout>
-	       
+	       <ImageButton android:id="@+id/search_anchor_point"
+	           android:contentDescription="@string/desc_image_button"
+	           android:layout_gravity="center"
+	           android:layout_height="wrap_content"
+	           android:layout_width="wrap_content"
+	           android:background="@drawable/home_small"
+	                   ></ImageButton>
 	        
         </FrameLayout>
 	 

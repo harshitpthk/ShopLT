@@ -36,7 +36,8 @@ public class PlacesAutoComplete {
 	public static MatrixCursor suggestionCursor  ;
 	
 	public void autocomplete(String input) {
-		if(CaptureActivity.decorView != null && CaptureActivity.decorView.findViewById(CaptureActivity.progressBar.getId()) == null ){
+		if(CaptureActivity.decorView != null && !CaptureActivity.isProgressBarAdded){
+			CaptureActivity.isProgressBarAdded = true;
 			CaptureActivity.decorView.addView(CaptureActivity.progressBar);
 		}
 		placesList = new ArrayList<PlacePrediction>();
@@ -81,6 +82,7 @@ public class PlacesAutoComplete {
 				SimpleCursorAdapter  suggestionAdapter  = new SimpleCursorAdapter(Globals.ApplicationContext, R.layout.list_item,suggestionCursor,new String[]{columnNames[1]},to, 0);
 				CaptureActivity.shopSearchView.setSuggestionsAdapter(suggestionAdapter);
 				if(CaptureActivity.decorView != null){
+					CaptureActivity.isProgressBarAdded = false;
 					CaptureActivity.decorView.removeView(CaptureActivity.progressBar);
 				}
 
