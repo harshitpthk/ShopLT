@@ -44,6 +44,12 @@ public interface ServiceProvider {
 	@POST("/service/user/packitems")
 	void packList(@Body com.shoplite.models.PackList packlist, Callback<JsonObject> callback);
 	
+	@POST("/service/user/submitorder")
+	void submitOrder(@Body com.shoplite.models.SubmitOrderDetails submitOrderDetails, Callback<Integer> orderID);
+	
+	@POST("/service/user/createorder")
+	void createOrderStar(@Body com.shoplite.models.SubmitOrderStar submitOrderStarDetails, Callback<String> response);
+	
 	
 	@GET("/")
 	void getPlacesSuggestion(Callback<JsonObject> callback);

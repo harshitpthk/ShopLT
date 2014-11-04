@@ -942,7 +942,8 @@ ControlsInterface,PackListInterface
 		CartMenuItem.setVisible(true);
 		MenuItem shopSearch = (MenuItem) MenuReference.findItem(R.id.search);
 		shopSearch.collapseActionView();
-		
+		Globals.delivery_location = new Location(MapUI.mMap.getCameraPosition().target.latitude,
+				MapUI.mMap.getCameraPosition().target.longitude);
 		
     	if(Globals.isInsideShop)
 			setCurrentShopping(1);
@@ -1024,7 +1025,7 @@ ControlsInterface,PackListInterface
     			getActionBar().setHomeButtonEnabled(false);
     			shopSearch.setVisible(false);
     			actionBar.setTitle(getResources().getText(R.string.shopping_cart)+
-        				"    " + Globals.cartTotalPrice.toString() + " " +getResources().getText(R.string.currency));
+        				"    " + Double.toString(Math.round(Globals.cartTotalPrice*100.0/100.0)) + " " +getResources().getText(R.string.currency));
         		
     		}
     		mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, ldrawer);

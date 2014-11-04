@@ -17,7 +17,7 @@ import com.shoplite.interfaces.ShopInterface;
 
 public class Shop implements ConnectionInterface {
 	private String name;
-	private String id;
+	private int id;
 	private String url;
 	private Location location;
 	private static ShopInterface calling_class_object;
@@ -31,10 +31,10 @@ public class Shop implements ConnectionInterface {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getId() {
+	public int getId() {
 		return id;
 	}
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 	public String getUrl() {
@@ -99,6 +99,7 @@ public class Shop implements ConnectionInterface {
 					Log.e("Retrofit Success", result.toString());
 					ServerConnectionMaker.recieveResponse(response);
 					Globals.connected_to_shop_success = true;
+					Globals.connected_shop_id = shopToConnect.getId();
 					Globals.connected_shop_name = shopToConnect.getName();
 					Globals.connected_shop_url = shopToConnect.getUrl();
 					Globals.connected_shop_location = shopToConnect.getLocation();

@@ -20,9 +20,15 @@ import android.widget.Toast;
 
 import com.shoplite.UI.Controls;
 import com.shoplite.UI.ItemListAdapter;
+import com.shoplite.Utils.CartGlobals;
 import com.shoplite.Utils.Globals;
+import com.shoplite.Utils.Constants.DBState;
 import com.shoplite.activities.CheckoutActivity;
 import com.shoplite.interfaces.ControlsInterface;
+import com.shoplite.interfaces.PackListInterface;
+import com.shoplite.models.ItemCategory;
+import com.shoplite.models.OrderItemDetail;
+import com.shoplite.models.PackList;
 import com.shoplite.models.SaveList;
 
 import eu.livotov.zxscan.R;
@@ -30,7 +36,7 @@ import eu.livotov.zxscan.R;
 
 
 
-public class CartFragment extends Fragment implements ControlsInterface {
+public class CartFragment extends Fragment implements ControlsInterface,PackListInterface {
 
 	
 	protected ListView cartItemsListView;
@@ -133,6 +139,7 @@ public class CartFragment extends Fragment implements ControlsInterface {
 		Controls.show_alert_dialog( this, getActivity(), R.layout.save_list_layout,200);
 	}
 	private void checkout() {
+		sendPackList();
 		Intent i = new Intent(getActivity(),CheckoutActivity.class);
 		getActivity().startActivity(i);
 	}
@@ -191,7 +198,53 @@ public class CartFragment extends Fragment implements ControlsInterface {
 	public void neutral_button_alert_method() {
 		
 	}
+	@Override
+	public void sendPackList() {
+		
+		
+		PackList pl = new PackList();
+		pl.items = ItemCategory.getToSendList(Globals.item_order_list);
+		pl.state = DBState.INSERT;
 	
+		ItemCategory.setSentList(Globals.item_order_list);
+		
+		if(CartGlobals.CartServerRequestQueue.size() == 0){
+			CartGlobals.CartServerRequestQueue.add(pl);
+			pl.sendPackList(this);
+		}
+		else{
+			CartGlobals.CartServerRequestQueue.add(pl);
+		}
+			
+	
+	}
+
+	/* (non-Javadoc)
+	 * @see com.shoplite.interfaces.PackListInterface#PackListSuccess(com.shoplite.models.PackList)
+	 */
+	@Override
+	public void PackListSuccess(PackList obj) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.shoplite.interfaces.PackListInterface#editPackList()
+	 */
+	@Override
+	public void editPackList() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.shoplite.interfaces.PackListInterface#deletePackList(com.shoplite.models.OrderItemDetail)
+	 */
+	@Override
+	public void deletePackList(OrderItemDetail itemToDelete) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 
 }

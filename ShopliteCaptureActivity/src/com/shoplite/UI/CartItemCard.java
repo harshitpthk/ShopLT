@@ -163,7 +163,7 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 					else{
 						Globals.cartTotalPrice += item.getTotalPrice();
 						CaptureActivity.actionBar.setTitle(r.getText(R.string.shopping_cart)+
-        				"    " + Globals.cartTotalPrice.toString() +" "+ r.getText(R.string.currency));
+        				"    " + Double.toString(Math.round(Globals.cartTotalPrice*100.0/100.0)) +" "+ r.getText(R.string.currency));
 						getItemEditView().setAnimation(animFadeOut);
 				    	getItemEditView().setVisibility(View.GONE);
 						setActionButtonText("Edit");
@@ -347,7 +347,7 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 	 	cartItemList.remove(getItem());
 	 	Globals.cartTotalPrice -= item.getTotalPrice();
 	 	CaptureActivity.actionBar.setTitle(r.getText(R.string.shopping_cart)+
-				 "    "+ Globals.cartTotalPrice.toString() +" " + r.getText(R.string.currency));
+				 "    "+  Double.toString(Math.round(Globals.cartTotalPrice*100.0/100.0))+" " + r.getText(R.string.currency));
 	 	
 		if(getItem().isSent()){
 			OrderItemDetail itemToDelete = new OrderItemDetail(item.getCurrentItemId(), item.getCurrentQty());

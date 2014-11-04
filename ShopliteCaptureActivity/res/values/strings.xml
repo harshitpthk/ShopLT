@@ -54,10 +54,13 @@
     <string name="currency">\u20B9</string>
     <string name ="home_delivery">Home Delivery</string>
     <string name ="shop_pickup">Take Away</string>
-    <string name ="address_input_hint">Please enter your Delivery Address here!</string>
+    <string name ="address_input_hint">Enter House number, Apartment/Society</string>
     <string name ="address_detail_heading">Address Details</string>
     <string name ="pay_cash">Pay Cash </string>
     <string name ="pay_online">Pay Online</string>
     <string name ="confirm_order">Confirm</string>
+    <string name ="finalize_order_message">Continue to place order, cancel to make changes.</string>
+    <string name ="finalize_order_title">Confirm Order?</string>
+    <string name ="confirming_order">Confirming Order</string>
     <string name ="order_summary_heading">Order Summary</string>
 </resources>
