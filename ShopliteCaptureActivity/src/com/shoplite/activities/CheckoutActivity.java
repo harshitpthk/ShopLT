@@ -99,7 +99,6 @@ public class CheckoutActivity extends Activity {
 		private LinearLayout addressContainer;
 		private TextView shopAddress;
 		private LinearLayout homeAddress;
-		private EditText  secondaryHomeAddress;
 		private EditText  primaryHomeAddress;
 		private RadioButton shopPickupRadio;
 		private RadioButton homeDeliveryRadio;
@@ -112,7 +111,6 @@ public class CheckoutActivity extends Activity {
 		boolean isOrderTakeAway;
 		boolean isPayOnline;
 		private AlertDialog alertDialog;
-		private String addressText;
 		
 		
 		public PlaceholderFragment() {
@@ -121,52 +119,6 @@ public class CheckoutActivity extends Activity {
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			Geocoder geocoder =
-                    new Geocoder(getActivity(), Locale.getDefault());
-			List<Address> addresses = null;
-			try {
-                /*
-                 * Return 1 address.
-                 */
-                addresses = geocoder.getFromLocation(Globals.delivery_location.getLatitude(),
-                		Globals.delivery_location.getLongitude(), 1);
-            } catch (IOException e1) {
-            	Log.e("LocationSampleActivity",
-                    "IO Exception in getFromLocation()");
-            	e1.printStackTrace();
-            		
-            } catch (IllegalArgumentException e2) {
-	            // Error message to post in the log
-	            String errorString = "Illegal arguments " +
-	                    Double.toString(Globals.delivery_location.getLatitude()) +
-	                    " , " +
-	                    Double.toString(Globals.delivery_location.getLongitude()) +
-	                    " passed to address service";
-	            Log.e("LocationSampleActivity", errorString);
-	            e2.printStackTrace();
-	            
-            }
-			if (addresses != null && addresses.size() > 0) {
-                // Get the first address
-                Address address = addresses.get(0);
-                /*
-                 * Format the first line of address (if available),
-                 * city, and country name.
-                 */
-                 addressText = String.format(
-                        "%s, %s, %s",
-                        // If there's a street address, add it
-                        address.getMaxAddressLineIndex() > 0 ?
-                                address.getAddressLine(0) : "",
-                        // Locality is usually a city
-                        address.getLocality(),
-                        // The country of the address
-                        address.getCountryName());
-                // Return the text
-                
-            } else {
-            	  addressText = "No address found";
-            }
 			
 			View rootView = inflater.inflate(R.layout.fragment_checkout,container, false);
 			
@@ -182,9 +134,7 @@ public class CheckoutActivity extends Activity {
 			shopAddress = (TextView) rootView.findViewById(R.id.shop_address_details);
 			homeAddress = (LinearLayout) rootView.findViewById(R.id.home_address_details);
 			primaryHomeAddress = (EditText) rootView.findViewById(R.id.home_address_primary);
-			secondaryHomeAddress = (EditText) rootView.findViewById(R.id.home_address_locality);
-			
-			secondaryHomeAddress.setText(addressText);
+			primaryHomeAddress.setText(Globals.delivery_address);
 			
 			payOnlineRadio = (RadioButton) rootView.findViewById(R.id.pay_by_card);
 			payCashRadio = (RadioButton) rootView.findViewById(R.id.pay_by_cash);
@@ -232,6 +182,7 @@ public class CheckoutActivity extends Activity {
 					isPayOnline = false;
 					if(primaryHomeAddress.getText().toString().length()> 0 )
 						confirmOrderButton.setVisibility(View.VISIBLE);
+					
 				}
 			});
 			
@@ -243,7 +194,7 @@ public class CheckoutActivity extends Activity {
 					if(primaryHomeAddress.getText().toString().length()> 0 )
 						finalizeOrder();
 					else{
-						Toast.makeText(getActivity(), "Enter House no. and Apartment Name ", Toast.LENGTH_SHORT).show();
+						primaryHomeAddress.setError(getResources().getText(R.string.error_field_required));
 					}
 				}
 			});
@@ -283,8 +234,7 @@ public class CheckoutActivity extends Activity {
 			else{
 				submitOrder.setAmount(Globals.cartTotalPrice);
 				submitOrder.setUsernameNumber(Globals.dbhelper.getItem("phoneNo"));
-				submitOrder.setAddress(primaryHomeAddress.getText().toString() +" "+
-						secondaryHomeAddress.getText().toString());
+				submitOrder.setAddress(primaryHomeAddress.getText().toString());
 				submitOrder.setLatitude(Globals.delivery_location.getLatitude());
 				submitOrder.setLongitude(Globals.delivery_location.getLongitude());
 				if(isPayOnline){

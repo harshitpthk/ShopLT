@@ -48,5 +48,6 @@
         <color name="friendfoeyellow">#FFFFA6</color>
         <color name="friendfoegreen">#BDF271</color>
         <color name="text_color">#707070</color>
+        <color name="transparent_white">#88FFFFFF</color>
         <color name="aspirinwhite">#F5F5F5</color>
 </resources>

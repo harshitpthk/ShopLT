@@ -39,7 +39,6 @@ import eu.livotov.zxscan.R;
 public class CartItemCard extends BasicCartItemCard implements PackListInterface{
 
 	
-	protected Button itemButton;
 	protected CustomNumberPicker measurePicker;
 	protected CustomNumberPicker qtyPicker;
 	protected ImageButton delete_button;
@@ -75,10 +74,10 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 		
 	
 	public Button getItemButton() {
-		return itemButton;
+		return itemCheckButton;
 	}
 	public void setItemButton(Button itemButton) {
-		this.itemButton = itemButton;
+		this.itemCheckButton = itemButton;
 	}
 		
 	public NumberPicker getMeasurePicker() {
@@ -141,9 +140,8 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 			}
 		});
 	
-		itemButton = (Button)containerView.findViewById(R.id.item_button);
-		itemButton.setVisibility(View.VISIBLE);
-		itemButton.setOnClickListener(new OnClickListener() {
+		
+		itemCheckButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
@@ -171,7 +169,7 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 					}
 			}
 		});
-		
+		setActionButtonText(context.getResources().getString(R.string.edit));
 		containerView.setOnTouchListener(new OnTouchListener() {
 			
 			
@@ -319,7 +317,7 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 	
 	@Override
 	public void setActionButtonText(String text) {
-		itemButton.setText(text);
+		super.setActionButtonText(text);
 	}
 
 	@Override

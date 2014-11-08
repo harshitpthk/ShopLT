@@ -47,7 +47,7 @@
 	            android:layout_height="wrap_content"
 	            android:gravity="center"
 	            android:textSize="18sp"
-	            android:text="12 Items"
+	            
 	            />
 	         <TextView android:id="@+id/order_total_price"
 	            android:layout_weight="1"
@@ -56,7 +56,7 @@
 	            android:gravity="center"
 	            android:textColor="#DB9E36"
 	            android:textSize="18sp"
-	            android:text="2000rs"
+	            
 	            />	        
 	    </LinearLayout>
         <RadioGroup 
@@ -136,7 +136,7 @@
 		    <EditText
 		       android:id="@+id/home_address_primary"
 		       android:layout_width="match_parent"
-		       android:layout_height="60dp"
+		       android:layout_height="wrap_content"
 		       android:hint="@string/address_input_hint"
 		       android:ems="10"
 		       android:textSize="14sp"
@@ -149,22 +149,7 @@
 		        >
 		        <requestFocus />
 		  	</EditText>
-		  	<EditText 
-            	android:id="@+id/home_address_locality"
-            	android:layout_width="match_parent"
-           		android:layout_height="wrap_content"
-            	android:enabled="true"
-            	android:inputType="textCapWords|textMultiLine|textPostalAddress"
-            	android:textSize="14sp"
-	        	android:layout_marginBottom="@dimen/activity_vertical_margin"
-	            android:text="xyz"
-	            android:layout_marginStart="5dp"
-		        android:layout_marginEnd="5dp"
-		        android:layout_marginRight="5dp"
-		        android:layout_marginLeft="5dp"
-	            />
-	  		
-		     
+		  		     
   
 	    </LinearLayout>
 	    <RadioGroup 

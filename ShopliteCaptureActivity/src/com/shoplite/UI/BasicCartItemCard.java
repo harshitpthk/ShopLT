@@ -9,10 +9,16 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.zxing.client.android.CaptureActivity;
+import com.shoplite.Utils.Globals;
 import com.shoplite.models.ItemCategory;
 import com.squareup.picasso.Picasso;
 
@@ -33,6 +39,8 @@ public class BasicCartItemCard extends BaseItemCard{
 	protected TextView quantityView;
 	protected TextView totalPriceView;
 	protected LinearLayout itemEditView;
+	protected Button itemCheckButton;
+	
 	
 	
 	//members to notify change in the List view
@@ -131,25 +139,56 @@ public class BasicCartItemCard extends BaseItemCard{
 	@Override
 	public void setUpView(Context context, ViewGroup container) {
 		LayoutInflater lp = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View view;
+			
 		if(container.findViewById(R.id.cart_item_view) == null){
-			view = lp.inflate(R.layout.cart_item_card, container);
+			this.containerView  = lp.inflate(R.layout.cart_item_card, container);
+			
+			innerView = (View)containerView.findViewById(R.id.cart_item_view);
+			itemNameView = (TextView) containerView.findViewById(R.id.item_name);
+			itemImageView = (ImageView) containerView.findViewById(R.id.item_image);
+			currentMeasureView = (TextView) containerView.findViewById(R.id.current_measure);
+			currentPriceView = (TextView) containerView.findViewById(R.id.current_measure_price);
+			quantityView = (TextView)containerView.findViewById(R.id.current_quantity);
+			totalPriceView = (TextView)containerView.findViewById(R.id.total_price);
+			itemEditView =(LinearLayout)containerView.findViewById(R.id.item_edit_view);
+			itemCheckButton = (Button)containerView.findViewById(R.id.item_button);
+			ViewHolder holder = new ViewHolder(innerView,itemNameView,itemImageView,
+			currentMeasureView,currentPriceView,quantityView,totalPriceView,itemEditView,itemCheckButton);
+		
+			container.setTag(holder);
+			
 		}
 		else{
-			view = container;
-		}
-		this.containerView = view;
-		super.setViewLayout(view.getId());
-		innerView = (View)containerView.findViewById(R.id.cart_item_view);
-		itemNameView = (TextView) containerView.findViewById(R.id.item_name);
-		itemImageView = (ImageView) containerView.findViewById(R.id.item_image);
-		currentMeasureView = (TextView) containerView.findViewById(R.id.current_measure);
-		currentPriceView = (TextView) containerView.findViewById(R.id.current_measure_price);
-		quantityView = (TextView)containerView.findViewById(R.id.current_quantity);
-		totalPriceView = (TextView)containerView.findViewById(R.id.total_price);
-		itemEditView =(LinearLayout)containerView.findViewById(R.id.item_edit_view);
-		itemEditView.setVisibility(View.GONE);
+			
+			this.containerView  = container;
+			ViewHolder holder = (ViewHolder) this.containerView.getTag();
+				innerView = holder.innerView;
+				itemNameView = holder.itemNameView;
+				itemImageView = holder.itemImageView;
+				currentMeasureView = holder.currentMeasureView;
+				currentPriceView = holder.currentPriceView;
+				quantityView = holder.quantityView;
+				totalPriceView = holder.totalPriceView;
+				itemEditView = holder.itemEditView;
+				itemCheckButton = holder.itemCheckButton;
+			}
 		
+		super.setViewLayout(this.containerView.getId());
+		
+		
+		
+		itemEditView.setVisibility(View.GONE);
+		itemCheckButton.setVisibility(View.VISIBLE);
+		
+		itemCheckButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+			}
+		});
+		
+		setActionButtonText(context.getResources().getString(R.string.pick));
 		updateView();
 		
 		
@@ -160,7 +199,7 @@ public class BasicCartItemCard extends BaseItemCard{
 	 */
 	@Override
 	public void setActionButtonText(String text) {
-		
+		itemCheckButton.setText(text);
 	}
 
 	/* (non-Javadoc)
@@ -188,6 +227,34 @@ public class BasicCartItemCard extends BaseItemCard{
 		this.itemListAdapter = itemListAdapter;
 		setUpView(getmContext(), container);
 		
+	}
+	
+	public static class ViewHolder{
+		 View containerView;
+		 View innerView;
+		 TextView itemNameView;
+		 ImageView itemImageView ;
+		 TextView currentMeasureView;
+		 TextView currentPriceView;
+		 TextView quantityView;
+		 TextView totalPriceView;
+		 LinearLayout itemEditView;
+		 Button itemCheckButton;
+		 
+		 public  ViewHolder(View innerView, TextView itemNameView, ImageView itemImageView,
+		  TextView currentMeasureView, TextView currentPriceView, TextView quantityView
+		  , TextView totalPriceView, LinearLayout itemEditView, Button itemCheckButton){
+			 this.innerView = innerView;
+			this.itemNameView = itemNameView;
+			this.itemImageView = itemImageView;
+			this.currentMeasureView = currentMeasureView;
+			this.currentPriceView = currentPriceView;
+			this.quantityView = quantityView;
+			this.totalPriceView = totalPriceView;
+			this.itemEditView =itemEditView;
+			this.itemCheckButton = itemCheckButton;
+		
+		 }
 	}
 
 }

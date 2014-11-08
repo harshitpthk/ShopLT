@@ -49,7 +49,7 @@
 	            android:layout_marginLeft="5dp"
 	            android:layout_marginStart="5dp"
 	            android:textColor="#000"
-	            android:text="Basmati"/>
+	            />
 	
 	        <TextView
 	            android:id="@+id/current_measure"
@@ -62,7 +62,7 @@
 	            android:layout_marginLeft="5dp"
 	            android:layout_marginStart="5dp"
 	             android:textColor="@color/text_color"
-	            android:text="30KG"
+	            
 	            android:textSize="14sp" />
 	
 	        <TextView 
@@ -78,7 +78,7 @@
 	            android:layout_marginStart="5dp"
 	             android:textColor="@color/text_color"
 	             android:gravity="top"
-	            android:text="340.00"
+	            
 	            />
 	
 	        <TextView
@@ -93,7 +93,7 @@
 	            android:layout_toStartOf="@+id/total_price"
 	            android:layout_toLeftOf="@+id/total_price"
 	            android:gravity="top|center"
-	            android:text="4" />
+	          />
 	
 	        <Button 
 	            android:id="@+id/item_button"
@@ -104,8 +104,10 @@
 	            android:layout_alignParentEnd="true"
 	            android:background="@color/white"
 	            android:visibility="gone"
-	            android:text="@string/edit"
 	            android:textColor="@color/app_color"/>
+	        
+	        
+	        
 	        <TextView
 	            android:id="@+id/total_price"
 	            android:layout_width="wrap_content"
@@ -114,7 +116,6 @@
 	            android:layout_alignParentBottom="true"
 	            android:layout_alignParentRight="true"
 	            android:layout_alignParentEnd="true"
-	            android:text="total_price"
 	            android:gravity="top|end"
 	            
 	            />

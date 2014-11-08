@@ -93,6 +93,13 @@
             android:value="@integer/google_play_services_version" />
          <uses-library
         	android:name="com.google.android.maps" />
+
+   
+
+    
+   
+
+    <meta-data android:name="com.crashlytics.ApiKey" android:value="d2f5efe75cfe6c05220c1f927e8dfe49b15428f7"/>
          
 
        

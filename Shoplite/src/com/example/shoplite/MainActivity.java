@@ -1,5 +1,7 @@
 package com.example.shoplite;
 
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 import java.util.regex.Pattern;
 
 import retrofit.Callback;
@@ -63,6 +65,7 @@ public class MainActivity extends Activity implements ConnectionInterface  {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+		Fabric.with(this, new Crashlytics());
         
         /*	Set Global Variables
           */

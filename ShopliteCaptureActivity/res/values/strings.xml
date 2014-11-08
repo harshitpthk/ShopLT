@@ -62,5 +62,10 @@
     <string name ="finalize_order_message">Continue to place order, cancel to make changes.</string>
     <string name ="finalize_order_title">Confirm Order?</string>
     <string name ="confirming_order">Confirming Order</string>
+    <string name ="delivery_anchor_title">Your Delivery Location</string>
+    <string name ="delivery_dialog_text">Set Delivery Point</string>
+    <string name ="set_address">Set</string>
+    <string name ="pick_delivery_location">Pick Delivery Location</string>
+    <string name ="pick">Pick</string>
     <string name ="order_summary_heading">Order Summary</string>
 </resources>
