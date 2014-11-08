@@ -67,5 +67,9 @@
     <string name ="set_address">Set</string>
     <string name ="pick_delivery_location">Pick Delivery Location</string>
     <string name ="pick">Pick</string>
+    <string name ="import_all">Import All</string>
+    <string name ="import_selected">Import Selected </string>
     <string name ="order_summary_heading">Order Summary</string>
+    <string name ="import_all_title">Import List</string>
+    <string name ="import_all_message">Import  items from the List ?</string>
 </resources>

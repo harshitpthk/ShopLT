@@ -3,20 +3,28 @@ package com.shoplite.activities;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.shoplite.UI.ItemListAdapter;
-import com.shoplite.UI.SaveListAdapter;
-import com.shoplite.models.ItemCategory;
-
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.shoplite.UI.Controls;
+import com.shoplite.UI.ItemListAdapter;
+import com.shoplite.Utils.Globals;
+import com.shoplite.interfaces.ControlsInterface;
+import com.shoplite.models.ItemCategory;
+
 import eu.livotov.zxscan.R;
 
-public class ItemsDisplayActivity extends Activity {
+public class ItemsDisplayActivity extends Activity implements ControlsInterface{
 
 	private ArrayList<ItemCategory> itemList;
 	private String listName;
@@ -24,6 +32,12 @@ public class ItemsDisplayActivity extends Activity {
     }.getType();
     private ItemListAdapter itemAdapter;
     private ListView itemsListView;
+    
+    private Button importAllItems;
+    private Button importSelectedItems;
+	private AlertDialog alertDialog;
+	private boolean isImportAll;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +52,10 @@ public class ItemsDisplayActivity extends Activity {
 		String ItemListJson = getIntent().getStringExtra("ItemList");
 		Gson gson = new Gson();
 		itemList = gson.fromJson(ItemListJson, listType);
+		importAllItems = (Button) findViewById(R.id.import_all_button);
+		importSelectedItems = (Button) findViewById(R.id.import_selected_button);
+		
+		
 		
 	}
 	@Override
@@ -46,7 +64,44 @@ public class ItemsDisplayActivity extends Activity {
 		super.onResume();
 		itemAdapter = new ItemListAdapter(this, itemList, "basiccartitem");
 		itemsListView.setAdapter(itemAdapter);
+		importAllItems.setOnClickListener(new OnClickListener() {
+			
+			
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				for(int i = 0 ; i < itemList.size() ;i++){
+					itemList.get(i).setSelected(true);
+				}
+				itemAdapter.notifyDataSetChanged();
+				isImportAll = true;
+				importAll();
+			}
+		});
 		
+		importSelectedItems.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				isImportAll = false;
+				importSelected();
+			}
+		});
+		
+		
+	}
+	public void importAll()
+	{
+		Controls.show_alert_dialog(this, this, R.layout.confirm_import_all_dialog, 250);
+		
+		
+	}
+	public void importSelected()
+	{
+		
+		Controls.show_alert_dialog(this, this, R.layout.confirm_import_all_dialog, 250);
 		
 	}
 
@@ -71,5 +126,68 @@ public class ItemsDisplayActivity extends Activity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	/* (non-Javadoc)
+	 * @see com.shoplite.interfaces.ControlsInterface#positive_button_alert_method()
+	 */
+	@Override
+	public void positive_button_alert_method() {
+		// TODO Auto-generated method stub
+		if(isImportAll){
+			Controls.show_loading_dialog(this, "Importing List to Cart");
+			for(int i = 0 ; i < itemList.size();i++)
+			{
+				Globals.item_order_list.add(itemList.get(i)); 
+				Globals.cartTotalPrice += itemList.get(i).getTotalPrice();
+			}
+			Controls.dismiss_progress_dialog();
+			Toast.makeText(this, "List"+ listName +" Imported Successfully", Toast.LENGTH_LONG).show();
+			finish();
+		}
+		else{
+			for(int i = 0 ; i < itemList.size();i++)
+			{
+				Controls.show_loading_dialog(this, "Importing items to Cart");
+				
+				if(itemList.get(i).isSelected()){
+					Globals.item_order_list.add(itemList.get(i)); 
+					Globals.cartTotalPrice += itemList.get(i).getTotalPrice();
+				}
+				Controls.dismiss_progress_dialog();
+				Toast.makeText(this, "Selected Items Imported Successfully", Toast.LENGTH_LONG).show();
+				finish();
+			}
+			
+		}
+		alertDialog.dismiss();
+		
+	}
+	/* (non-Javadoc)
+	 * @see com.shoplite.interfaces.ControlsInterface#negative_button_alert_method()
+	 */
+	@Override
+	public void negative_button_alert_method() {
+		// TODO Auto-generated method stub
+		alertDialog.dismiss();
+		for(int i = 0 ; i < itemList.size() ;i++){
+			itemList.get(i).setSelected(false);
+		}
+		itemAdapter.notifyDataSetChanged();
+	}
+	/* (non-Javadoc)
+	 * @see com.shoplite.interfaces.ControlsInterface#save_alert_dialog(android.app.AlertDialog)
+	 */
+	@Override
+	public void save_alert_dialog(AlertDialog alertDialog) {
+		// TODO Auto-generated method stub
+		this.alertDialog = alertDialog;
+	}
+	/* (non-Javadoc)
+	 * @see com.shoplite.interfaces.ControlsInterface#neutral_button_alert_method()
+	 */
+	@Override
+	public void neutral_button_alert_method() {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -977,7 +977,7 @@ ControlsInterface,PackListInterface
 						shopAtStoreButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.scan_grey));
 				    	shopByListButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.cart_grey));
 				    	orderListButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.purchase_order_blue));
-						CartMenuItem.setVisible(false);
+						CartMenuItem.setVisible(true);
 				        ShopMap.setVisible(false);
 						window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 						getActionBar().setDisplayHomeAsUpEnabled(false);
