@@ -74,10 +74,10 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 		
 	
 	public Button getItemButton() {
-		return itemCheckButton;
+		return itemButton;
 	}
 	public void setItemButton(Button itemButton) {
-		this.itemCheckButton = itemButton;
+		this.itemButton = itemButton;
 	}
 		
 	public NumberPicker getMeasurePicker() {
@@ -106,6 +106,11 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 		
 		setMeasurePicker((CustomNumberPicker)containerView.findViewById(R.id.item_measure_picker));
 		setQtyPicker((CustomNumberPicker)containerView.findViewById(R.id.item_quantity_picker));
+		
+		itemEditView.setVisibility(View.GONE);
+		itemCheckBox.setVisibility(View.GONE);
+		itemButton.setVisibility(View.VISIBLE);
+		
 		
 		delete_button = (ImageButton)containerView.findViewById(R.id.delete_cart_item);
       	delete_button.setOnClickListener(new OnClickListener() {
@@ -141,7 +146,7 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 		});
 	
 		
-		itemCheckButton.setOnClickListener(new OnClickListener() {
+		itemButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {

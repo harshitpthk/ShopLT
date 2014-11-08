@@ -11,6 +11,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 
+import com.shoplite.UI.BasicCartItemCard.ViewHolder;
 import com.shoplite.Utils.ThreadPreconditions;
 import com.shoplite.models.ItemCategory;
 
@@ -65,17 +66,13 @@ public class ItemListAdapter extends BaseAdapter {
 	 @Override
      public View getView( int position,  View convertView, final ViewGroup parent)
      {
+		 ItemCategory itemAdded = cartItemList.get(position);
+			
 		  if (convertView == null) {
 		      convertView = LayoutInflater.from(mContext).inflate(R.layout.cart_item_container, parent, false);  //inflating if convert view is not present to be recycled
-			 
 		  }
-		 else{
-			
-		 }
-		 ItemCategory itemAdded = cartItemList.get(position);
 		 
-		
-		 
+		 	 
 		 
 		  if(type.equalsIgnoreCase("cartItem")){
 			  CartItemCard itemCard = new CartItemCard(mContext,itemAdded);

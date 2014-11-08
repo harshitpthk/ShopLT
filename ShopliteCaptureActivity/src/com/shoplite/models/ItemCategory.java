@@ -17,7 +17,14 @@ public class ItemCategory {
 	private int quantity;
 	private String imageUrl;
 	private boolean isSent;
+	private boolean isSelected;
 	
+	public boolean isSelected() {
+		return isSelected;
+	}
+	public void setSelected(boolean isSelected) {
+		this.isSelected = isSelected;
+	}
 	public int getCurrentItemId() {
 		return currentItemId;
 	}

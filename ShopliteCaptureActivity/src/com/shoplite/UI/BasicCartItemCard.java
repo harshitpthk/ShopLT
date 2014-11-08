@@ -13,6 +13,9 @@ import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -39,7 +42,8 @@ public class BasicCartItemCard extends BaseItemCard{
 	protected TextView quantityView;
 	protected TextView totalPriceView;
 	protected LinearLayout itemEditView;
-	protected Button itemCheckButton;
+	protected Button itemButton;
+	protected CheckBox itemCheckBox;
 	
 	
 	
@@ -151,9 +155,10 @@ public class BasicCartItemCard extends BaseItemCard{
 			quantityView = (TextView)containerView.findViewById(R.id.current_quantity);
 			totalPriceView = (TextView)containerView.findViewById(R.id.total_price);
 			itemEditView =(LinearLayout)containerView.findViewById(R.id.item_edit_view);
-			itemCheckButton = (Button)containerView.findViewById(R.id.item_button);
+			itemButton = (Button)containerView.findViewById(R.id.item_button);
+			itemCheckBox = (CheckBox)containerView.findViewById(R.id.item_checkbox);
 			ViewHolder holder = new ViewHolder(innerView,itemNameView,itemImageView,
-			currentMeasureView,currentPriceView,quantityView,totalPriceView,itemEditView,itemCheckButton);
+			currentMeasureView,currentPriceView,quantityView,totalPriceView,itemEditView,itemButton,itemCheckBox);
 		
 			container.setTag(holder);
 			
@@ -170,7 +175,8 @@ public class BasicCartItemCard extends BaseItemCard{
 				quantityView = holder.quantityView;
 				totalPriceView = holder.totalPriceView;
 				itemEditView = holder.itemEditView;
-				itemCheckButton = holder.itemCheckButton;
+				itemButton = holder.itemCheckButton;
+				itemCheckBox = holder.itemCheckBox;
 			}
 		
 		super.setViewLayout(this.containerView.getId());
@@ -178,17 +184,33 @@ public class BasicCartItemCard extends BaseItemCard{
 		
 		
 		itemEditView.setVisibility(View.GONE);
-		itemCheckButton.setVisibility(View.VISIBLE);
+		itemButton.setVisibility(View.GONE);
+		itemCheckBox.setVisibility(View.VISIBLE);
 		
-		itemCheckButton.setOnClickListener(new OnClickListener() {
+		itemCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			
 			@Override
-			public void onClick(View v) {
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				// TODO Auto-generated method stub
+				if(isChecked){
+					item.setSelected(true);
+				}
+				else{
+					item.setSelected(false);
+				}
 				
 			}
 		});
+				
 		
-		setActionButtonText(context.getResources().getString(R.string.pick));
+		if(item.isSelected()){
+			itemCheckBox.setChecked(true);
+		}
+		else{
+			itemCheckBox.setChecked(false);
+		}
+		
+		setCheckBoxText(context.getResources().getString(R.string.pick));
 		updateView();
 		
 		
@@ -199,7 +221,12 @@ public class BasicCartItemCard extends BaseItemCard{
 	 */
 	@Override
 	public void setActionButtonText(String text) {
-		itemCheckButton.setText(text);
+		itemButton.setText(text);
+	}
+	
+	public void setCheckBoxText(String text)
+	{
+		itemCheckBox.setText(text);
 	}
 
 	/* (non-Javadoc)
@@ -240,10 +267,12 @@ public class BasicCartItemCard extends BaseItemCard{
 		 TextView totalPriceView;
 		 LinearLayout itemEditView;
 		 Button itemCheckButton;
+		  CheckBox itemCheckBox;
+			
 		 
 		 public  ViewHolder(View innerView, TextView itemNameView, ImageView itemImageView,
 		  TextView currentMeasureView, TextView currentPriceView, TextView quantityView
-		  , TextView totalPriceView, LinearLayout itemEditView, Button itemCheckButton){
+		  , TextView totalPriceView, LinearLayout itemEditView, Button itemCheckButton,CheckBox itemCheckBox){
 			 this.innerView = innerView;
 			this.itemNameView = itemNameView;
 			this.itemImageView = itemImageView;
@@ -253,7 +282,7 @@ public class BasicCartItemCard extends BaseItemCard{
 			this.totalPriceView = totalPriceView;
 			this.itemEditView =itemEditView;
 			this.itemCheckButton = itemCheckButton;
-		
+			this.itemCheckBox = itemCheckBox;
 		 }
 	}
 

@@ -47,6 +47,7 @@ public class ItemsDisplayActivity extends Activity {
 		itemAdapter = new ItemListAdapter(this, itemList, "basiccartitem");
 		itemsListView.setAdapter(itemAdapter);
 		
+		
 	}
 
 	@Override
