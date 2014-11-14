@@ -11,6 +11,7 @@ import retrofit.client.Response;
 import android.util.Log;
 
 import com.shoplite.Utils.Globals;
+import com.shoplite.Utils.util;
 import com.shoplite.connection.ConnectionInterface;
 import com.shoplite.connection.ServerConnectionMaker;
 import com.shoplite.connection.ServiceProvider;
@@ -49,12 +50,7 @@ public class SubmitOrderStar implements ConnectionInterface {
 		this.calling_class_object = callee;
 		this.orderId = orderID;
 		this.shopId = shopId;
-		String shopURL = null;
-		if(Globals.connected_shop_url != null)
-			shopURL  = "https://" + Globals.connected_shop_url;
-		else
-			shopURL  = "https://" + "planetp1940097444trial.hanatrial.ondemand.com/shop-sys/";
-		
+		String shopURL = util.starURL;
 		try {
 			ServerConnectionMaker.sendRequest(this, shopURL);
 			Log.e("sendPackList"," called");

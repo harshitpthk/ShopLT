@@ -267,6 +267,7 @@ public class CheckoutActivity extends Activity {
 			SubmitOrderStar submitOrderStar = new SubmitOrderStar();
 			submitOrderStar.submitOrderToStar(this,orderID,Globals.connected_shop_id );
 			Toast.makeText(getActivity(), "Submit To Planet Success" + orderID.toString(), Toast.LENGTH_SHORT).show();
+			getActivity().finish();
 		}
 
 		/* (non-Javadoc)
