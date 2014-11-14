@@ -9,10 +9,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.text.format.DateFormat;
 
 import com.google.gson.Gson;
-import com.shoplite.models.ItemCategory;
+import com.shoplite.models.PreviousOrder;
+import com.shoplite.models.Product;
 import com.shoplite.models.SaveList;
 import com.shoplite.models.Shop;
 
@@ -39,6 +39,23 @@ public class DbHelper extends  SQLiteOpenHelper{
     private static final String LIST_ENTRIES="LIST_ENTRIES";
     private static final String TOTAL_ITEMS = "TOTAL_ITEMS";
     private static final String SAVED_DATE="SAVED_DATE";
+    
+    //PREVIOU ORDERS
+    private static final String ORDERS_TABLE = "ORDERS_TABLE";
+    private static final String ORDER_ID = "ORDER_ID";
+    private static final String ORDER_TOTAL_ITEMS ="TOTAL_ITEMS";
+    private static final String ORDER_DATE = "DATE";
+    private static final String ORDER_AMOUNT = "ORDER_AMOUNT";
+    private static final String LAST_KNOWN_STATUS = "LAST_KNOWN_STATUS";
+    
+    private static final String ORDERS_TABLE_CREATE=
+    		"CREATE TABLE" + ORDERS_TABLE +"(" +
+    				ORDER_ID + " INTEGER PRIMARY KEY NOT NULL, " +
+    				ORDER_TOTAL_ITEMS + " ORDER_TOTAL_ITEMS NOT NULL, " +
+    				ORDER_DATE + " TEXT NOT NULL, " +
+    				ORDER_AMOUNT + " REAL NOT NULL, " +
+    				LAST_KNOWN_STATUS + " TEXT NOT NULL ";
+    
     
     private static final String DICTIONARY_TABLE_CREATE =
                 "CREATE TABLE " + TABLE_NAME + " (" +
@@ -69,6 +86,7 @@ public class DbHelper extends  SQLiteOpenHelper{
         db.execSQL(DICTIONARY_TABLE_CREATE);
         db.execSQL(SHOP_LOCATION_TABLE_CREATE);
         db.execSQL(SHOPPING_LIST_TABLE_CREATE);
+        db.execSQL(ORDERS_TABLE_CREATE);
     }
 
 
@@ -244,7 +262,7 @@ public class DbHelper extends  SQLiteOpenHelper{
 	}
 
 
-	public  boolean  storeShoppingList(String listName ,ArrayList<ItemCategory> shoppingList)
+	public  boolean  storeShoppingList(String listName ,ArrayList<Product> shoppingList)
 	{
 		String listEntries = new Gson().toJson(shoppingList);
 		int totalItems = shoppingList.size();
@@ -338,6 +356,12 @@ public class DbHelper extends  SQLiteOpenHelper{
         }
 		
 		return allSavedLists;
+		
+	}
+	
+	public ArrayList<PreviousOrder> getPreviosOrders()
+	{
+		return null;
 		
 	}
 }

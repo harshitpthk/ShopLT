@@ -26,7 +26,7 @@ import com.shoplite.Utils.Constants.DBState;
 import com.shoplite.activities.CheckoutActivity;
 import com.shoplite.interfaces.ControlsInterface;
 import com.shoplite.interfaces.PackListInterface;
-import com.shoplite.models.ItemCategory;
+import com.shoplite.models.Product;
 import com.shoplite.models.OrderItemDetail;
 import com.shoplite.models.PackList;
 import com.shoplite.models.SaveList;
@@ -119,7 +119,7 @@ public class CartFragment extends Fragment implements ControlsInterface,PackList
 		
 //	@Override
 //	public boolean onCreateOptionsMenu(Menu menu) {
-//		// Inflate the menu; this adds items to the action bar if it is present.
+//		// Inflate the menu; this adds products to the action bar if it is present.
 //		super.onCreateOptionsMenu(menu, getActivity().getMenuInflater());
 //		return false;
 //	}
@@ -203,10 +203,10 @@ public class CartFragment extends Fragment implements ControlsInterface,PackList
 		
 		
 		PackList pl = new PackList();
-		pl.items = ItemCategory.getToSendList(Globals.item_order_list);
+		pl.products = Product.getToSendList(Globals.item_order_list);
 		pl.state = DBState.INSERT;
 	
-		ItemCategory.setSentList(Globals.item_order_list);
+		Product.setSentList(Globals.item_order_list);
 		
 		if(CartGlobals.CartServerRequestQueue.size() == 0){
 			CartGlobals.CartServerRequestQueue.add(pl);

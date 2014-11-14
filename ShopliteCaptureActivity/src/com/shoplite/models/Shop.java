@@ -56,7 +56,7 @@ public class Shop implements ConnectionInterface {
 		Shop.calling_class_object = calling_class_object;
 		this.get_shop_list_bool = true;
 		Shop.areaLocation = areaLocation;
-		ServerConnectionMaker.sendRequest(this,util.starURL);
+		ServerConnectionMaker.sendRequest(this);
 		
 	}
 	public void connect_to_shop(ShopInterface calling_class_object , String shopURL, String shopName, Location shopLoc)
@@ -67,7 +67,7 @@ public class Shop implements ConnectionInterface {
 		this.url = shopURL;
 		this.location = shopLoc;
 		shopURL= "https://" + shopURL;
-		ServerConnectionMaker.sendRequest(this,shopURL);
+		ServerConnectionMaker.sendRequest(this);
 		
 	}
 	
@@ -77,7 +77,7 @@ public class Shop implements ConnectionInterface {
 			
 		if(this.connect_to_shop_bool){
 			final Shop shopToConnect = this;
-			serviceProvider.loginShop(ServerConnectionMaker.star_sessionID, new Callback<JsonObject>(){
+			serviceProvider.loginShop(shopToConnect.getId(), new Callback<JsonObject>(){
 
 				@Override
 				public void failure(RetrofitError arg0) {
@@ -88,7 +88,6 @@ public class Shop implements ConnectionInterface {
 					//Toast.makeText(getBaseContext(), arg0.toString(), Toast.LENGTH_LONG).show();
 					Log.e("Retrofit error", arg0.getUrl());
 					Log.e("Retrofit error", arg0.getMessage());
-					//Controls.dismiss_progress_dialog();
 					ServerConnectionMaker.recieveResponse(null);
 				}
 
@@ -99,10 +98,7 @@ public class Shop implements ConnectionInterface {
 					Log.e("Retrofit Success", result.toString());
 					ServerConnectionMaker.recieveResponse(response);
 					Globals.connected_to_shop_success = true;
-					Globals.connected_shop_id = shopToConnect.getId();
-					Globals.connected_shop_name = shopToConnect.getName();
-					Globals.connected_shop_url = shopToConnect.getUrl();
-					Globals.connected_shop_location = shopToConnect.getLocation();
+					Globals.connectedShop = shopToConnect;
 					Globals.dbhelper.storeShopLocation(shopToConnect.getName(), shopToConnect.getUrl(), shopToConnect.getLocation().getLatitude(), shopToConnect.getLocation().getLongitude());
 					Shop.calling_class_object.shop_connected();
 					

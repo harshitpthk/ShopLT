@@ -14,7 +14,7 @@ import android.widget.NumberPicker;
 import android.widget.NumberPicker.OnValueChangeListener;
 import android.widget.TextView;
 
-import com.shoplite.models.ItemCategory;
+import com.shoplite.models.Product;
 import com.squareup.picasso.Picasso;
 
 import eu.livotov.zxscan.R;
@@ -39,7 +39,7 @@ public class AddItemCard extends BaseItemCard {
 	{
 		
 	}
-	public AddItemCard(Context context,ItemCategory item) {
+	public AddItemCard(Context context,Product item) {
 		super(context,item);
 		item.setCurrentItemId(item.getItemList().get(0).getId());
 		item.setCurrentMeasure(item.getItemList().get(0).getName());

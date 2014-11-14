@@ -29,7 +29,7 @@ import com.shoplite.Utils.Globals;
 import com.shoplite.Utils.Constants.DBState;
 import com.shoplite.fragments.CartFragment;
 import com.shoplite.interfaces.PackListInterface;
-import com.shoplite.models.ItemCategory;
+import com.shoplite.models.Product;
 import com.shoplite.models.OrderItemDetail;
 import com.shoplite.models.PackList;
 
@@ -53,10 +53,10 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 	protected boolean animationMode = false;
 	   
 	
-	public CartItemCard(Context context,ItemCategory addedItem){
+	public CartItemCard(Context context,Product addedItem){
 		super(context,addedItem);
 	}
-	public void setParentView(Context context,ViewGroup container, ArrayList<ItemCategory> cartItemListRecieved,
+	public void setParentView(Context context,ViewGroup container, ArrayList<Product> cartItemListRecieved,
 			 ItemListAdapter cartItemAdapter)
 	{
 		this.cartItemList = cartItemListRecieved;
@@ -119,7 +119,6 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 			public void onClick(View v) {
 				if(isAnimationMode()){
 					
-					Toast.makeText(mContext, "Cart Array Adapter delete", Toast.LENGTH_SHORT).show();
 					final Animation animation = AnimationUtils.loadAnimation(mContext,R.anim.slideout);
 				    animation.setAnimationListener(new AnimationListener() {
 				        @Override
@@ -348,6 +347,7 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 	 	animationMode = false;
 	 	getItemButton().setEnabled(true);
 	 	cartItemList.remove(getItem());
+	 	Globals.item_added_list.remove(Globals.item_added_list.indexOf(getItem().getCurrentItemId()));
 	 	Globals.cartTotalPrice -= item.getTotalPrice();
 	 	CaptureActivity.actionBar.setTitle(r.getText(R.string.shopping_cart)+
 				 "    "+  Double.toString(Math.round(Globals.cartTotalPrice*100.0/100.0))+" " + r.getText(R.string.currency));
@@ -371,17 +371,17 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 	@Override
 	public void PackListSuccess(PackList obj) {
 		if(obj.state==DBState.DELETE){
-			for(int i = 0 ;i < obj.items.size() ; i++){
-				if(CartGlobals.cartList.contains(obj.items.get(i)))
-					CartGlobals.cartList.remove(obj.items.get(i));
-				if(CartGlobals.recentDeletedItems.contains(obj.items.get(i)))
-					CartGlobals.recentDeletedItems.remove(obj.items.get(i));
+			for(int i = 0 ;i < obj.products.size() ; i++){
+				if(CartGlobals.cartList.contains(obj.products.get(i)))
+					CartGlobals.cartList.remove(obj.products.get(i));
+				if(CartGlobals.recentDeletedItems.contains(obj.products.get(i)))
+					CartGlobals.recentDeletedItems.remove(obj.products.get(i));
 			}
 			
 		}
 		else if (obj.state == DBState.INSERT){
-			for(int i = 0 ;i < obj.items.size() ; i++){
-				CartGlobals.cartList.add(obj.items.get(i));
+			for(int i = 0 ;i < obj.products.size() ; i++){
+				CartGlobals.cartList.add(obj.products.get(i));
 			}
 		}
 		else{
@@ -403,7 +403,7 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 		deleteList.add(itemToDelete);
 		PackList pl = new PackList();
 		pl.state = Constants.DBState.DELETE;
-		pl.items = deleteList;
+		pl.products = deleteList;
 		CartGlobals.CartServerRequestQueue.add(pl);
 		pl.sendPackList(this);
 	}

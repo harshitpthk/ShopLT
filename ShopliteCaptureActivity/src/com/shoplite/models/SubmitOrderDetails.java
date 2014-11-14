@@ -23,22 +23,21 @@ import com.shoplite.interfaces.SubmitOrderInterface;
  */
 public class SubmitOrderDetails   implements ConnectionInterface {
 
-	Constants.ORDERState state;
+	Constants.ORDERStatus status;
 	String address;
 	double latitude;
 	double longitude;
-	String usernameNumber;
 	double amount;
 	String refNumber;
 	private SubmitOrderInterface calling_class_object;
 	
 
-	public Constants.ORDERState getState() {
-		return state;
+	public Constants.ORDERStatus getState() {
+		return status;
 	}
 
-	public void setState(Constants.ORDERState state) {
-		this.state = state;
+	public void setState(Constants.ORDERStatus state) {
+		this.status = state;
 	}
 
 	public String getAddress() {
@@ -65,14 +64,7 @@ public class SubmitOrderDetails   implements ConnectionInterface {
 		this.longitude = longitude;
 	}
 
-	public String getUsernameNumber() {
-		return usernameNumber;
-	}
-
-	public void setUsernameNumber(String usernameNumber) {
-		this.usernameNumber = usernameNumber;
-	}
-
+	
 	public double getAmount() {
 		return amount;
 	}
@@ -89,17 +81,12 @@ public class SubmitOrderDetails   implements ConnectionInterface {
 		this.refNumber = refNumber;
 	}
 
-	public void submitOrderToPlanet(SubmitOrderInterface callee)
+	public void submitOrder(SubmitOrderInterface callee)
 	{
 		this.calling_class_object = callee;
-		String shopURL = null;
-		if(Globals.connected_shop_url != null)
-			shopURL  = "https://" + Globals.connected_shop_url;
-		else
-			shopURL  = "https://" + "planetp1940097444trial.hanatrial.ondemand.com/shop-sys/";
 		
 		try {
-			ServerConnectionMaker.sendRequest(this, shopURL);
+			ServerConnectionMaker.sendRequest(this);
 			Log.e("sendPackList"," called");
 			}
 		catch (RetrofitError e) {
@@ -138,7 +125,7 @@ public class SubmitOrderDetails   implements ConnectionInterface {
 				
 				ServerConnectionMaker.recieveResponse(response);
 				Log.e("SubmitOrderSuccess", response.toString());
-				callee.submitToPlanetSuccess(orderID);
+				callee.submitOrderSuccess(orderID);
 				
 				
 			}

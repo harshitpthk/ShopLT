@@ -111,8 +111,8 @@ import com.shoplite.interfaces.ItemInterface;
 import com.shoplite.interfaces.LocationInterface;
 import com.shoplite.interfaces.PackListInterface;
 import com.shoplite.interfaces.ShopInterface;
-import com.shoplite.models.Item;
-import com.shoplite.models.ItemCategory;
+import com.shoplite.models.ProductVariance;
+import com.shoplite.models.Product;
 import com.shoplite.models.Location;
 import com.shoplite.models.OrderItemDetail;
 import com.shoplite.models.PackList;
@@ -376,7 +376,7 @@ ControlsInterface,PackListInterface
     	MapUI.mMap = MapUI.mMapFragment.getMap();
     	MapUI.mMap.setOnCameraChangeListener(onCameraChange);
     	MapUI.mMap.setOnMarkerClickListener(this);
-    	//MapUI.mMap.setMyLocationEnabled(true);
+    	MapUI.mMap.setMyLocationEnabled(true);
     	
     	hasSurface = false;
        // inactivityTimer = new InactivityTimer(this);
@@ -399,8 +399,11 @@ ControlsInterface,PackListInterface
     {
         super.onResume();
        // inactivityTimer.onResume();
-        location loc = new location();
-		loc.getLocation(this,this);
+        
+        if(!location.made_use_of_location){
+        	location loc = new location();
+			loc.getLocation(this,this);
+        }
 		
         
         // CameraManager must be initialized here, not in onCreate(). This is necessary because we don't
@@ -577,7 +580,7 @@ ControlsInterface,PackListInterface
 
 			@Override
 			public boolean onSuggestionSelect(int arg0) {
-				Toast.makeText(getApplicationContext(), Integer.toString(arg0), Toast.LENGTH_SHORT).show();
+				//Toast.makeText(getApplicationContext(), Integer.toString(arg0), Toast.LENGTH_SHORT).show();
 				return true;
 			}});
         MenuItem shopSearch = (MenuItem) menu.findItem(R.id.search);
@@ -1070,7 +1073,6 @@ ControlsInterface,PackListInterface
 			CartMenuItem.setVisible(true);
 			MenuItem shopSearch = (MenuItem) MenuReference.findItem(R.id.search);
 			shopSearch.collapseActionView();
-			
 			shopSearch.setVisible(false);
 			Globals.delivery_location = new Location(MapUI.mMap.getCameraPosition().target.latitude,
 					MapUI.mMap.getCameraPosition().target.longitude);
@@ -1089,7 +1091,12 @@ ControlsInterface,PackListInterface
 				mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, ldrawer);
 		        setCurrentShopping(0);
 			}
-	    	
+	    	location.removeLocationListener();
+	    	MapUI.mMap.setMyLocationEnabled(false);
+	    	MapUI.markerList=null;
+	    	MapUI.mMap = null;
+	    	MapUI.mMapFragment = null;
+	    	MapUI.mMapView = null;
 	    	
 		
 		
@@ -1114,8 +1121,9 @@ ControlsInterface,PackListInterface
 			
 		}
 		else{
-			if(shopObject.getName().equals(Globals.connected_shop_name)){
-				Toast.makeText(this, ("You are Connected to " + Globals.connected_shop_name), Toast.LENGTH_SHORT).show();
+			
+			if(Globals.connectedShop != null && shopObject.getName().equals(Globals.connectedShop.getName())){
+				Toast.makeText(this, ("You are Connected to " + Globals.connectedShop.getName()), Toast.LENGTH_SHORT).show();
 			}
 			else{
 				connect_to_shop(shopObject);
@@ -1175,16 +1183,23 @@ ControlsInterface,PackListInterface
     	final Animation animScale = AnimationUtils.loadAnimation(this, R.anim.buttonscale);
     	v.startAnimation(animScale);
     	if(Globals.item_order_list != null && Globals.item_order_list.size() > 0){
-    		
-	    	OrderItemDetail itemToDelete = new OrderItemDetail(Globals.item_order_list.get(Globals.item_order_list.size()-1).getCurrentItemId(),Globals.item_order_list.get(Globals.item_order_list.size()-1).getCurrentQty());
+    		Globals.cartTotalPrice -= Globals.item_order_list.get(Globals.item_order_list.size()-1).getTotalPrice();
+	    	OrderItemDetail itemToDelete = new OrderItemDetail(Globals.item_order_list.get(
+	    			Globals.item_order_list.size()-1).getCurrentItemId(),Globals.item_order_list.get(Globals.item_order_list.size()-1).getCurrentQty());
+	    	
 	    	CartGlobals.recentDeletedItems.add(Globals.item_order_list.get(Globals.item_order_list.size()-1));
+	    	
+	    	Globals.item_added_list.remove(Globals.item_added_list.indexOf(
+	    			Globals.item_order_list.get(Globals.item_order_list.size()-1).getCurrentItemId()));
+		 	
 	    	Globals.item_order_list.remove(Globals.item_order_list.get(Globals.item_order_list.size()-1));
-			deletePackList(itemToDelete);
-			Toast.makeText(this, "Last Scanned Item Removed", Toast.LENGTH_SHORT).show();
+	    	
+	    	deletePackList(itemToDelete);
+			Toast.makeText(this, "Last Scanned Product Removed", Toast.LENGTH_SHORT).show();
 			
     	}
     	else{
-    		Toast.makeText(Globals.ApplicationContext, "Your Cart is Empty", Toast.LENGTH_SHORT).show();
+    		Toast.makeText(this, "Your Cart is Empty", Toast.LENGTH_SHORT).show();
     		
     	}
     		
@@ -1214,16 +1229,16 @@ ControlsInterface,PackListInterface
 		//AnimatedLinearLayout fullShopDetailsView = (AnimatedLinearLayout) getLayoutInflater().inflate(R.layout.full_detail_layout, shop_details_container, false);
 		//shop_details_container.addView(fullShopDetailsView);
 		if(Globals.connected_to_shop_success){
-			MapUI.move_map_camera(new LatLng(Globals.connected_shop_location.getLatitude(),
-					Globals.connected_shop_location.getLongitude()));
+			MapUI.move_map_camera(new LatLng(Globals.connectedShop.getLocation().getLatitude(),
+					Globals.connectedShop.getLocation().getLongitude()));
 		}
 	}
-	public  void show_item_siblings(View view,ItemCategory item)
+	
+	public  void show_item_siblings(View view,Product item)
 	{
 	    	
 	    	DrawerLayout itemDrawerLayout = (DrawerLayout)AddDialog.findViewById(R.id.drawer_add_item);
 	    	FrameLayout itemDrawer = (FrameLayout)AddDialog.findViewById(R.id.simmilar_item_container);
-	    	
 	    	prgBar = new ProgressBar(this);
 	    	FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
 	    	lp.gravity = Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL;
@@ -1269,13 +1284,13 @@ ControlsInterface,PackListInterface
 	@Override
 	public void shop_connected() {
 		
-		double lat =  Globals.connected_shop_location.getLatitude();
-		double lng =  Globals.connected_shop_location.getLongitude();
+		double lat =  Globals.connectedShop.getLocation().getLatitude();
+		double lng =  Globals.connectedShop.getLocation().getLongitude();
 		
 		LatLng coordinate = new LatLng(lat, lng);
 		//MapUI.mMap.addMarker(new MarkerOptions().position(coordinate).draggable(false).title(Globals.connected_shop_name).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
 		
-		shop_detail_heading.setText("Welcome to " + Globals.connected_shop_name);
+		shop_detail_heading.setText("Welcome to " + Globals.connectedShop.getName());
 		
 		shop_detail_description.setText("You can shop various " +
 				"products through your cam scanner " +
@@ -1403,19 +1418,19 @@ ControlsInterface,PackListInterface
 
 
 	
-	//Item Methods
+	//ProductVariance Methods
 	
 
 	@Override
-	public void getItemList(ItemCategory item) {
+	public void getItemList(Product item) {
 		
-		Item itm = new Item(0, null, 0, 0);
+		ProductVariance itm = new ProductVariance(0, null, 0, 0);
     	itm.getItems(this,item.getBrandId());
 	}
 
 	
 	@Override
-	public void ItemGetSuccess(final ItemCategory itemFetched) {
+	public void ItemGetSuccess(final Product itemFetched) {
 		
 		Controls.show_alert_dialog(this, this, R.layout.activity_add_item,450);
         
@@ -1425,7 +1440,7 @@ ControlsInterface,PackListInterface
 		 addToItem.setActionButtonOnClick(new OnClickActionButtonListener() {
 			
 			@Override
-			public void onClick(ItemCategory item, View view) {
+			public void onClick(Product item, View view) {
 				show_item_siblings(view,itemFetched);
 			}
 		});
@@ -1435,7 +1450,7 @@ ControlsInterface,PackListInterface
 	}
 
 	@Override
-	public void ItemListGetSuccess(ArrayList<ItemCategory> itemSimmilarFamily) {
+	public void ItemListGetSuccess(ArrayList<Product> itemSimmilarFamily) {
 		
 		FrameLayout drawerFrameLayout = (FrameLayout)AddDialog.findViewById(R.id.simmilar_item_container);
 		drawerFrameLayout.removeView(prgBar);
@@ -1464,8 +1479,14 @@ ControlsInterface,PackListInterface
 		*/
 		AddDialog.dismiss();
 		//for(int i = 0 ; i < 10 ; i++){
+		if(!Globals.item_added_list.contains(addToItem.getItem().getCurrentItemId())){
+			Globals.item_added_list.add(addToItem.getItem().getCurrentItemId());
 			Globals.item_order_list.add(addToItem.getItem()); 
 			Globals.cartTotalPrice += addToItem.getItem().getTotalPrice();
+		}
+		else{
+			Toast.makeText(this, "Product already present in your Cart", Toast.LENGTH_SHORT).show();
+		}
 		//}
 		
 		sendPackList();
@@ -1503,15 +1524,15 @@ ControlsInterface,PackListInterface
 	 */
 	@Override
 	public void sendPackList() {
-			int count = ItemCategory.countNotSent(Globals.item_order_list);
+			int count = Product.countNotSent(Globals.item_order_list);
 		
 		if(count >= Constants.MAX_NOT_SENT_ITEMS){
 					
 			PackList pl = new PackList();
-			pl.items = ItemCategory.getToSendList(Globals.item_order_list);
+			pl.products = Product.getToSendList(Globals.item_order_list);
 			pl.state = DBState.INSERT;
 		
-			ItemCategory.setSentList(Globals.item_order_list);
+			Product.setSentList(Globals.item_order_list);
 			
 			if(CartGlobals.CartServerRequestQueue.size() == 0){
 				CartGlobals.CartServerRequestQueue.add(pl);
@@ -1531,17 +1552,17 @@ ControlsInterface,PackListInterface
 	public void PackListSuccess(PackList obj) {
 		// TODO Auto-generated method stub
 		if(obj.state==DBState.DELETE){
-			for(int i = 0 ;i < obj.items.size() ; i++){
-				if(CartGlobals.cartList.contains(obj.items.get(i)))
-					CartGlobals.cartList.remove(obj.items.get(i));
-				if(CartGlobals.recentDeletedItems.contains(obj.items.get(i)))
-					CartGlobals.recentDeletedItems.remove(obj.items.get(i));
+			for(int i = 0 ;i < obj.products.size() ; i++){
+				if(CartGlobals.cartList.contains(obj.products.get(i)))
+					CartGlobals.cartList.remove(obj.products.get(i));
+				if(CartGlobals.recentDeletedItems.contains(obj.products.get(i)))
+					CartGlobals.recentDeletedItems.remove(obj.products.get(i));
 			}
 			
 		}
 		else if (obj.state == DBState.INSERT){
-			for(int i = 0 ;i < obj.items.size() ; i++){
-				CartGlobals.cartList.add(obj.items.get(i));
+			for(int i = 0 ;i < obj.products.size() ; i++){
+				CartGlobals.cartList.add(obj.products.get(i));
 			}
 		}
 		else{
@@ -1565,8 +1586,8 @@ ControlsInterface,PackListInterface
 	public void deletePackList(OrderItemDetail itemToDelete) {
 		// TODO Auto-generated method stub
 		PackList pl = new PackList();
-		pl.items = new ArrayList<OrderItemDetail>();
-		pl.items.add(itemToDelete);
+		pl.products = new ArrayList<OrderItemDetail>();
+		pl.products.add(itemToDelete);
 		pl.state = DBState.DELETE;
 		CartGlobals.CartServerRequestQueue.add(pl);
 		pl.sendPackList(this);

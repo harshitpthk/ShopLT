@@ -19,20 +19,14 @@ import com.shoplite.interfaces.PackListInterface;
 public class PackList implements ConnectionInterface {
 
     public DBState state;
-	public ArrayList<OrderItemDetail> items;
+	public ArrayList<OrderItemDetail> products;
 	public  PackListInterface calling_class_object;
 	
 	public  void sendPackList(PackListInterface calling_class_object)
 	{
 		this.calling_class_object = calling_class_object;
-		String shopURL = null;
-		if(Globals.connected_shop_url != null)
-			shopURL  = "https://" + Globals.connected_shop_url;
-		else
-			shopURL  = "https://" + "planetp1940097444trial.hanatrial.ondemand.com/shop-sys/";
-		
 		try {
-			ServerConnectionMaker.sendRequest(this, shopURL);
+			ServerConnectionMaker.sendRequest(this);
 			Log.e("sendPackList"," called");
 			}
 		catch (RetrofitError e) {
@@ -63,13 +57,8 @@ public class PackList implements ConnectionInterface {
 					Log.e("PackList error", response.getMessage());
 					Log.e("PackList error", response.getStackTrace().toString());
 					ServerConnectionMaker.recieveResponse(null);
-					String shopURL = null;
-					if(Globals.connected_shop_url != null)
-						shopURL  = "https://" + Globals.connected_shop_url;
-					else
-						shopURL  = "https://" + "planetp1940097444trial.hanatrial.ondemand.com/shop-sys/";
-			
-					ServerConnectionMaker.sendRequest(CartGlobals.CartServerRequestQueue.peekFirst(), shopURL);
+					
+					ServerConnectionMaker.sendRequest(CartGlobals.CartServerRequestQueue.peekFirst());
 					
 				}
 
@@ -81,12 +70,7 @@ public class PackList implements ConnectionInterface {
 					calling_class_object_internal.PackListSuccess(packlist);
 					CartGlobals.CartServerRequestQueue.removeFirst();
 					if(!CartGlobals.CartServerRequestQueue.isEmpty()){
-						String shopURL = null;
-						if(Globals.connected_shop_url != null)
-							shopURL  = "https://" + Globals.connected_shop_url;
-						else
-							shopURL  = "https://" + "planetp1940097444trial.hanatrial.ondemand.com/shop-sys/";
-						ServerConnectionMaker.sendRequest(CartGlobals.CartServerRequestQueue.peekFirst(), shopURL);
+						ServerConnectionMaker.sendRequest(CartGlobals.CartServerRequestQueue.peekFirst());
 					}
 					
 					

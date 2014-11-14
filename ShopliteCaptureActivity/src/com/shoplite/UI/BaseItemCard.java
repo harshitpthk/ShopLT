@@ -3,16 +3,16 @@ package com.shoplite.UI;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import com.shoplite.models.ItemCategory;
+import com.shoplite.models.Product;
 
 public abstract class BaseItemCard {
 
 	protected Context mContext;
 	protected int viewLayout = -1;
-	protected ItemCategory item;
+	protected Product item;
 	protected OnClickActionButtonListener mOnClickActionButtonListener;
 	public interface OnClickActionButtonListener {
-        public void onClick(ItemCategory itemCategory, View view);
+        public void onClick(Product itemCategory, View view);
     }
 		
 	//constructors
@@ -21,7 +21,7 @@ public abstract class BaseItemCard {
 		
 	}
 	
-	public BaseItemCard(Context context,ItemCategory item){
+	public BaseItemCard(Context context,Product item){
 		setItem(item);
 		setmContext(context);
 	}
@@ -45,10 +45,10 @@ public abstract class BaseItemCard {
 	}
 	
 	
-	public ItemCategory getItem() {
+	public Product getItem() {
 		return item;
 	}
-	public void setItem(ItemCategory item) {
+	public void setItem(Product item) {
 		this.item = item;
 	}
 	

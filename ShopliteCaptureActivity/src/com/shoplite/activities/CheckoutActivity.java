@@ -1,16 +1,9 @@
 package com.shoplite.activities;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,18 +18,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.shoplite.UI.Controls;
-import com.shoplite.Utils.CartGlobals;
 import com.shoplite.Utils.Constants;
-import com.shoplite.Utils.Constants.DBState;
 import com.shoplite.Utils.Globals;
 import com.shoplite.interfaces.ControlsInterface;
-import com.shoplite.interfaces.PackListInterface;
 import com.shoplite.interfaces.SubmitOrderInterface;
-import com.shoplite.models.ItemCategory;
-import com.shoplite.models.OrderItemDetail;
-import com.shoplite.models.PackList;
 import com.shoplite.models.SubmitOrderDetails;
-import com.shoplite.models.SubmitOrderStar;
 
 import eu.livotov.zxscan.R;
 
@@ -65,7 +51,7 @@ public class CheckoutActivity extends Activity {
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
+		// Inflate the menu; this adds products to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.order, menu);
 		return true;
 	}
@@ -219,67 +205,55 @@ public class CheckoutActivity extends Activity {
 			SubmitOrderDetails submitOrder = new SubmitOrderDetails();
 			if(isOrderTakeAway){
 				submitOrder.setAmount(Globals.cartTotalPrice);
-				submitOrder.setUsernameNumber(Globals.dbhelper.getItem("phoneNo"));
 				submitOrder.setAddress("takeAway");
-				submitOrder.setLatitude(Globals.connected_shop_location.getLatitude());
-				submitOrder.setLongitude(Globals.connected_shop_location.getLongitude());
+				submitOrder.setLatitude(Globals.connectedShop.getLocation().getLatitude());
+				submitOrder.setLongitude(Globals.connectedShop.getLocation().getLongitude());
 				if(isPayOnline){
-					submitOrder.setState(Constants.ORDERState.FORDELIVERY);
+					submitOrder.setState(Constants.ORDERStatus.FORDELIVERY);
 					submitOrder.setRefNumber("xyz");
 				}
 				else{
-					submitOrder.setState(Constants.ORDERState.FORPAYMENT);
+					submitOrder.setState(Constants.ORDERStatus.FORPAYMENT);
 					}
 			}
 			else{
 				submitOrder.setAmount(Globals.cartTotalPrice);
-				submitOrder.setUsernameNumber(Globals.dbhelper.getItem("phoneNo"));
 				submitOrder.setAddress(primaryHomeAddress.getText().toString());
 				submitOrder.setLatitude(Globals.delivery_location.getLatitude());
 				submitOrder.setLongitude(Globals.delivery_location.getLongitude());
 				if(isPayOnline){
-					submitOrder.setState(Constants.ORDERState.FORHOMEDELIVERY);
+					submitOrder.setState(Constants.ORDERStatus.FORHOMEDELIVERY);
 					submitOrder.setRefNumber("xyz");
 				}
 				else{
-					submitOrder.setState(Constants.ORDERState.FORHOMEDELIVERYPAYMENT);
+					submitOrder.setState(Constants.ORDERStatus.FORHOMEDELIVERYPAYMENT);
 						}
 			}
-			submitOrderToPlanet(submitOrder);
+			submitOrder(submitOrder);
 			alertDialog.dismiss();
 			Controls.show_loading_dialog(getActivity(), getResources().getString(R.string.confirming_order));
 		}
 
 		/**
-		 * @param submitOrder
+		 * @param submit_order
 		 */
-		private void submitOrderToPlanet(SubmitOrderDetails submitOrder) {
+		private void submitOrder(SubmitOrderDetails submit_order) {
 			// TODO Auto-generated method stub
-			submitOrder.submitOrderToPlanet(this);
+			submit_order.submitOrder(this);
 		}
 		
 		/* (non-Javadoc)
 		 * @see com.shoplite.interfaces.SubmitOrderInterface#submitToPlanetSuccess()
 		 */
 		@Override
-		public void submitToPlanetSuccess(Integer orderID) {
+		public void submitOrderSuccess(Integer orderID) {
 			// TODO Auto-generated method stub
-			SubmitOrderStar submitOrderStar = new SubmitOrderStar();
-			submitOrderStar.submitOrderToStar(this,orderID,Globals.connected_shop_id );
-			Toast.makeText(getActivity(), "Submit To Planet Success" + orderID.toString(), Toast.LENGTH_SHORT).show();
+			
+			Toast.makeText(getActivity(), "Order Submitted Successfully,Check Order Status for more info.", Toast.LENGTH_LONG).show();
 			getActivity().finish();
 		}
 
-		/* (non-Javadoc)
-		 * @see com.shoplite.interfaces.SubmitOrderInterface#submitToStarSuccess()
-		 */
-		@Override
-		public void submitToStarSuccess() {
-			// TODO Auto-generated method stub
-			Toast.makeText(getActivity(), "Submit To Star Success" ,Toast.LENGTH_SHORT).show();
-			
-		}
-
+	
 		/**
 		 * 
 		 */

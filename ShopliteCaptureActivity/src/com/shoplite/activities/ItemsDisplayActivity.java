@@ -20,15 +20,15 @@ import com.shoplite.UI.Controls;
 import com.shoplite.UI.ItemListAdapter;
 import com.shoplite.Utils.Globals;
 import com.shoplite.interfaces.ControlsInterface;
-import com.shoplite.models.ItemCategory;
+import com.shoplite.models.Product;
 
 import eu.livotov.zxscan.R;
 
 public class ItemsDisplayActivity extends Activity implements ControlsInterface{
 
-	private ArrayList<ItemCategory> itemList;
+	private ArrayList<Product> itemList;
 	private String listName;
-	private Type listType = new TypeToken<ArrayList<ItemCategory>>() {
+	private Type listType = new TypeToken<ArrayList<Product>>() {
     }.getType();
     private ItemListAdapter itemAdapter;
     private ListView itemsListView;
@@ -107,7 +107,7 @@ public class ItemsDisplayActivity extends Activity implements ControlsInterface{
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
+		// Inflate the menu; this adds products to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.items_display, menu);
 		return true;
 	}
@@ -133,28 +133,54 @@ public class ItemsDisplayActivity extends Activity implements ControlsInterface{
 	@Override
 	public void positive_button_alert_method() {
 		// TODO Auto-generated method stub
+		boolean itemsAlreadyPresent = false;
 		if(isImportAll){
 			Controls.show_loading_dialog(this, "Importing List to Cart");
 			for(int i = 0 ; i < itemList.size();i++)
 			{
-				Globals.item_order_list.add(itemList.get(i)); 
-				Globals.cartTotalPrice += itemList.get(i).getTotalPrice();
+				if(!Globals.item_added_list.contains(itemList.get(i).getCurrentItemId())){
+					Globals.item_added_list.add(itemList.get(i).getCurrentItemId());
+					
+					Globals.item_order_list.add(itemList.get(i)); 
+					Globals.cartTotalPrice += itemList.get(i).getTotalPrice();
+				}
+				else{
+					itemsAlreadyPresent = true;
+				}
 			}
 			Controls.dismiss_progress_dialog();
-			Toast.makeText(this, "List"+ listName +" Imported Successfully", Toast.LENGTH_LONG).show();
+			if(itemsAlreadyPresent){
+				Toast.makeText(this, "List"+ listName +" Imported Successfully with certain Items already present", Toast.LENGTH_LONG).show();
+			}
+			else{
+				Toast.makeText(this, "List"+ listName +" Imported Successfully", Toast.LENGTH_LONG).show();
+				
+			}
 			finish();
 		}
 		else{
 			for(int i = 0 ; i < itemList.size();i++)
 			{
-				Controls.show_loading_dialog(this, "Importing items to Cart");
+				Controls.show_loading_dialog(this, "Importing products to Cart");
 				
 				if(itemList.get(i).isSelected()){
-					Globals.item_order_list.add(itemList.get(i)); 
-					Globals.cartTotalPrice += itemList.get(i).getTotalPrice();
+					if(!Globals.item_added_list.contains(itemList.get(i).getCurrentItemId())){
+						Globals.item_added_list.add(itemList.get(i).getCurrentItemId());
+						Globals.item_order_list.add(itemList.get(i)); 
+						Globals.cartTotalPrice += itemList.get(i).getTotalPrice();
+					}
+					else{
+						itemsAlreadyPresent = true;
+					}
 				}
 				Controls.dismiss_progress_dialog();
-				Toast.makeText(this, "Selected Items Imported Successfully", Toast.LENGTH_LONG).show();
+				if(itemsAlreadyPresent){
+					Toast.makeText(this, "Selected Items Imported Successfully with certain Items already present", Toast.LENGTH_LONG).show();
+				
+				}
+				else{
+					Toast.makeText(this, "Selected Items Imported Successfully", Toast.LENGTH_LONG).show();
+				}
 				finish();
 			}
 			

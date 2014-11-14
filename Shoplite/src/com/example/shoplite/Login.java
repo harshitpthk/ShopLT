@@ -29,11 +29,8 @@ public class Login implements ConnectionInterface {
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
 		long time = calendar.getTimeInMillis();
-		
 		int factor = (int)time/(63000);
-		
 		String seed = util.generateSeed((long)factor,8);
-		
 		String authKey = key+seed;
 		String authcode="";
 		try {
@@ -54,7 +51,7 @@ public class Login implements ConnectionInterface {
 		generateAuthCode(key);
 		this.email = email;
 		this.mContext = context;
-		ServerConnectionMaker.sendRequest(this,util.starURL);
+		ServerConnectionMaker.sendRequest(this);
 	}
 
 	@Override
@@ -69,8 +66,8 @@ public class Login implements ConnectionInterface {
 					Log.e("Retrofit error", "503"); // Use another code if you'd prefer
 			    }
 				//Toast.makeText(getBaseContext(), arg0.toString(), Toast.LENGTH_LONG).show();
-				Log.e("Retrofit error", arg0.getUrl());
-				Log.e("Retrofit error", arg0.getMessage());
+				//Log.e("Retrofit error", arg0.getUrl());
+				//Log.e("Retrofit error", arg0.getMessage());
 				ServerConnectionMaker.recieveResponse(null);
 			}
 

@@ -8,6 +8,6 @@ package com.shoplite.interfaces;
  *
  */
 public interface SubmitOrderInterface {
-	public void submitToPlanetSuccess(Integer orderId);
-	public void submitToStarSuccess();
+	public void submitOrderSuccess(Integer orderId);
+	
 }

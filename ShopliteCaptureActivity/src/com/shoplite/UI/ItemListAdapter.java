@@ -13,7 +13,7 @@ import android.widget.CheckBox;
 
 import com.shoplite.UI.BasicCartItemCard.ViewHolder;
 import com.shoplite.Utils.ThreadPreconditions;
-import com.shoplite.models.ItemCategory;
+import com.shoplite.models.Product;
 
 import eu.livotov.zxscan.R;
 
@@ -23,7 +23,7 @@ import eu.livotov.zxscan.R;
  */
 public class ItemListAdapter extends BaseAdapter {
 
-	protected ArrayList<ItemCategory> cartItemList;
+	protected ArrayList<Product> cartItemList;
 	protected Context mContext;
 	protected String type;
 	 
@@ -32,7 +32,7 @@ public class ItemListAdapter extends BaseAdapter {
 	 * @param resource
 	 * @param objects
 	 */
-	public ItemListAdapter(Context context, ArrayList<ItemCategory> item_order_list,String type) {
+	public ItemListAdapter(Context context, ArrayList<Product> item_order_list,String type) {
 		super();
 		this.cartItemList = item_order_list;
 		this.mContext = context;
@@ -46,12 +46,12 @@ public class ItemListAdapter extends BaseAdapter {
      }
 	 
 	 @Override
-    public ItemCategory getItem(int position) {
+    public Product getItem(int position) {
         return cartItemList.get(position);
     }
 	 
 	 //update method to ask view to redraw themselves in the list view
-	 public void updateCart(ArrayList<ItemCategory> cartItemList) {
+	 public void updateCart(ArrayList<Product> cartItemList) {
 		 ThreadPreconditions.checkOnMainThread();   
 		 this.cartItemList = cartItemList;
 	     notifyDataSetChanged();
@@ -66,7 +66,7 @@ public class ItemListAdapter extends BaseAdapter {
 	 @Override
      public View getView( int position,  View convertView, final ViewGroup parent)
      {
-		 ItemCategory itemAdded = cartItemList.get(position);
+		 Product itemAdded = cartItemList.get(position);
 			
 		  if (convertView == null) {
 		      convertView = LayoutInflater.from(mContext).inflate(R.layout.cart_item_container, parent, false);  //inflating if convert view is not present to be recycled
@@ -76,15 +76,15 @@ public class ItemListAdapter extends BaseAdapter {
 		 
 		  if(type.equalsIgnoreCase("cartItem")){
 			  CartItemCard itemCard = new CartItemCard(mContext,itemAdded);
-			  itemCard.setParentView((ViewGroup) convertView,cartItemList,this);		 // populate the views by sending convert view as parent to the cart Item card
+			  itemCard.setParentView((ViewGroup) convertView,cartItemList,this);		 // populate the views by sending convert view as parent to the cart ProductVariance card
 		  }
 		  else if(type.equalsIgnoreCase("drawerItem")){
 			  DrawerItemCard itemCard = new DrawerItemCard(mContext, itemAdded);
-			  itemCard.setParentView((ViewGroup) convertView,cartItemList,this);		 // populate the views by sending convert view as parent to the cart Item card
+			  itemCard.setParentView((ViewGroup) convertView,cartItemList,this);		 // populate the views by sending convert view as parent to the cart ProductVariance card
 		 }
 		  else if(type.equalsIgnoreCase("basicCartItem")){
 			  BasicCartItemCard itemCard = new BasicCartItemCard( mContext,itemAdded);
-			  itemCard.setParentView((ViewGroup) convertView,cartItemList,this);		 // populate the views by sending convert view as parent to the cart Item card
+			  itemCard.setParentView((ViewGroup) convertView,cartItemList,this);		 // populate the views by sending convert view as parent to the cart ProductVariance card
 				
 				
 		  }

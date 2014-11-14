@@ -2,13 +2,13 @@ package com.shoplite.models;
 
 import java.util.ArrayList;
 
-public class ItemCategory {
+public class Product {
 
-	private int categoryId;
 	private int id;
+	private int categoryId;
 	private String name;
 	private int brandId;
-	private ArrayList<Item> itemList;
+	private ArrayList<ProductVariance> varianceList;
 	private int currentItemId;
 	private int currentQty;
 	private String currentMeasure;
@@ -102,22 +102,22 @@ public class ItemCategory {
 		this.categoryId = categoryId;
 	}
 	
-	public ItemCategory(int id, String name) {
+	public Product(int id, String name) {
 		super();
 		this.id = id;
 		this.name = name;
 	}
-	public ArrayList<Item> getItemList() {
-		return itemList;
+	public ArrayList<ProductVariance> getItemList() {
+		return varianceList;
 	}
-	public void setItemList(ArrayList<Item> itemList) {
-		this.itemList = itemList;
+	public void setItemList(ArrayList<ProductVariance> itemList) {
+		this.varianceList = itemList;
 	}
 	
 	
 	
 	
-	public static int countNotSent(ArrayList<ItemCategory> item_order_list){
+	public static int countNotSent(ArrayList<Product> item_order_list){
 		int count = 0;
 		for(int i = 0 ; i < item_order_list.size();i++){
 			if(!item_order_list.get(i).isSent()){
@@ -127,7 +127,7 @@ public class ItemCategory {
 		return count;
 	}
 	
-	public static void setSentList(ArrayList<ItemCategory> item_order_list) {
+	public static void setSentList(ArrayList<Product> item_order_list) {
 		int i;
 		for(i = 0 ; i < item_order_list.size() ;i++){
 			if(!item_order_list.get(i).isSent()){
@@ -136,7 +136,7 @@ public class ItemCategory {
 		}
 	}
 	
-	public static ArrayList<OrderItemDetail> getToSendList(ArrayList<ItemCategory> item_order_list)
+	public static ArrayList<OrderItemDetail> getToSendList(ArrayList<Product> item_order_list)
 	{
 		int i;
 		ArrayList<OrderItemDetail> toSendList = new ArrayList<OrderItemDetail>();

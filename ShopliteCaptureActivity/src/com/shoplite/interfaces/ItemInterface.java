@@ -2,14 +2,14 @@ package com.shoplite.interfaces;
 
 import java.util.ArrayList;
 
-import com.shoplite.models.ItemCategory;
+import com.shoplite.models.Product;
 
 public interface ItemInterface {
 
 	
-	public void getItemList(ItemCategory item);
+	public void getItemList(Product item);
 	
-	public void ItemGetSuccess(ItemCategory item);
+	public void ItemGetSuccess(Product item);
 	
-	public void ItemListGetSuccess(ArrayList<ItemCategory> itemFamily);
+	public void ItemListGetSuccess(ArrayList<Product> itemFamily);
 }

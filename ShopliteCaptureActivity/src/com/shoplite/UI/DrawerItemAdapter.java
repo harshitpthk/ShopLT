@@ -16,7 +16,7 @@ import android.widget.FrameLayout;
 
 import com.google.zxing.client.android.CaptureActivity;
 import com.shoplite.UI.BaseItemCard.OnClickActionButtonListener;
-import com.shoplite.models.ItemCategory;
+import com.shoplite.models.Product;
 
 import eu.livotov.zxscan.R;
 
@@ -24,7 +24,7 @@ import eu.livotov.zxscan.R;
  * @author I300291
  *
  */
-public class DrawerItemAdapter extends ArrayAdapter<ItemCategory>{
+public class DrawerItemAdapter extends ArrayAdapter<Product>{
 
 	/**
 	 * @param context
@@ -34,14 +34,14 @@ public class DrawerItemAdapter extends ArrayAdapter<ItemCategory>{
 	 protected Context mContext;
 	 
 	 protected int mRowLayoutId = R.layout.drawer_item_container;
-	 protected ArrayList<ItemCategory> drawerItemList;
+	 protected ArrayList<Product> drawerItemList;
 	 protected int innerviewTypeCount=1;
 
 	private BaseCardView addItemContainer;
 
 	private AlertDialog AddDialog;
 
-	public DrawerItemAdapter(Context context,ArrayList<ItemCategory> itemSimmilarFamily) {
+	public DrawerItemAdapter(Context context,ArrayList<Product> itemSimmilarFamily) {
 			super(context,R.layout.drawer_item_container , itemSimmilarFamily);
 			mContext = context;
 			this.drawerItemList = itemSimmilarFamily;
@@ -59,7 +59,7 @@ public class DrawerItemAdapter extends ArrayAdapter<ItemCategory>{
 			 	drawerItem.setActionButtonOnClick(new OnClickActionButtonListener() {
 					
 					@Override
-					public void onClick(ItemCategory item, View view) {
+					public void onClick(Product item, View view) {
 						// TODO Auto-generated method stub
 						CaptureActivity.addToItem = new AddItemCard(mContext,item);
 						BaseCardView itemContainer =(BaseCardView)AddDialog.findViewById(R.id.itemView);
@@ -70,7 +70,7 @@ public class DrawerItemAdapter extends ArrayAdapter<ItemCategory>{
 				    	CaptureActivity.addToItem.setActionButtonOnClick(new OnClickActionButtonListener() {
 							
 							@Override
-							public void onClick(ItemCategory itemCategory, View view) {
+							public void onClick(Product itemCategory, View view) {
 								itemDrawerLayout.openDrawer(itemDrawer);
 							}
 						});

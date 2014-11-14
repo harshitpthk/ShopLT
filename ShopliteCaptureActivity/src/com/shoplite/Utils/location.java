@@ -1,11 +1,5 @@
 package com.shoplite.Utils;
 
-import com.shoplite.connection.ConnectionInterface;
-import com.shoplite.connection.ServiceProvider;
-import com.shoplite.interfaces.LocationInterface;
-
-
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -19,7 +13,9 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-public class location implements ConnectionInterface {
+import com.shoplite.interfaces.LocationInterface;
+
+public class location  {
 	public Activity mActivity;
 	public Intent mIntent;
 	public int count = 0;
@@ -28,8 +24,9 @@ public class location implements ConnectionInterface {
 	public static Location  current_location = null;
 	public static boolean made_use_of_location = false;
 	private int location_listened_count = 0;
-	private final LocationManager lm = (LocationManager) Globals.ApplicationContext.getSystemService(Context.LOCATION_SERVICE);
-	private LocationListener locationListener;
+	private final static LocationManager lm = (LocationManager) Globals.ApplicationContext.getSystemService(Context.LOCATION_SERVICE);
+	private static LocationListener locationListener;
+	
 	
 	public void getLocation(final LocationInterface calling_class_object,Activity activity) {
 		
@@ -120,6 +117,10 @@ public class location implements ConnectionInterface {
 		
     }
 	
+	public static void removeLocationListener(){
+		lm.removeUpdates(locationListener);
+		
+	}
 	private final Handler handler = new Handler() {
 	     public void handleMessage(Message msg) {
 	          if(msg.arg1 == 1){
@@ -154,10 +155,6 @@ public class location implements ConnectionInterface {
 		}
 	}
 
-	@Override
-	public void sendRequest(ServiceProvider sp) {
-		
-	} 
 	
 	
 }

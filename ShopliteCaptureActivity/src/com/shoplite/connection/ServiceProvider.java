@@ -10,47 +10,44 @@ import retrofit.http.POST;
 
 import com.google.gson.JsonObject;
 import com.shoplite.models.Input;
-import com.shoplite.models.ItemCategory;
+import com.shoplite.models.Product;
 import com.shoplite.models.Shop;
 import com.shoplite.models.User;
 
 public interface ServiceProvider {
 
-	@POST("/service/user/registeruser")
+	@POST("/registeruser")
 	void signup(@Body User obj , Callback<Integer> cb  );
 	
-	@POST("/service/user/adduser")
+	@POST("/adduser")
 	void addUser(@Body Integer auth_token, Callback<ArrayList<String>> cb);
 	
-	@POST("/service/user/getitem")
-	void getItem(@Body Input itemInput, Callback<ItemCategory> callback);
+	@POST("/getproduct")
+	void getItem(@Body Input itemInput, Callback<Product> callback);
 	
-	@POST("/service/user/getitems")
-	void getItems(@Body Input brandInput, Callback<ArrayList<ItemCategory>> callback);
+	@POST("/getproduct")
+	void getItems(@Body Input brandInput, Callback<ArrayList<Product>> callback);
 	
-	@POST("/service/user/login")
+	@POST("/login")
 	void login(@Header("shoplite-client-id") String authCode,@Body String email,Callback<String> cb);
 	
-	@POST("/service/user/getshop")
+	@POST("/getshop")
 	void getshop(@Body com.shoplite.models.Location loc, Callback<Shop> cb);
 
-	@POST("/service/user/login")
-	void loginShop(@Body String sessionID, Callback<JsonObject> callback);
+	@POST("/connect")
+	void loginShop(@Body Integer shopID, Callback<JsonObject> callback);
 	
-	@POST("/service/user/getshoplist")
+	@POST("/getshoplist")
 	void getshoplist(@Body  com.shoplite.models.Location loc, Callback<ArrayList<Shop>> callback);
 
 	
-	@POST("/service/user/packitems")
+	@POST("/packproducts")
 	void packList(@Body com.shoplite.models.PackList packlist, Callback<JsonObject> callback);
 	
-	@POST("/service/user/submitorder")
+	@POST("/submitorder")
 	void submitOrder(@Body com.shoplite.models.SubmitOrderDetails submitOrderDetails, Callback<Integer> orderID);
 	
-	@POST("/service/user/createorder")
-	void createOrderStar(@Body com.shoplite.models.SubmitOrderStar submitOrderStarDetails, Callback<String> response);
-	
-	
+		
 	@GET("/")
 	void getPlacesSuggestion(Callback<JsonObject> callback);
 	

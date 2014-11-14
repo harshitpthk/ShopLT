@@ -39,8 +39,8 @@ import com.shoplite.Utils.Globals;
 import com.shoplite.interfaces.ControlsInterface;
 import com.shoplite.interfaces.ItemInterface;
 import com.shoplite.interfaces.PackListInterface;
-import com.shoplite.models.Item;
-import com.shoplite.models.ItemCategory;
+import com.shoplite.models.ProductVariance;
+import com.shoplite.models.Product;
 import com.shoplite.models.OrderItemDetail;
 import com.shoplite.models.PackList;
 import com.shoplite.models.Shop;
@@ -131,13 +131,13 @@ public final class CaptureActivityHandler extends Handler
             Bundle extras = result.getExtras();
             String QRCValue = (String) extras.get("SCAN_RESULT");       //{"id":"10000","itemcategory":"10000"}
             Gson gson =  new Gson();
-            Item QRItem = null;
+            ProductVariance QRItem = null;
             try{
-            	 QRItem =  gson.fromJson(QRCValue, Item.class);
+            	 QRItem =  gson.fromJson(QRCValue, ProductVariance.class);
             	  getItem(QRItem);
             }
             catch(Exception e){
-            	Controls.show_single_action_dialog("Item Not Found","This Code doesn't contain any product information.","Okay" ,activity,activity );
+            	Controls.show_single_action_dialog("ProductVariance Not Found","This Code doesn't contain any product information.","Okay" ,activity,activity );
                	Toast.makeText(activity.getBaseContext(), e.toString(), Toast.LENGTH_LONG).show();
             	e.printStackTrace();
             	//Log.e("Dialog Error",e.getMessage());	
@@ -190,7 +190,7 @@ public final class CaptureActivityHandler extends Handler
     }
     // Custom methods
     
-    public  void getItem(Item QRItem)
+    public  void getItem(ProductVariance QRItem)
     {
     	
     	QRItem.getItem(activity);

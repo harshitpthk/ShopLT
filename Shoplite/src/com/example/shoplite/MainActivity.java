@@ -176,19 +176,19 @@ public class MainActivity extends Activity implements ConnectionInterface  {
 		        	 
 		         
 		        }
-		         Toast.makeText(this, "returned OK" + scannedCode, Toast.LENGTH_SHORT).show();
+		        // Toast.makeText(this, "returned OK" + scannedCode, Toast.LENGTH_SHORT).show();
 		         
 		         
 		      } else if (resultCode == RESULT_CANCELED) {
 		         // Handle cancel
-		    	  Toast.makeText(this, "returned null  ", Toast.LENGTH_SHORT).show();
+		    	//  Toast.makeText(this, "returned null  ", Toast.LENGTH_SHORT).show();
 		      }
 		   }
 		}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the menu; this adds products to the action bar if it is present.
        
         return true;
     }
@@ -274,8 +274,7 @@ public class MainActivity extends Activity implements ConnectionInterface  {
 			// perform the user login attempt.
 			
 			Controls.show_loading_dialog(this, "Signing Up");
-			
-			ServerConnectionMaker.sendRequest(this,util.starURL);
+			ServerConnectionMaker.sendRequest(this);
 			
 			 
 		}
@@ -293,7 +292,6 @@ public class MainActivity extends Activity implements ConnectionInterface  {
 		user.setName(mName);
 		
 
-		final MainActivity ma = this;
 		
 		serviceProvider.signup(user, new Callback<Integer>(){
 
@@ -304,8 +302,8 @@ public class MainActivity extends Activity implements ConnectionInterface  {
 					Toast.makeText(getBaseContext(), "Network Error", Toast.LENGTH_LONG).show();
 			    }
 				Toast.makeText(getBaseContext(), arg0.toString(), Toast.LENGTH_LONG).show();
-				Log.e("Retrofit error", arg0.getUrl());
-				Log.e("Retrofit error", arg0.getMessage());
+				//Log.e("Retrofit error", arg0.getUrl());
+				//Log.e("Retrofit error", arg0.getMessage());
 				ServerConnectionMaker.recieveResponse(null);
 			}
 
@@ -313,25 +311,29 @@ public class MainActivity extends Activity implements ConnectionInterface  {
 			public void success(Integer auth_token, Response response) {
 				
 				
-				Toast.makeText(getBaseContext(), auth_token.toString(), Toast.LENGTH_LONG).show();
+				//Toast.makeText(getBaseContext(), auth_token.toString(), Toast.LENGTH_LONG).show();
 				
 				Globals.dbhelper.setItem("name", mName);
 				Globals.dbhelper.setItem("email", mEmail);
 				Globals.dbhelper.setItem("phoneNo", mPhoneNo);
 				Globals.dbhelper.setItem("auth-token", auth_token.toString() ); //currently setting auth_code here later will be received by sms
-				
-			    
-			    
 				ServerConnectionMaker.recieveResponse(response);
 				Globals.dbhelper.setItem("JSESSIONID",ServerConnectionMaker.star_sessionID );
-				ma.finish();
-	        	Intent i = new Intent(ma, Verification.class);
-	        	startActivity(i);
+				startVerification();
+				
 			}
 			
     		
     	});
 		
+	}
+
+
+	protected void startVerification() {
+		// TODO Auto-generated method stub
+		this.finish();
+    	Intent i = new Intent(this, Verification.class);
+    	startActivity(i);
 	}
 
 

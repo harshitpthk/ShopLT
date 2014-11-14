@@ -17,7 +17,6 @@ public class ServerConnectionMaker  {
 	
 	
 	
-	public static String planet_sessionID = null;
 	public static String star_sessionID = null;
 	public static String userSessionID = null;
 
@@ -25,7 +24,7 @@ public class ServerConnectionMaker  {
 
 	 
 	
-	public static  void sendRequest(ConnectionInterface ci,final String URL){
+	public static  void sendRequest(ConnectionInterface ci){
 			
 		//adding of custom headers in the service provider
 		RequestInterceptor requestInterceptor = new RequestInterceptor() {
@@ -34,20 +33,15 @@ public class ServerConnectionMaker  {
 			@Override
 			  public void intercept(RequestFacade request) {
 			    request.addHeader("Access-Control-Allow-Star", "shoplite");
-			    if(URL.contains("planet")){
-			    	 request.addHeader("Cookie", planet_sessionID);
-			    }
-			    else{
-			    	request.addHeader("Cookie", star_sessionID);
-			    }
-			   
+			    request.addHeader("Cookie", star_sessionID);
+			    			   
 			  }
 			  
 			  
 			};
 				
 		RestAdapter restAdapter = new RestAdapter.Builder()
-		.setEndpoint(URL)
+		.setEndpoint(util.starURL)
 		.setRequestInterceptor(requestInterceptor)
 		.setLogLevel(RestAdapter.LogLevel.FULL)
 		.build();
@@ -70,14 +64,8 @@ public class ServerConnectionMaker  {
 			for(Header header : headers){
 				if("set-cookie".equalsIgnoreCase(header.getName())){
 					if(header.getValue().contains("JSESSIONID="))
-						if(response.getUrl().contains("planet")){
-							planet_sessionID = header.getValue();
-							Log.e("planet session ID",planet_sessionID);
-						}
-						else{
-							star_sessionID = header.getValue();
-							Log.e("star session ID",star_sessionID);
-						}
+						star_sessionID = header.getValue();
+						Log.e("star session ID",star_sessionID);
 						
 						//add_sessionID_request.addHeader("Access-Control-Allow-Star", "shoplite");
 						

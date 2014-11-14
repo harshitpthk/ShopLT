@@ -44,7 +44,7 @@ public class Verification extends Activity implements ConnectionInterface {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
+		// Inflate the menu; this adds products to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.verification, menu);
 		return true;
 	}
@@ -75,7 +75,7 @@ public class Verification extends Activity implements ConnectionInterface {
 	{
 		Controls.show_loading_dialog(this, "Resending");
 		resend = true;
-		ServerConnectionMaker.sendRequest(this,util.starURL);
+		ServerConnectionMaker.sendRequest(this);
 		
 	}
 	
@@ -88,7 +88,7 @@ public class Verification extends Activity implements ConnectionInterface {
 			ServerConnectionMaker.star_sessionID = Globals.dbhelper.getItem("JSESSIONID_STAR" );
     	
 		}
-		ServerConnectionMaker.sendRequest(this,util.starURL);
+		ServerConnectionMaker.sendRequest(this);
 	}
 
 	@Override
@@ -120,8 +120,6 @@ public class Verification extends Activity implements ConnectionInterface {
 					Globals.dbhelper.setItem("cliendID", clientID.get(0).toString());
 					String email = Globals.dbhelper.getItem("email");
 					ServerConnectionMaker.recieveResponse(response);
-					
-					
 					Toast.makeText(getBaseContext(), clientID.get(0).toString(), Toast.LENGTH_LONG).show();
 					Login ln = new Login();
 					ln.login(clientID.get(0).toString(), email ,vf);
@@ -139,8 +137,6 @@ public class Verification extends Activity implements ConnectionInterface {
 			user.setPhno(phoneNo);
 			//user.setLocation(loc);
 			user.setName(name);
-			
-			
 			serviceProvider.signup(user, new Callback<Integer>(){
 
 				@Override
@@ -158,8 +154,6 @@ public class Verification extends Activity implements ConnectionInterface {
 
 				@Override
 				public void success(Integer arg0, Response response) {
-					
-					
 					Integer auth_token = arg0;
 					Toast.makeText(getBaseContext(), arg0.toString(), Toast.LENGTH_LONG).show();
 					ServerConnectionMaker.recieveResponse(response);

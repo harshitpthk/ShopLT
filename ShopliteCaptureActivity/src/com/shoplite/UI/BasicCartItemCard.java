@@ -22,7 +22,7 @@ import android.widget.TextView;
 
 import com.google.zxing.client.android.CaptureActivity;
 import com.shoplite.Utils.Globals;
-import com.shoplite.models.ItemCategory;
+import com.shoplite.models.Product;
 import com.squareup.picasso.Picasso;
 
 import eu.livotov.zxscan.R;
@@ -48,10 +48,10 @@ public class BasicCartItemCard extends BaseItemCard{
 	
 	
 	//members to notify change in the List view
-	protected ArrayList<ItemCategory> cartItemList;
+	protected ArrayList<Product> cartItemList;
 	protected ItemListAdapter itemListAdapter;
 	
-	public BasicCartItemCard(Context context,ItemCategory item)
+	public BasicCartItemCard(Context context,Product item)
 	{
 		super(context,item);
 	}
@@ -247,7 +247,7 @@ public class BasicCartItemCard extends BaseItemCard{
 	 * @param itemListAdapter
 	 */
 	public void setParentView(ViewGroup container,
-			ArrayList<ItemCategory> cartItemListRecieved,
+			ArrayList<Product> cartItemListRecieved,
 			ItemListAdapter itemListAdapter) {
 		// TODO Auto-generated method stub
 		this.cartItemList = cartItemListRecieved;

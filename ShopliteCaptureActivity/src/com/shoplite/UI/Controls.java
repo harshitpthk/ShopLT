@@ -15,7 +15,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 
 import com.shoplite.interfaces.ControlsInterface;
-import com.shoplite.models.ItemCategory;
+import com.shoplite.models.Product;
 
 import eu.livotov.zxscan.R;
 public class Controls {
@@ -69,7 +69,7 @@ public class Controls {
 		calling_class_object.save_alert_dialog(alertDialog);
 	}
 
-	public static void show_add_item_dialog_spinner(Context context,AlertDialog AddDialog,ItemCategory itemFamily)
+	public static void show_add_item_dialog_spinner(Context context,AlertDialog AddDialog,Product itemFamily)
 	{
 		 
 		

@@ -14,7 +14,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.shoplite.models.ItemCategory;
+import com.shoplite.models.Product;
 import com.squareup.picasso.Picasso;
 
 import eu.livotov.zxscan.R;
@@ -35,7 +35,7 @@ public class DrawerItemCard extends BaseItemCard {
 	 * @param item
 	 * @param container 
 	 */
-	public DrawerItemCard(Context context,ItemCategory item) {
+	public DrawerItemCard(Context context,Product item) {
 		super(context,item);
 				
 	}
@@ -144,7 +144,7 @@ public class DrawerItemCard extends BaseItemCard {
 	 * @param itemListAdapter
 	 */
 	public void setParentView(ViewGroup convertView,
-			ArrayList<ItemCategory> cartItemList,
+			ArrayList<Product> cartItemList,
 			ItemListAdapter itemListAdapter) {
 		// TODO Auto-generated method stub
 		
