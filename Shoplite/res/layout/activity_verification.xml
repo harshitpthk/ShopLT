@@ -18,6 +18,7 @@
             android:text="@string/verify"
             android:typeface="sans"
      />
+     
     <TextView
         android:id="@+id/verification_message"
         android:layout_width="wrap_content"

@@ -77,7 +77,7 @@
 	              
 	        />
 			<LinearLayout
-			    android:id="@+id/main_info_view"
+			    android:id="@+id/map_dialog"
 			    android:background="@drawable/shadow"
 			    android:orientation="vertical"
 			    android:layout_width="match_parent"

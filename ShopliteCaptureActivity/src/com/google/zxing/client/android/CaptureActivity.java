@@ -99,6 +99,7 @@ import com.shoplite.Utils.Constants.DBState;
 import com.shoplite.Utils.Globals;
 import com.shoplite.Utils.PlacesAutoComplete;
 import com.shoplite.Utils.location;
+import com.shoplite.activities.SettingsActivity;
 import com.shoplite.fragments.CameraFragment;
 import com.shoplite.fragments.CartFragment;
 import com.shoplite.fragments.ContainerFragment;
@@ -138,42 +139,50 @@ ControlsInterface,PackListInterface
 
     private static final String TAG = CaptureActivity.class.getSimpleName();
     private static final long DEFAULT_INTENT_RESULT_DURATION_MS = 1L;
-	public static AlertDialog AddDialog;
-    private CameraManager cameraManager;
+	private CameraManager cameraManager;
     private CaptureActivityHandler handler;
     private Result savedResultToShow;
     private boolean hasSurface;
     private Collection<BarcodeFormat> decodeFormats;
     private String characterSet;
-    //  private InactivityTimer inactivityTimer;
+    private InactivityTimer inactivityTimer;
     private BeepManager beepManager;
-    public ListView ldrawer;
-    public DrawerLayout mDrawerLayout;
-    public CartFragment cartFrag = new CartFragment();
-    public OrderFragment orderFrag = new OrderFragment();
-    public CameraFragment camFrag = new CameraFragment();
-    public ContainerFragment conFrag = new ContainerFragment();
-    private String[] main_action = {"Groceries","Fruits & Veg","Beverages/Health-Drinks","Dairy/Eggs","Ready to Eat/Packed Foods","Personnel Care","Household","Stationery"};
     SurfaceHolder.Callback cameraSurfaceCallback = this;
-    private ActionBarDrawerToggle mDrawerToggle;
-    private Window window;
-	private Menu MenuReference;
-	public String current_container_fragment = null;
-	public static  SearchView shopSearchView = null;
-    public ProgressBar  prgBar;
-    public TextView shop_detail_heading;
-    public TextView shop_detail_description;
-    public Button startShop;
+    
+   
     public static ButteryProgressBar progressBar;
     public static FrameLayout decorView;
+    
+    private FrameLayout mainFragmentContainer;
+	private View mainTabsView;
+    private CartFragment cartFrag = new CartFragment();
+    private OrderFragment orderFrag = new OrderFragment();
+    private CameraFragment camFrag = new CameraFragment();
+    private ContainerFragment conFrag = new ContainerFragment();
+    
+    private ListView ldrawer;
+    private DrawerLayout mDrawerLayout;
+    private String[] main_action = {"Groceries","Fruits & Veg","Beverages/Health-Drinks","Dairy/Eggs","Ready to Eat/Packed Foods","Personnel Care","Household","Stationery"};
+    private ActionBarDrawerToggle mDrawerToggle;
+    
+    
+    private Window window;
+	private Menu MenuReference;
+	public static  SearchView shopSearchView = null;
+    public ProgressBar  prgBar;
+    public TextView shopDetailHeading;
+    public TextView shopDetailDescription;
+    public Button startShop;
+    
     public static boolean isProgressBarAdded;
     private ImageButton shopByListButton;
     private ImageButton shopAtStoreButton;
     private ImageButton orderListButton;
     private Marker deliveryMarker;
-	private TextView deliveryDialogText;
+	//private TextView deliveryDialogText;
 	private String addressText ;
 	private Circle circle;
+	public static AlertDialog AddDialog;
     public static AddItemCard addToItem;
     public static ActionBar actionBar;
     private EditText deliveryAddressInput;
@@ -181,11 +190,10 @@ ControlsInterface,PackListInterface
 	private boolean booleanDeliveryAddressSet;
 	private LinearLayout shopDetailsView;
 	private LinearLayout deliveryAddressView;
-	private LinearLayout mainInfoView;
+	private LinearLayout mapDialogView;
 	private boolean animationFlipClockWise;
-	private Shop nearestShop;
-	private FrameLayout mainFragmentContainer;
-	private View mainTabsView;
+	//private Shop nearestShop;
+	
 	private OnCameraChangeListener onCameraChange = new OnCameraChangeListener() {
 		
 		@Override
@@ -193,7 +201,7 @@ ControlsInterface,PackListInterface
 			// TODO Auto-generated method stub
 			if(animationFlipClockWise){
 				ObjectAnimator anim = (ObjectAnimator) AnimatorInflater.loadAnimator(getApplicationContext(), R.anim.flip_anti_clockwise); 
-				anim.setTarget(mainInfoView);
+				anim.setTarget(mapDialogView);
 				anim.setDuration(500);
 				anim.addListener(new AnimatorListener() {
 					@Override
@@ -274,7 +282,7 @@ ControlsInterface,PackListInterface
 	        } else {
 	        	  addressText = "No address found";
 	        }
-			//shop_detail_description.setText(addressText);
+			//shopDetailDescription.setText(addressText);
 			secondaryAddress.setText(addressText);
 			
 			
@@ -287,11 +295,16 @@ ControlsInterface,PackListInterface
 	    
    //activity methods
    
-    @Override
+   
+	
+	
+	
+	
+	@Override
     public void onCreate(Bundle icicle)
     {
 		  
-		 super.onCreate(icicle);
+		super.onCreate(icicle);
 
 	    if (android.os.Build.VERSION.SDK_INT < 8 || ZXScanHelper.isBlockCameraRotation())
 	    {
@@ -299,17 +312,22 @@ ControlsInterface,PackListInterface
 	    }
        
         window = getWindow();
-        
         int scanner_layout = R.layout.scanner_layout_capture;                 	// setting the custom layout on top of capture activity
 		setContentView(scanner_layout);
         
 		//action Bar
 		actionBar = getActionBar();
-	    progressBar = new ButteryProgressBar(this);
+		actionBar.setTitle(getResources().getText(R.string.pick_delivery_location));
+		actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+		actionBar.setDisplayHomeAsUpEnabled(false);
+		actionBar.setHomeButtonEnabled(false);
+	        
+		
+		
+		progressBar = new ButteryProgressBar(this);
         progressBar.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 24)); // create new ProgressBar and style it
         decorView = (FrameLayout) getWindow().getDecorView();			// retrieve the top view of our application
-        actionBar.setTitle(getResources().getText(R.string.pick_delivery_location));
-		
+        
         // Here we try to position the ProgressBar to the correct position by looking
         // at the position where content area starts. But during creating time, sizes 
         // of the components are not set yet, so we have to wait until the components
@@ -329,13 +347,15 @@ ControlsInterface,PackListInterface
             }
         });
         
+        
+        
         mainFragmentContainer = (FrameLayout)findViewById(R.id.fragment_container);
         mainTabsView = (View) findViewById(R.id.main_tabs_view);
-        
-        getActionBar().setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-        getActionBar().setDisplayHomeAsUpEnabled(false);
-        getActionBar().setHomeButtonEnabled(false);
-        
+        shopByListButton = (ImageButton) findViewById(R.id.shop_outside_store);
+    	shopAtStoreButton=(ImageButton) findViewById(R.id.shop_at_store);
+    	orderListButton = (ImageButton) findViewById(R.id.orders_list);
+    	
+       
         
         mDrawerLayout = (DrawerLayout)this.findViewById(R.id.drawer_layout_capture);
         mDrawerToggle = new ActionBarDrawerToggle(this,mDrawerLayout,R.drawable.navigation_drawer,R.string.drawer_open,R.string.drawer_open)
@@ -357,20 +377,23 @@ ControlsInterface,PackListInterface
         ldrawer.setAdapter(new ArrayAdapter<String>(this.getBaseContext(),R.layout.drawer_list_item, main_action));
         ldrawer.setOnItemClickListener(new DrawerItemClickListener());// Set the list's click listener
     	mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, ldrawer);
-    	 
-     //   deliveryDialogText = (TextView)findViewById(R.id.delivery_dialog_text);
+    	
+    	
+    	
+    	
+    	
 		shopDetailsView = (LinearLayout)findViewById(R.id.shop_details_view);
-    	shop_detail_heading = (TextView)findViewById(R.id.shop_details_heading);
-    	shop_detail_description = (TextView)findViewById(R.id.shop_details_description);
+    	shopDetailHeading = (TextView)findViewById(R.id.shop_details_heading);
+    	shopDetailDescription = (TextView)findViewById(R.id.shop_details_description);
     	startShop = (Button)findViewById(R.id.startShop);
     	  
-    	shopByListButton = (ImageButton) findViewById(R.id.shop_outside_store);
-    	shopAtStoreButton=(ImageButton) findViewById(R.id.shop_at_store);
-    	orderListButton = (ImageButton) findViewById(R.id.orders_list);
-    	mainInfoView = (LinearLayout) findViewById(R.id.main_info_view);
+    	
+    	mapDialogView = (LinearLayout) findViewById(R.id.map_dialog);
     	deliveryAddressView = (LinearLayout)findViewById(R.id.delivery_address_container);
     	deliveryAddressInput = (EditText) findViewById(R.id.delivery_address_input);
     	secondaryAddress = (TextView) findViewById(R.id.delivery_address_secondary);
+    	
+    	
     	MapUI.mMapFragment = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.mapFragment));
     	MapUI.mMap = MapUI.mMapFragment.getMap();
     	View mapView = MapUI.mMapFragment.getView();
@@ -408,10 +431,20 @@ ControlsInterface,PackListInterface
     {
         super.onResume();
        // inactivityTimer.onResume();
-        
-        if(!location.made_use_of_location){
-        	location loc = new location();
-			loc.getLocation(this,this);
+        if(MapUI.mMap != null){
+	        if(!location.made_use_of_location){
+	        	location loc = new location();
+				loc.getLocation(this,this);
+	        }
+	        else{
+	        	LatLng coordinate = new LatLng(Globals.current_location.getLatitude(), Globals.current_location.getLongitude());
+	    		MapUI.zoomInDeliveryLocation(coordinate);
+	    		
+	        }
+        }
+        else{
+        	FrameLayout map_container = (FrameLayout)findViewById(R.id.map_container);
+        	map_container.setVisibility(View.GONE);
         }
 		
         
@@ -519,6 +552,11 @@ ControlsInterface,PackListInterface
         	 showCart(null);
              return true;
     	}
+    	 else if(item.getItemId() == R.id.settings){
+    		 Intent i = new Intent(this, SettingsActivity.class);
+    		 startActivity(i);
+    		 return true;
+    	 }
     	else
              return super.onOptionsItemSelected(item);
      }
@@ -618,6 +656,7 @@ ControlsInterface,PackListInterface
 				return true;
 			}
 		});
+       
         return super.onCreateOptionsMenu(menu);
     }
     
@@ -1107,6 +1146,7 @@ ControlsInterface,PackListInterface
 		        setCurrentShopping(0);
 			}
 	    	location.removeLocationListener();
+	    	
 	    	MapUI.mMap.setMyLocationEnabled(false);
 	    	MapUI.markerList=null;
 	    	MapUI.mMap = null;
@@ -1293,7 +1333,7 @@ ControlsInterface,PackListInterface
 		String shopName = shopObj.getName();
 		com.shoplite.models.Location shopLoc = shopObj.getLocation();
 		shopObj.connect_to_shop(this,shopURL,shopName,shopLoc);
-		shop_detail_heading.setText("Connecting to " + shopName);
+		shopDetailHeading.setText("Connecting to " + shopName);
 		
 	}
 	@Override
@@ -1305,9 +1345,9 @@ ControlsInterface,PackListInterface
 		LatLng coordinate = new LatLng(lat, lng);
 		//MapUI.mMap.addMarker(new MarkerOptions().position(coordinate).draggable(false).title(Globals.connected_shop_name).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
 		
-		shop_detail_heading.setText("Welcome to " + Globals.connectedShop.getName());
+		shopDetailHeading.setText("Welcome to " + Globals.connectedShop.getName());
 		
-		shop_detail_description.setText("You can shop various " +
+		shopDetailDescription.setText("You can shop various " +
 				"products through your cam scanner " +
 				"or through the list at an affordable prices.\nHappy Shopping!");
 		
@@ -1379,8 +1419,8 @@ ControlsInterface,PackListInterface
 						//inside the shop
 					connect_to_shop(shpObject);
 					Globals.isInsideShop = true;
-					shop_detail_heading.setText("Welcome to " + shpObject.getName());
-					shop_detail_description.setText("Happy Shopping!");
+					shopDetailHeading.setText("Welcome to " + shpObject.getName());
+					shopDetailDescription.setText("Happy Shopping!");
 					startShop.setVisibility(View.VISIBLE);	
 				}
 					
@@ -1388,20 +1428,20 @@ ControlsInterface,PackListInterface
 				{
 					// nearby the shop  
 					Globals.isInsideShop = false;
-					//shop_detail_heading.setText("Select a shop near your delivery location");
+					//shopDetailHeading.setText("Select a shop near your delivery location");
 					if(!animationFlipClockWise){
 						deliveryAddressView.setVisibility(View.VISIBLE);
 						shopDetailsView.setVisibility(View.GONE);
 					}else{
 						if(shopList.size()>1){
-						 shop_detail_heading.setText("");
-						 shop_detail_description.setText("Multiple Shops found tap shop marker to connect or drag map to change delivery location");
+						 shopDetailHeading.setText("");
+						 shopDetailDescription.setText("Multiple Shops found tap shop marker to connect or drag map to change delivery location");
 						 startShop.setVisibility(View.GONE);
 						}
 						else{
-							shop_detail_heading.setText("");
+							shopDetailHeading.setText("");
 							connect_to_shop( shopList.get(0));
-							shop_detail_description.setText("");
+							shopDetailDescription.setText("");
 							startShop.setVisibility(View.GONE);	
 						}
 					}
@@ -1411,10 +1451,10 @@ ControlsInterface,PackListInterface
 			}
 			else{
 				// no shop found
-				shop_detail_heading.setText("No Shops to serve in this area");
+				shopDetailHeading.setText("No Shops to serve in this area");
 				deliveryAddressView.setVisibility(View.GONE);
 				shopDetailsView.setVisibility(View.VISIBLE);
-				shop_detail_description.setText("Drag map to change delivery Location");
+				shopDetailDescription.setText("Drag map to change delivery Location");
 				startShop.setVisibility(View.GONE);
 			}
 			
@@ -1692,7 +1732,7 @@ ControlsInterface,PackListInterface
 			}
 			
 			ObjectAnimator anim = (ObjectAnimator) AnimatorInflater.loadAnimator(this, R.anim.flip_clockwise); 
-			anim.setTarget(mainInfoView);
+			anim.setTarget(mapDialogView);
 			anim.setDuration(500);
 
 			
@@ -1734,7 +1774,7 @@ ControlsInterface,PackListInterface
 		    
 			//v.setVisibility(View.GONE);
 			//deliveryDialogText.setText("Delivery Address" + addressText + "\n Tap home to modify.");
-			//shop_detail_heading.setText("Delivery Address set as");
+			//shopDetailHeading.setText("Delivery Address set as");
 			get_shop_list(new Location(centerFromPoint.latitude,centerFromPoint.longitude));
 			booleanDeliveryAddressSet = true;
 			animationFlipClockWise = true;

@@ -2,6 +2,11 @@ package com.shoplite.UI;
 
 import java.util.ArrayList;
 
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -20,6 +25,8 @@ public class MapUI  extends SupportMapFragment{
 	public static boolean mapVisible = true;						// initial visibility set to false of the map
 	public static MapController  mMapController;
 	public static MapView mMapView;
+	public static ArrayList<Marker> markerList = new ArrayList<Marker>();
+	
 	public static void move_map_camera(LatLng coordinate) {
 		CameraUpdate yourLocation = CameraUpdateFactory.newLatLngZoom(coordinate, 13);
 	    MapUI.mMap.moveCamera(yourLocation);
@@ -49,7 +56,24 @@ public class MapUI  extends SupportMapFragment{
 	    });
 	    
 	}
-	public static ArrayList<Marker> markerList = new ArrayList<Marker>();
+	
+	
+	@Override
+	public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	{
+		return container;
+		
+	}
+	@Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+	}
+	@Override
+	public void onResume()
+	{
+		super.onResume();
+	}
 	
 	
 }

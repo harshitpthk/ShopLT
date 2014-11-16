@@ -6,7 +6,8 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_settings_">Settings_Activity</string>
     <string name="title_activity_verification">Verification</string>
-    <string name="verification_message">We have sent a code for verifying you as a real person, please enter the code received on your phone numbered  </string>
+    <string name="verification_message">We have sent a code for verifying you as a real person,
+        the code should be verified automatically.If not, try resending the request.</string>
     <string name="title_activity_navigation_drawer_test">NavigationDrawerTest</string>
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
