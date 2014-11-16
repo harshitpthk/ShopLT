@@ -2,7 +2,10 @@
 <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="40dp"
     android:layout_height="40dp"
+    android:layout_gravity="center_vertical"
     android:contentDescription="@string/desc_image"
+    android:src="@drawable/delivery"
+    android:id="@+id/order_status_view"
      >
     
 </ImageView>

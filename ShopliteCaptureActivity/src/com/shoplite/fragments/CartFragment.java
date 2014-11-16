@@ -76,9 +76,11 @@ public class CartFragment extends Fragment implements ControlsInterface,PackList
 	public void onResume()
 	{
 		super.onResume();	
+		cartAdapter = new ItemListAdapter(getActivity(), Globals.item_order_list,"cartItem");
 		
 		if(Globals.item_order_list.size() == 0){
 			emptyCartState();
+			cartAdapter.updateCart(Globals.item_order_list);
 		}
 		else{
 			filledCartState();
@@ -96,7 +98,6 @@ public class CartFragment extends Fragment implements ControlsInterface,PackList
 		       });
 			
 			
-			cartAdapter = new ItemListAdapter(getActivity(), Globals.item_order_list,"cartItem");
 			cartItemsListView.setAdapter(cartAdapter);
 		}
 		

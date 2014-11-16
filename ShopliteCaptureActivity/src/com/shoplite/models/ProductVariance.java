@@ -124,7 +124,7 @@ public class ProductVariance implements ConnectionInterface {
 					}
 					
 					ServerConnectionMaker.recieveResponse(null);
-					
+					ProductVariance.calling_class_object.ItemGetFailure();
 				}
 
 				@Override

@@ -7,9 +7,11 @@ import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.Header;
 import retrofit.http.POST;
+import android.provider.SyncStateContract.Constants;
 
 import com.google.gson.JsonObject;
 import com.shoplite.models.Input;
+import com.shoplite.models.OrderItemDetail;
 import com.shoplite.models.Product;
 import com.shoplite.models.Shop;
 import com.shoplite.models.User;
@@ -47,7 +49,12 @@ public interface ServiceProvider {
 	@POST("/submitorder")
 	void submitOrder(@Body com.shoplite.models.SubmitOrderDetails submitOrderDetails, Callback<Integer> orderID);
 	
-		
+	@POST("/getorderstate")
+	void getOrderStatus(@Body int orderId, Callback<com.shoplite.Utils.Constants.ORDERState> orderStatus);
+	
+	@POST("/getorderdetails")
+	void getOrderDetails(@Body int orderId, Callback<ArrayList<OrderItemDetail>> orderedProductList);
+	
 	@GET("/")
 	void getPlacesSuggestion(Callback<JsonObject> callback);
 	

@@ -16,8 +16,8 @@ import android.util.Base64;
 
 public class util {
 	
-	public static String starURL = "http://192.168.1.8:8080/Earth/service";
-	//public static String starURL = "http://builto.elasticbeanstalk.com";
+	//public static String starURL = "http://192.168.1.7:8080/Earth/service";
+	public static String starURL = "http://builto.elasticbeanstalk.com/service";
 
 	private final static java.security.SecureRandom random = new  java.security.SecureRandom();
 	private static String Algorithm ="AES";

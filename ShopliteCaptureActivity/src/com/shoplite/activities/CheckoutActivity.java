@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.shoplite.UI.Controls;
 import com.shoplite.Utils.Constants;
 import com.shoplite.Utils.Globals;
+import com.shoplite.fragments.OrderHistoryFragment;
 import com.shoplite.interfaces.ControlsInterface;
 import com.shoplite.interfaces.SubmitOrderInterface;
 import com.shoplite.models.SubmitOrderDetails;
@@ -250,6 +251,11 @@ public class CheckoutActivity extends Activity {
 			// TODO Auto-generated method stub
 			
 			Toast.makeText(getActivity(), "Order Submitted Successfully,Check Order Status for more info.", Toast.LENGTH_LONG).show();
+			Globals.dbhelper.storeOrder(orderID, Globals.cartTotalPrice, Globals.item_order_list.size(),Constants.ORDERState.PACKING.ordinal());
+			OrderHistoryFragment.getPreviousOrderLists().clear();
+			OrderHistoryFragment.getPreviousOrderLists().addAll(Globals.dbhelper.getAllOrders());
+			OrderHistoryFragment.getOrderListAdapter().updateOrderLists(Globals.dbhelper.getAllOrders());
+			Globals.resetCartData();
 			getActivity().finish();
 		}
 

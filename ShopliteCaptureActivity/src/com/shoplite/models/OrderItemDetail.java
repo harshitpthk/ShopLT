@@ -6,6 +6,10 @@ public class OrderItemDetail {
 	int orderId;
 	int varianceId;
 	int quantity;
+	int productId;
+	String varianceName;
+	String productName;
+	
 	double price;
 	public boolean isSent;
 	
@@ -33,6 +37,32 @@ public class OrderItemDetail {
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
+	
+	public int getVarianceId() {
+		return varianceId;
+	}
+	public void setVarianceId(int varianceId) {
+		this.varianceId = varianceId;
+	}
+	public int getProductId() {
+		return productId;
+	}
+	public void setProductId(int productId) {
+		this.productId = productId;
+	}
+	public String getVarianceName() {
+		return varianceName;
+	}
+	public void setVarianceName(String varianceName) {
+		this.varianceName = varianceName;
+	}
+	public String getProductName() {
+		return productName;
+	}
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+
 	public double getPrice() {
 		return price;
 	}

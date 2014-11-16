@@ -47,11 +47,13 @@ public class ItemsDisplayActivity extends Activity implements ControlsInterface{
 		itemsListView = (ListView) findViewById(R.id.items_display_list);
 		
 		listName = getIntent().getStringExtra("ListName"); 
+		String ItemListJson = getIntent().getStringExtra("ItemList");
+		
 		getActionBar().setTitle(listName);
 		
-		String ItemListJson = getIntent().getStringExtra("ItemList");
 		Gson gson = new Gson();
 		itemList = gson.fromJson(ItemListJson, listType);
+		
 		importAllItems = (Button) findViewById(R.id.import_all_button);
 		importSelectedItems = (Button) findViewById(R.id.import_selected_button);
 		

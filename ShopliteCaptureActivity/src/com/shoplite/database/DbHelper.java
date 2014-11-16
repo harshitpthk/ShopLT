@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.google.gson.Gson;
+import com.shoplite.Utils.Constants.ORDERState;
 import com.shoplite.models.PreviousOrder;
 import com.shoplite.models.Product;
 import com.shoplite.models.SaveList;
@@ -49,12 +50,13 @@ public class DbHelper extends  SQLiteOpenHelper{
     private static final String LAST_KNOWN_STATUS = "LAST_KNOWN_STATUS";
     
     private static final String ORDERS_TABLE_CREATE=
-    		"CREATE TABLE" + ORDERS_TABLE +"(" +
+    		"CREATE TABLE " + ORDERS_TABLE +" ( " +
     				ORDER_ID + " INTEGER PRIMARY KEY NOT NULL, " +
-    				ORDER_TOTAL_ITEMS + " ORDER_TOTAL_ITEMS NOT NULL, " +
     				ORDER_DATE + " TEXT NOT NULL, " +
+    				ORDER_TOTAL_ITEMS + " INTEGER NOT NULL, " +
     				ORDER_AMOUNT + " REAL NOT NULL, " +
-    				LAST_KNOWN_STATUS + " TEXT NOT NULL ";
+    				LAST_KNOWN_STATUS + " INTEGER NOT NULL "+
+    				");";
     
     
     private static final String DICTIONARY_TABLE_CREATE =
@@ -359,9 +361,102 @@ public class DbHelper extends  SQLiteOpenHelper{
 		
 	}
 	
-	public ArrayList<PreviousOrder> getPreviosOrders()
+	
+	/**
+	 * @param packing 
+	 * @return
+	 */
+	public  boolean  storeOrder(int orderId ,double orderAmount, int totalItems, int state)
 	{
-		return null;
+		Date dt = new Date();
+		SimpleDateFormat dtformat = (SimpleDateFormat) SimpleDateFormat.getDateInstance();
+		String date =  dtformat.format(dt);
+		
+		try {
+			
+			SQLiteDatabase database=  this.getWritableDatabase();
+			ContentValues values = new ContentValues();
+			
+			values.put(ORDER_ID, orderId);
+			values.put(ORDER_DATE,date);
+			values.put(ORDER_TOTAL_ITEMS,totalItems );
+		    values.put(ORDER_AMOUNT,orderAmount);
+		    values.put(LAST_KNOWN_STATUS, state);
+		    
+		    
+		      
+		    long id = database.insertWithOnConflict(ORDERS_TABLE, null, values, SQLiteDatabase.CONFLICT_FAIL);
+		  
+	    	
+	    	if(id != -1)
+	    		return true;
+	    	else
+	    		return false;
+	    	
+			
+		} catch (Exception e) {
+			return false;
+			
+		}
+		
+		
+	}
+	
+	public ArrayList<PreviousOrder> getAllOrders() {
+		// TODO Auto-generated method stub
+		ArrayList<PreviousOrder>  previousOrderLists = new ArrayList<PreviousOrder>();
+		SQLiteDatabase database = this.getReadableDatabase();
+		Cursor cursor = null;
+		try{
+			cursor = database.query(ORDERS_TABLE,new String[]{ORDER_ID,ORDER_DATE,ORDER_TOTAL_ITEMS,ORDER_AMOUNT,LAST_KNOWN_STATUS},null,null,null,null,ORDER_DATE);
+			cursor.moveToFirst();
+		
+			while(cursor.isAfterLast() == false){
+				PreviousOrder previousOrder = new PreviousOrder();
+				previousOrder.setOrderId(cursor.getInt(0));
+				previousOrder.setOrderDate(cursor.getString(1));
+				previousOrder.setOrderTotalItems(cursor.getInt(2));
+				previousOrder.setOrderAmount(cursor.getDouble(3));
+				previousOrder.setOrderState(cursor.getInt(4));
+				previousOrderLists.add(previousOrder);
+				cursor.moveToNext();
+			}
+		}
+		catch(Exception e)
+		{
+			return null;
+		}
+		finally 
+        {
+			if(cursor!=null)
+      	  		cursor.close(); 
+        }
+		
+		return previousOrderLists;
+	}
+	
+	public boolean updateOrderState(int orderID, int orderState)
+	{
+		
+		try {
+			SQLiteDatabase database=  this.getWritableDatabase();
+			ContentValues values = new ContentValues();
+			values.put(LAST_KNOWN_STATUS, orderState);
+	    	long id = 0;
+	    	String selctionArgs[] = {Integer.toString(orderID)};
+	    	id = database.update(ORDERS_TABLE, values, ORDER_ID+"=?", selctionArgs);
+	    	if(id != -1)
+	    		return true;
+	    	else
+	    		return false;
+	    	
+				
+		} catch (Exception e) {
+			return false;
+			
+		}
+	
+		
 		
 	}
 }

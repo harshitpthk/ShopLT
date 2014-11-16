@@ -75,5 +75,15 @@ public class Globals {
 			return null;
 		}
 	}
+	/**
+	 * 
+	 */
+	public static void resetCartData() {
+		// TODO Auto-generated method stub
+		item_added_list.clear();
+		item_order_list.clear();
+		cartTotalPrice = 0.00;
+	
+	}
 	
 }

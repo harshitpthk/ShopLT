@@ -8,9 +8,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
@@ -55,7 +52,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.Animation.AnimationListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -66,6 +62,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
 import android.widget.SearchView.OnSuggestionListener;
@@ -111,11 +108,11 @@ import com.shoplite.interfaces.ItemInterface;
 import com.shoplite.interfaces.LocationInterface;
 import com.shoplite.interfaces.PackListInterface;
 import com.shoplite.interfaces.ShopInterface;
-import com.shoplite.models.ProductVariance;
-import com.shoplite.models.Product;
 import com.shoplite.models.Location;
 import com.shoplite.models.OrderItemDetail;
 import com.shoplite.models.PackList;
+import com.shoplite.models.Product;
+import com.shoplite.models.ProductVariance;
 import com.shoplite.models.Shop;
 
 import eu.livotov.zxscan.R;
@@ -188,6 +185,7 @@ ControlsInterface,PackListInterface
 	private boolean animationFlipClockWise;
 	private Shop nearestShop;
 	private FrameLayout mainFragmentContainer;
+	private View mainTabsView;
 	private OnCameraChangeListener onCameraChange = new OnCameraChangeListener() {
 		
 		@Override
@@ -332,6 +330,7 @@ ControlsInterface,PackListInterface
         });
         
         mainFragmentContainer = (FrameLayout)findViewById(R.id.fragment_container);
+        mainTabsView = (View) findViewById(R.id.main_tabs_view);
         
         getActionBar().setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
         getActionBar().setDisplayHomeAsUpEnabled(false);
@@ -374,6 +373,16 @@ ControlsInterface,PackListInterface
     	secondaryAddress = (TextView) findViewById(R.id.delivery_address_secondary);
     	MapUI.mMapFragment = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.mapFragment));
     	MapUI.mMap = MapUI.mMapFragment.getMap();
+    	View mapView = MapUI.mMapFragment.getView();
+    	View locationButton = ((View) mapView.findViewById(1).getParent()).findViewById(2);
+    	RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
+        // position on right bottom
+        rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
+        rlp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+        rlp.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+        rlp.addRule(RelativeLayout.ALIGN_PARENT_START, RelativeLayout.TRUE);
+        rlp.setMargins(30, 30, 30, 40);
+
     	MapUI.mMap.setOnCameraChangeListener(onCameraChange);
     	MapUI.mMap.setOnMarkerClickListener(this);
     	MapUI.mMap.setMyLocationEnabled(true);
@@ -1083,7 +1092,13 @@ ControlsInterface,PackListInterface
 				
 			}
 			mainFragmentContainer.setVisibility(View.VISIBLE);
+			mainTabsView.setVisibility(View.VISIBLE);
+			shopAtStoreButton.setVisibility(View.VISIBLE);
+			shopByListButton.setVisibility(View.VISIBLE);
+			orderListButton.setVisibility(View.VISIBLE);
+			
 	    	if(Globals.isInsideShop)
+	    		
 				setCurrentShopping(1);
 			else{
 				getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -1725,5 +1740,14 @@ ControlsInterface,PackListInterface
 			animationFlipClockWise = true;
 		}
 		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.shoplite.interfaces.ItemInterface#ItemGetFailure()
+	 */
+	@Override
+	public void ItemGetFailure() {
+		// TODO Auto-generated method stub
+		handler.restartPreviewAndDecode();
 	}
 }

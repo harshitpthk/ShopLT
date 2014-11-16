@@ -8,11 +8,66 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical" >
    
-    <TextView
+    <LinearLayout
+        android:id="@+id/empty_order_history"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="orderHistory"
+        android:orientation="vertical"
+        android:visibility="gone"
         android:textSize="22sp"/>
+    <LinearLayout
+        android:id="@+id/previos_order_container"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+         >
+         <LinearLayout
+             android:id="@+id/status_info_container"
+             android:orientation="horizontal"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:padding="5dp">
+             <ImageView android:id="@+id/status_packing"
+                 android:layout_weight="1"
+                 android:layout_width="50dp"
+                 android:layout_margin="5dp"
+                 android:contentDescription="@string/desc_image"
+                 android:src="@drawable/packing"
+                 android:layout_height="50dp"/>
+             <ImageView android:id="@+id/status_packed"
+                 android:layout_weight="1"
+                 android:layout_width="50dp"
+                 android:layout_margin="5dp"
+                  android:src="@drawable/packed"
+                   android:contentDescription="@string/desc_image"
+                 android:layout_height="50dp"/>
+             <ImageView android:id="@+id/status_fordelivery"
+                 android:layout_weight="1"
+                 android:layout_width="50dp"
+                 android:layout_margin="5dp"
+                  android:src="@drawable/delivery"
+                   android:contentDescription="@string/desc_image"
+                 android:layout_height="50dp"/>
+             <ImageView android:id="@+id/status_delivered"
+                 android:layout_weight="1"
+                 android:layout_width="50dp"
+                 android:layout_margin="5dp"
+                  android:contentDescription="@string/desc_image"
+                  android:src="@drawable/delivered_stamp"
+                 android:layout_height="50dp"/>
+         </LinearLayout>
+             
+	     <ListView 
+	        android:id="@+id/orderHistory_ListView"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:paddingRight="@dimen/activity_horizontal_margin"
+	        android:paddingLeft="@dimen/activity_horizontal_margin"
+	        android:paddingTop="@dimen/activity_horizontal_margin"
+	        android:paddingBottom="@dimen/activity_horizontal_margin">
+	        
+	    </ListView>
+    </LinearLayout>
     
 
 </LinearLayout>
