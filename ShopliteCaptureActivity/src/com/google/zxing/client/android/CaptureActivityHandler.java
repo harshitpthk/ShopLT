@@ -39,6 +39,7 @@ import com.shoplite.Utils.Globals;
 import com.shoplite.interfaces.ControlsInterface;
 import com.shoplite.interfaces.ItemInterface;
 import com.shoplite.interfaces.PackListInterface;
+import com.shoplite.models.Input;
 import com.shoplite.models.ProductVariance;
 import com.shoplite.models.Product;
 import com.shoplite.models.OrderItemDetail;
@@ -131,9 +132,9 @@ public final class CaptureActivityHandler extends Handler
             Bundle extras = result.getExtras();
             String QRCValue = (String) extras.get("SCAN_RESULT");       //{"id":"10000","itemcategory":"10000"}
             Gson gson =  new Gson();
-            ProductVariance QRItem = null;
+            Input QRItem = null;
             try{
-            	 QRItem =  gson.fromJson(QRCValue, ProductVariance.class);
+            	 QRItem =  gson.fromJson(QRCValue, Input.class);
             	  getItem(QRItem);
             }
             catch(Exception e){
@@ -190,10 +191,10 @@ public final class CaptureActivityHandler extends Handler
     }
     // Custom methods
     
-    public  void getItem(ProductVariance QRItem)
+    public  void getItem(Input QRItem)
     {
-    	
-    	QRItem.getItem(activity);
+    	Product p = new Product(0,null);
+    	p.getItem(QRItem,activity);
     	
     	
     }

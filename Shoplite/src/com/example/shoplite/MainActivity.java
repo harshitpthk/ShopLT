@@ -214,6 +214,16 @@ public class MainActivity extends Activity implements ConnectionInterface  {
 		mPhoneNo= mPhoneNoView.getText().toString();
 		mName = mNameView.getText().toString();
 		
+		mName = mName.trim();
+		mPhoneNo = mPhoneNo.trim();
+		mEmail = mEmail.trim();
+		
+		mNameView.setText(mName);
+		mPhoneNoView.setText(mPhoneNo);
+		mNameView.setText(mName);
+		
+		
+		
 		boolean cancel = false;
 		View focusViewEmail = null;
 		View focusViewPhoneNo = null;
@@ -233,7 +243,7 @@ public class MainActivity extends Activity implements ConnectionInterface  {
 			mPhoneNoView.setError(getString(R.string.error_field_required));
 			focusViewPhoneNo = mPhoneNoView;
 			cancel = true;
-		} else if (mPhoneNo.length() != 10) {
+		} else if (!mPhoneNo.matches("^[0-9]{10}$") ) {
 			mPhoneNoView.setError(getString(R.string.error_invalid_phoneNo));
 			focusViewPhoneNo = mPhoneNoView;
 			cancel = true;
@@ -242,7 +252,7 @@ public class MainActivity extends Activity implements ConnectionInterface  {
 			mNameView.setError(getString(R.string.error_field_required));
 			focusViewName = mNameView;
 			cancel = true;
-		} else if (!mName.matches("[a-zA-Z ]+")) {
+		} else if (!mName.matches("^[a-zA-z][a-zA-Z. ]+$")) {
 			mNameView.setError(getString(R.string.error_invalid_name));
 			focusViewName = mNameView;
 			cancel = true;

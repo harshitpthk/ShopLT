@@ -32,4 +32,12 @@
         <item>TW</item>
         <item>US</item>
     </string-array>
+
+    <array name="open_source_entries">
+        <item>Retrofit</item>
+    </array>
+    <array name="open_source_values">
+        <item>Retrofit</item>
+    </array>
+
 </resources>

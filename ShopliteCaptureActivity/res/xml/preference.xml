@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen  xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+            android:title="@string/account">
+ 		<EditTextPreference
+                android:key="name_preference"
+                android:title="@string/name"
+                android:summary="Harshit"
+                android:dialogTitle="Your Name" />
+		
+ 		<EditTextPreference
+                android:key="address_preference"
+                android:title="@string/address"
+                android:summary="T1 Garden Canopy View Rustum Bagh"
+                android:dialogTitle="Your Address" />
+		
+    
+    </PreferenceCategory>
+    <PreferenceCategory
+         android:title="Notifications" >
+        <SwitchPreference
+            android:key="notification_preference"
+            android:title="Send Notifications"
+            android:summary="Recieve Latest Updates and Offers from us."
+            android:defaultValue="true"
+            >
+            
+        </SwitchPreference>
+    </PreferenceCategory>
+    <PreferenceCategory
+            android:title="@string/legal">
+ 		    
+    </PreferenceCategory>
+</PreferenceScreen>

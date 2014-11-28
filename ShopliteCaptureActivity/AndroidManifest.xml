@@ -66,19 +66,31 @@
         <uses-library android:name="com.google.android.maps" />
         <activity
             android:name=".OrderActivity"
-            android:label="@string/title_activity_checkout"
-           >
+            android:label="@string/title_activity_checkout" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.google.zxing.client.android.CaptureActivity" />
         </activity>
         <activity
             android:name=".ItemsDisplayActivity"
-            android:label="@string/title_activity_items_display"
-            >
+            android:label="@string/title_activity_items_display" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.google.zxing.client.android.CaptureActivity" />
+        </activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName="com.google.zxing.client.android.CaptureActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.google.zxing.client.android.CaptureActivity" />
         </activity>
     </application>
 </manifest>
+
+
+
+   
+
+

@@ -33,11 +33,12 @@ public class Globals {
 	public static Product fetched_item_category;
 	public static ArrayList<Product> simmilar_item_list = new ArrayList<Product>();
 	public static ArrayList<Product> item_order_list = new ArrayList<Product>();
+	public static ArrayList<Integer> item_added_list = new ArrayList<Integer>();	//keeps track of items added
+	
 	public static Double cartTotalPrice = 0.00;
 	
 	public static boolean isInsideShop;
 	public static String delivery_address;
-	public static ArrayList<Integer> item_added_list = new ArrayList<Integer>();
 	
 	//Method to Return Shop object which is at minimum distance from current location inside the 200 meters radius
 	public static Shop min_sd_matrix() {

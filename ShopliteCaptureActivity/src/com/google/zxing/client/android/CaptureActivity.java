@@ -155,10 +155,10 @@ ControlsInterface,PackListInterface
     
     private FrameLayout mainFragmentContainer;
 	private View mainTabsView;
-    private CartFragment cartFrag = new CartFragment();
+    CartFragment cartFrag = new CartFragment();
     private OrderFragment orderFrag = new OrderFragment();
     private CameraFragment camFrag = new CameraFragment();
-    private ContainerFragment conFrag = new ContainerFragment();
+    ContainerFragment conFrag = new ContainerFragment();
     
     private ListView ldrawer;
     private DrawerLayout mDrawerLayout;
@@ -1487,18 +1487,25 @@ ControlsInterface,PackListInterface
 	@Override
 	public void ItemGetSuccess(final Product itemFetched) {
 		
-		Controls.show_alert_dialog(this, this, R.layout.activity_add_item,450);
-        
-		BaseCardView itemContainer = (BaseCardView) AddDialog.findViewById(R.id.itemView);
-		 addToItem = new AddItemCard(this, itemFetched);
-		 addToItem.setParentView(this, itemContainer);
-		 addToItem.setActionButtonOnClick(new OnClickActionButtonListener() {
+		if(itemFetched.getItemList().size()>0){
 			
-			@Override
-			public void onClick(Product item, View view) {
-				show_item_siblings(view,itemFetched);
-			}
-		});
+			Controls.show_alert_dialog(this, this, R.layout.activity_add_item,450);
+	        
+			BaseCardView itemContainer = (BaseCardView) AddDialog.findViewById(R.id.itemView);
+				 addToItem = new AddItemCard(this, itemFetched);
+				 addToItem.setParentView(this, itemContainer);
+				 addToItem.setActionButtonOnClick(new OnClickActionButtonListener() {
+					
+					@Override
+					public void onClick(Product item, View view) {
+						show_item_siblings(view,itemFetched);
+					}
+				});
+		}
+		else{
+			Toast.makeText(this, "Our Apologies, Product is out of Stock", Toast.LENGTH_LONG).show();
+			handler.restartPreviewAndDecode();
+		}
 		//itemCard.setActionButtonText("More");
 		
 
@@ -1789,5 +1796,32 @@ ControlsInterface,PackListInterface
 	public void ItemGetFailure() {
 		// TODO Auto-generated method stub
 		handler.restartPreviewAndDecode();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.shoplite.interfaces.ItemInterface#getItem()
+	 */
+	@Override
+	public void getItem() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.shoplite.interfaces.ItemInterface#updateItemSuccess(com.shoplite.models.Product)
+	 */
+	@Override
+	public void updateItemSuccess(Product product) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.shoplite.interfaces.ItemInterface#updateItemFailure()
+	 */
+	@Override
+	public void updateItemFailure() {
+		// TODO Auto-generated method stub
+		
 	}
 }

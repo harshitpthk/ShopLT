@@ -14,4 +14,10 @@ public interface ItemInterface {
 	public void ItemGetFailure();
 	
 	public void ItemListGetSuccess(ArrayList<Product> itemFamily);
+	
+	public void getItem();
+	
+	public void updateItemSuccess(Product product);
+	
+	public void updateItemFailure();
 }

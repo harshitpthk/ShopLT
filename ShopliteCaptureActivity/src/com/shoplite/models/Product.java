@@ -2,7 +2,19 @@ package com.shoplite.models;
 
 import java.util.ArrayList;
 
-public class Product {
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+
+import android.util.Log;
+
+import com.shoplite.Utils.Globals;
+import com.shoplite.connection.ConnectionInterface;
+import com.shoplite.connection.ServerConnectionMaker;
+import com.shoplite.connection.ServiceProvider;
+import com.shoplite.interfaces.ItemInterface;
+
+public class Product implements ConnectionInterface{
 
 	private int id;
 	private int categoryId;
@@ -18,6 +30,16 @@ public class Product {
 	private String imageUrl;
 	private boolean isSent;
 	private boolean isSelected;
+	
+	
+	private static ItemInterface calling_class_object;
+	private Input ItemInput;
+	private Input brandInput;
+	
+	
+	private boolean update_item_bool;
+	private boolean get_item_bool;
+	private boolean get_items_from_brand_bool;
 	
 	public boolean isSelected() {
 		return isSelected;
@@ -103,7 +125,6 @@ public class Product {
 	}
 	
 	public Product(int id, String name) {
-		super();
 		this.id = id;
 		this.name = name;
 	}
@@ -147,6 +168,148 @@ public class Product {
 			}
 		}
 		return toSendList;
+	}
+	
+	public  void getItem(Input input, ItemInterface calling_class_object) {
+		
+		Product.calling_class_object = calling_class_object;
+		this.get_item_bool = true;
+		ItemInput = input;
+		ServerConnectionMaker.sendRequest(this);
+		
+	}
+	
+	public  void updateItem(Input input, ItemInterface calling_class_object) {
+		
+		Product.calling_class_object = calling_class_object;
+		this.update_item_bool = true;
+		ItemInput = input;
+		ServerConnectionMaker.sendRequest(this);
+		
+	}
+	
+	public  void getItems( ItemInterface calling_class_object,int brandId) {
+		
+		Product.calling_class_object = calling_class_object;
+		this.get_items_from_brand_bool = true;
+		brandInput = new Input(brandId,"brand");
+		
+		ServerConnectionMaker.sendRequest(this);
+		
+	}
+	
+	/* (non-Javadoc)
+	 * @see com.shoplite.connection.ConnectionInterface#sendRequest(com.shoplite.connection.ServiceProvider)
+	 */
+	
+	@Override
+	public void sendRequest(ServiceProvider serviceProvider) {
+		// TODO Auto-generated method stub
+		if(this.get_items_from_brand_bool == true ){
+			serviceProvider.getItems( brandInput,new Callback<ArrayList<Product>>(){
+
+				@Override
+				public void failure(RetrofitError response) {
+					if (response.isNetworkError()) {
+						Log.e("Service Unavailable", "503"); // Use another code if you'd prefer
+				    }
+					else{
+						Log.e("Get Items Failure",response.getMessage());
+					}
+					
+					ServerConnectionMaker.recieveResponse(null);
+					
+				}
+
+				@Override
+				public void success(ArrayList<Product> itemFamily, Response response) {
+					
+					ServerConnectionMaker.recieveResponse(response);
+					Globals.simmilar_item_list = itemFamily;
+					Product.calling_class_object.ItemListGetSuccess(itemFamily);
+				}
+				
+			});
+		}
+		else if(this.get_item_bool == true){
+			serviceProvider.getItem( ItemInput,new Callback<Product>(){
+
+				@Override
+				public void failure(RetrofitError response) {
+					if (response.isNetworkError()) {
+						Log.e("Service Unavailable", "503"); 	
+				    }
+					else{
+						Log.e("Get ProductVariance Failure",response.getMessage());
+					}
+					
+					ServerConnectionMaker.recieveResponse(null);
+					Product.calling_class_object.ItemGetFailure();
+				}
+
+				@Override
+				public void success(Product item, Response response) {
+					
+					ServerConnectionMaker.recieveResponse(response);
+					Globals.fetched_item_category = item;
+								//Currently calling all the products at the same time of the item fetch, have to move it to demand based fetching
+					Product.calling_class_object.ItemGetSuccess(item);
+					
+				}
+				
+			});
+		}
+		else if(this.update_item_bool == true){
+			final Product originalProduct = this;
+			serviceProvider.getItem( ItemInput,new Callback<Product>(){
+
+				@Override
+				public void failure(RetrofitError response) {
+					if (response.isNetworkError()) {
+						Log.e("Service Unavailable", "503"); 	
+				    }
+					else{
+						Log.e("Get ProductVariance Failure",response.getMessage());
+					}
+					
+					ServerConnectionMaker.recieveResponse(null);
+					Product.calling_class_object.updateItemFailure();
+				}
+
+				@Override
+				public void success(Product updatedProduct, Response response) {
+					
+					ServerConnectionMaker.recieveResponse(response);
+					updatedProduct.setCurrentItemId(originalProduct.getCurrentItemId());
+					updatedProduct.setCurrentMeasure(originalProduct.getCurrentMeasure());
+					for(int i = 0 ; i < updatedProduct.getItemList().size();i++)
+					{
+						if(updatedProduct.getItemList().get(i).getId() == updatedProduct.getCurrentItemId()){
+							if(updatedProduct.getItemList().get(i).getQuantity()<
+									originalProduct.getCurrentQty())
+							{
+								updatedProduct.setCurrentQty(updatedProduct.getItemList().get(i).getQuantity());
+								
+							}
+							else{
+								updatedProduct.setCurrentQty(originalProduct.getCurrentQty());
+							}
+							updatedProduct.setCurrentMsrPrice(updatedProduct.getItemList().get(i).getPrice());
+							break;
+						}
+						
+					}
+					updatedProduct.setTotalPrice(updatedProduct.getCurrentMsrPrice()*
+							updatedProduct.getCurrentQty());
+					Log.e("updation",updatedProduct.toString());
+					
+					
+					Product.calling_class_object.updateItemSuccess(updatedProduct);
+					
+				}
+				
+			});
+		}
 	}
 	
 	

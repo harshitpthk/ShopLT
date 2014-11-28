@@ -20,11 +20,13 @@ import com.shoplite.UI.Controls;
 import com.shoplite.UI.ItemListAdapter;
 import com.shoplite.Utils.Globals;
 import com.shoplite.interfaces.ControlsInterface;
+import com.shoplite.interfaces.ItemInterface;
+import com.shoplite.models.Input;
 import com.shoplite.models.Product;
 
 import eu.livotov.zxscan.R;
 
-public class ItemsDisplayActivity extends Activity implements ControlsInterface{
+public class ItemsDisplayActivity extends Activity implements ControlsInterface,ItemInterface{
 
 	private ArrayList<Product> itemList;
 	private String listName;
@@ -142,9 +144,8 @@ public class ItemsDisplayActivity extends Activity implements ControlsInterface{
 			{
 				if(!Globals.item_added_list.contains(itemList.get(i).getCurrentItemId())){
 					Globals.item_added_list.add(itemList.get(i).getCurrentItemId());
+					updateItem(itemList.get(i));
 					
-					Globals.item_order_list.add(itemList.get(i)); 
-					Globals.cartTotalPrice += itemList.get(i).getTotalPrice();
 				}
 				else{
 					itemsAlreadyPresent = true;
@@ -168,8 +169,9 @@ public class ItemsDisplayActivity extends Activity implements ControlsInterface{
 				if(itemList.get(i).isSelected()){
 					if(!Globals.item_added_list.contains(itemList.get(i).getCurrentItemId())){
 						Globals.item_added_list.add(itemList.get(i).getCurrentItemId());
-						Globals.item_order_list.add(itemList.get(i)); 
-						Globals.cartTotalPrice += itemList.get(i).getTotalPrice();
+						updateItem(itemList.get(i));
+						
+						
 					}
 					else{
 						itemsAlreadyPresent = true;
@@ -188,6 +190,17 @@ public class ItemsDisplayActivity extends Activity implements ControlsInterface{
 			
 		}
 		alertDialog.dismiss();
+		
+	}
+	/**
+	 * @param product 
+	 * 
+	 */
+	private void updateItem(Product product) {
+		// TODO Auto-generated method stub
+		Input input = new Input(product.getId(),"productid");
+		product.updateItem(input, this);
+		
 		
 	}
 	/* (non-Javadoc)
@@ -215,6 +228,64 @@ public class ItemsDisplayActivity extends Activity implements ControlsInterface{
 	 */
 	@Override
 	public void neutral_button_alert_method() {
+		// TODO Auto-generated method stub
+		
+	}
+	/* (non-Javadoc)
+	 * @see com.shoplite.interfaces.ItemInterface#getItemList(com.shoplite.models.Product)
+	 */
+	@Override
+	public void getItemList(Product item) {
+		// TODO Auto-generated method stub
+		
+	}
+	/* (non-Javadoc)
+	 * @see com.shoplite.interfaces.ItemInterface#ItemGetSuccess(com.shoplite.models.Product)
+	 */
+	@Override
+	public void ItemGetSuccess(Product item) {
+		// TODO Auto-generated method stub
+		
+	}
+	/* (non-Javadoc)
+	 * @see com.shoplite.interfaces.ItemInterface#ItemGetFailure()
+	 */
+	@Override
+	public void ItemGetFailure() {
+		// TODO Auto-generated method stub
+		
+	}
+	/* (non-Javadoc)
+	 * @see com.shoplite.interfaces.ItemInterface#ItemListGetSuccess(java.util.ArrayList)
+	 */
+	@Override
+	public void ItemListGetSuccess(ArrayList<Product> itemFamily) {
+		// TODO Auto-generated method stub
+		
+	}
+	/* (non-Javadoc)
+	 * @see com.shoplite.interfaces.ItemInterface#getItem()
+	 */
+	@Override
+	public void getItem() {
+		// TODO Auto-generated method stub
+		
+	}
+	/* (non-Javadoc)
+	 * @see com.shoplite.interfaces.ItemInterface#updateItemSuccess(com.shoplite.models.Product)
+	 */
+	@Override
+	public void updateItemSuccess(Product product) {
+		// TODO Auto-generated method stub
+		
+		Globals.item_order_list.add(product); 
+		Globals.cartTotalPrice += product.getTotalPrice();
+	}
+	/* (non-Javadoc)
+	 * @see com.shoplite.interfaces.ItemInterface#updateItemFailure(com.shoplite.models.Product)
+	 */
+	@Override
+	public void updateItemFailure() {
 		// TODO Auto-generated method stub
 		
 	}

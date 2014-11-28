@@ -12,7 +12,7 @@
  distributed under the License is distributed on an "AS IS" BASIS,
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
- limitations under the License.
+ limitations under the License.
 -->
 <resources>
     <string name="zx_msg_default_status">Place a barcode inside the viewfinder rectangle to scan it.</string>
@@ -52,27 +52,34 @@
     <string name="title_activity_items_display">ItemsDisplayActivity</string>
     <string name="app_name">shoplite</string>
     <string name="currency">\u20B9</string>
-    <string name ="home_delivery">Home Delivery</string>
-    <string name ="shop_pickup">Take Away</string>
-    <string name ="address_input_hint">Enter House number, Apartment/Society</string>
-    <string name ="address_detail_heading">Address Details</string>
-    <string name ="pay_cash">Pay Cash </string>
-    <string name ="pay_online">Pay Online</string>
-    <string name ="confirm_order">Confirm</string>
-    <string name ="finalize_order_message">Continue to place order, cancel to make changes.</string>
-    <string name ="finalize_order_title">Confirm Order?</string>
-    <string name ="confirming_order">Confirming Order</string>
-    <string name ="delivery_anchor_title">Your Delivery Location</string>
-    <string name ="delivery_dialog_text">Set Delivery Point</string>
-    <string name ="set_address">Set</string>
-    <string name ="pick_delivery_location">Pick Delivery Location</string>
-    <string name ="pick">Pick</string>
-    <string name ="import_all">Import All</string>
-    <string name ="import_selected">Import Selected </string>
-    <string name ="order_summary_heading">Order Summary</string>
-    <string name ="import_all_title">Import List</string>
-    <string name ="settings">Settings</string>
-    <string name ="item">Item</string>
-    <string name ="items">Items</string>
-    <string name ="import_all_message">Import  items from the List ?</string>
+    <string name="home_delivery">Home Delivery</string>
+    <string name="shop_pickup">Take Away</string>
+    <string name="address_input_hint">Enter House number, Apartment/Society</string>
+    <string name="address_detail_heading">Address Details</string>
+    <string name="pay_cash">Pay Cash </string>
+    <string name="pay_online">Pay Online</string>
+    <string name="confirm_order">Confirm</string>
+    <string name="finalize_order_message">Continue to place order, cancel to make changes.</string>
+    <string name="finalize_order_title">Confirm Order?</string>
+    <string name="confirming_order">Confirming Order</string>
+    <string name="delivery_anchor_title">Your Delivery Location</string>
+    <string name="delivery_dialog_text">Set Delivery Point</string>
+    <string name="set_address">Set</string>
+    <string name="pick_delivery_location">Pick Delivery Location</string>
+    <string name="pick">Pick</string>
+    <string name="import_all">Import All</string>
+    <string name="import_selected">Import Selected </string>
+    <string name="order_summary_heading">Order Summary</string>
+    <string name="import_all_title">Import List</string>
+    <string name="settings">Settings</string>
+    <string name="item">Item</string>
+    <string name="account">Account</string>
+    <string name="items">Items</string>
+    <string name="import_all_message">Import  items from the List ?</string>
+    <string name="address">Address</string>
+    <string name="phone">Phone no.</string>
+    <string name="legal">Legal</string>
+    <string name="open_source_license">Open Source Licenses</string>
+    <string name="name">Name</string>
+    <string name="title_activity_settings">SettingsActivity</string>
 </resources>
