@@ -3,7 +3,7 @@ package com.shoplite.fragments;
 import java.util.ArrayList;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,12 +16,19 @@ import com.shoplite.models.SaveList;
 
 import eu.livotov.zxscan.R;
 
-public class SavedListsFragment extends Fragment{
+public class SavedListsFragment extends DialogFragment {
 
 	private ListView savedListsView;
 	private LinearLayout emptySavedListView;
 	private static ArrayList<SaveList> savedLists ;
 	private static SaveListAdapter saveListAdapter;
+	
+	public static SavedListsFragment newInstance() {
+		SavedListsFragment dialogInstance = new SavedListsFragment();
+
+        return dialogInstance;
+    }
+	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
         Bundle savedInstanceState) {
@@ -30,6 +37,9 @@ public class SavedListsFragment extends Fragment{
 		emptySavedListView = (LinearLayout) rootView.findViewById(R.id.empty_saved_list_container);
 		savedLists = Globals.dbhelper.getAllSavedShopList();
 		saveListAdapter = new SaveListAdapter(getActivity(), savedLists);
+		if(getDialog()!= null)
+			getDialog().setTitle("Your Saved Lists");
+
 		return rootView;
        }
 	

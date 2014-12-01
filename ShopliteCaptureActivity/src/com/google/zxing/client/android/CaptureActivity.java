@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.content.res.XmlResourceParser;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -32,16 +33,19 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MenuItem.OnActionExpandListener;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -104,6 +108,7 @@ import com.shoplite.fragments.CameraFragment;
 import com.shoplite.fragments.CartFragment;
 import com.shoplite.fragments.ContainerFragment;
 import com.shoplite.fragments.OrderFragment;
+import com.shoplite.fragments.SavedListsFragment;
 import com.shoplite.interfaces.ControlsInterface;
 import com.shoplite.interfaces.ItemInterface;
 import com.shoplite.interfaces.LocationInterface;
@@ -159,7 +164,7 @@ ControlsInterface,PackListInterface
     private OrderFragment orderFrag = new OrderFragment();
     private CameraFragment camFrag = new CameraFragment();
     ContainerFragment conFrag = new ContainerFragment();
-    
+    private SavedListsFragment savedListFragment = new SavedListsFragment();
     private ListView ldrawer;
     private DrawerLayout mDrawerLayout;
     private String[] main_action = {"Groceries","Fruits & Veg","Beverages/Health-Drinks","Dairy/Eggs","Ready to Eat/Packed Foods","Personnel Care","Household","Stationery"};
@@ -192,6 +197,7 @@ ControlsInterface,PackListInterface
 	private LinearLayout deliveryAddressView;
 	private LinearLayout mapDialogView;
 	private boolean animationFlipClockWise;
+	private MenuItem importToCart;
 	//private Shop nearestShop;
 	
 	private OnCameraChangeListener onCameraChange = new OnCameraChangeListener() {
@@ -321,7 +327,7 @@ ControlsInterface,PackListInterface
 		actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 		actionBar.setDisplayHomeAsUpEnabled(false);
 		actionBar.setHomeButtonEnabled(false);
-	        
+		
 		
 		
 		progressBar = new ButteryProgressBar(this);
@@ -657,8 +663,26 @@ ControlsInterface,PackListInterface
 			}
 		});
        
+        
+        importToCart = menu.findItem(R.id.import_to_cart);
+        importToCart.setVisible(false);
+        importToCart.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+			
+			@Override
+			public boolean onMenuItemClick(MenuItem item) {
+				// TODO Auto-generated method stub
+				if(!cartFrag.isDetached()){
+					DialogFragment newFragment = SavedListsFragment.newInstance();
+				    newFragment.show(getSupportFragmentManager(), "SaveListDialog"); 
+				    //newFragment.getDialog().setTitle("Your Saved Lists");
+				}
+				return true;
+			}
+		});
         return super.onCreateOptionsMenu(menu);
     }
+    
+    
     
     @Override
     public boolean onPrepareOptionsMenu(Menu menu)
@@ -1204,7 +1228,7 @@ ControlsInterface,PackListInterface
 			
 			//hiding cart
 			if(!cartFrag.isDetached()){
-        		getSupportFragmentManager().beginTransaction().detach(cartFrag).commit();
+        		getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_out,R.anim.fade_out).detach(cartFrag).commit();
         		getSupportFragmentManager().executePendingTransactions();
         		if(conFrag.mViewPager.getCurrentItem() == 0){
         			getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -1215,18 +1239,19 @@ ControlsInterface,PackListInterface
         		}
         		actionBar.setTitle(getResources().getText(R.string.app_name));
         		shopSearch.setVisible(false);
+        		importToCart.setVisible(false);
         	}
 			//showing cart
     		else{
     			
-    			getSupportFragmentManager().beginTransaction().attach(cartFrag ).addToBackStack(null).commit();
+    			getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in,R.anim.fade_in).attach(cartFrag ).addToBackStack(null).commit();
         		getSupportFragmentManager().executePendingTransactions();
         		getActionBar().setDisplayHomeAsUpEnabled(false);
     			getActionBar().setHomeButtonEnabled(false);
     			shopSearch.setVisible(false);
     			actionBar.setTitle(getResources().getText(R.string.shopping_cart)+
         				"    " + Double.toString(Math.round(Globals.cartTotalPrice*100.0/100.0)) + " " +getResources().getText(R.string.currency));
-        		
+    			importToCart.setVisible(true);
     		}
     		mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, ldrawer);
         	
