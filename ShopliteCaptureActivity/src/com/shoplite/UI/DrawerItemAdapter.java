@@ -36,9 +36,7 @@ public class DrawerItemAdapter extends ArrayAdapter<Product>{
 	 protected int mRowLayoutId = R.layout.drawer_item_container;
 	 protected ArrayList<Product> drawerItemList;
 	 protected int innerviewTypeCount=1;
-
-	private BaseCardView addItemContainer;
-
+	
 	private AlertDialog AddDialog;
 
 	public DrawerItemAdapter(Context context,ArrayList<Product> itemSimmilarFamily) {
@@ -60,7 +58,6 @@ public class DrawerItemAdapter extends ArrayAdapter<Product>{
 					
 					@Override
 					public void onClick(Product item, View view) {
-						// TODO Auto-generated method stub
 						CaptureActivity.addToItem = new AddItemCard(mContext,item);
 						BaseCardView itemContainer =(BaseCardView)AddDialog.findViewById(R.id.itemView);
 						CaptureActivity.addToItem.setParentView(mContext, itemContainer);
@@ -95,7 +92,7 @@ public class DrawerItemAdapter extends ArrayAdapter<Product>{
 	 * @param itemContainer
 	 */
 	public void setAddCardView(AlertDialog addDialog) {
-		// TODO Auto-generated method stub
+		
 		this.AddDialog = addDialog;
 	}
 

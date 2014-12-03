@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.Button;
 import android.widget.ImageButton;
 
 import com.shoplite.interfaces.ControlsInterface;
@@ -46,7 +45,6 @@ public class Controls {
 			
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				//alertDialog.dismiss();      //should be taken care by the callee methods
 				Controls.calling_class_object.positive_button_alert_method();
 			}
@@ -56,7 +54,6 @@ public class Controls {
 			
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				//alertDialog.dismiss();    //should be taken care by the callee methods
 				Controls.calling_class_object.negative_button_alert_method();
 			}

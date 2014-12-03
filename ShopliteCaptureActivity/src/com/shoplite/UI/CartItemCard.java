@@ -20,18 +20,17 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.NumberPicker;
 import android.widget.NumberPicker.OnValueChangeListener;
-import android.widget.Toast;
 
 import com.google.zxing.client.android.CaptureActivity;
 import com.shoplite.Utils.CartGlobals;
 import com.shoplite.Utils.Constants;
-import com.shoplite.Utils.Globals;
 import com.shoplite.Utils.Constants.DBState;
+import com.shoplite.Utils.Globals;
 import com.shoplite.fragments.CartFragment;
 import com.shoplite.interfaces.PackListInterface;
-import com.shoplite.models.Product;
 import com.shoplite.models.OrderItemDetail;
 import com.shoplite.models.PackList;
+import com.shoplite.models.Product;
 
 import eu.livotov.zxscan.R;
 
@@ -179,7 +178,6 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 			
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				// TODO Auto-generated method stub
 				
 				switch(event.getAction())
                 {

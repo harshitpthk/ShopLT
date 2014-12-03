@@ -8,10 +8,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 import android.util.Log;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.shoplite.Utils.Constants;
-import com.shoplite.Utils.Globals;
 import com.shoplite.connection.ConnectionInterface;
 import com.shoplite.connection.ServerConnectionMaker;
 import com.shoplite.connection.ServiceProvider;
@@ -99,7 +96,6 @@ public class SubmitOrderDetails   implements ConnectionInterface {
 	 */
 	@Override
 	public void sendRequest(ServiceProvider serviceProvider) {
-		// TODO Auto-generated method stub
 		
 		final SubmitOrderDetails submitOrder = this;
 		final SubmitOrderInterface callee =  submitOrder.calling_class_object;

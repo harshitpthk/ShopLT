@@ -8,7 +8,6 @@ import java.util.List;
 import android.content.Context;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.shoplite.UI.BaseItemCard;
 import com.shoplite.database.DbHelper;
 import com.shoplite.fragments.CartFragment;
 import com.shoplite.models.Product;
@@ -81,7 +80,7 @@ public class Globals {
 	 * 
 	 */
 	public static void resetCartData() {
-		// TODO Auto-generated method stub
+		
 		item_added_list.clear();
 		item_order_list.clear();
 		cartTotalPrice = 0.00;

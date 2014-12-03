@@ -128,7 +128,6 @@ public class OrderHistoryFragment extends Fragment{
 			 * 
 			 */
 			public void getStatus() {
-				// TODO Auto-generated method stub
 				
 				ServerConnectionMaker.sendRequest(this);
 				
@@ -144,20 +143,17 @@ public class OrderHistoryFragment extends Fragment{
 			
 			@Override
 			public void sendRequest(ServiceProvider serviceProvider) {
-				// TODO Auto-generated method stub
 								
 					serviceProvider.getOrderStatus(this.orderID, new Callback<ORDERState>(){
 
 						@Override
 						public void failure(RetrofitError response) {
-							// TODO Auto-generated method stub
 							ServerConnectionMaker.recieveResponse(null);
 							Log.e("Order Status failure", response.getMessage().toString());
 						}
 
 						@Override
 						public void success(ORDERState state, Response response) {
-							// TODO Auto-generated method stub
 							ServerConnectionMaker.recieveResponse(response);
 							updateStatus(state.ordinal());
 							Log.e("Order Status Success", response.toString());

@@ -11,7 +11,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.google.gson.Gson;
-import com.shoplite.Utils.Constants.ORDERState;
 import com.shoplite.models.PreviousOrder;
 import com.shoplite.models.Product;
 import com.shoplite.models.SaveList;
@@ -403,7 +402,6 @@ public class DbHelper extends  SQLiteOpenHelper{
 	}
 	
 	public ArrayList<PreviousOrder> getAllOrders() {
-		// TODO Auto-generated method stub
 		ArrayList<PreviousOrder>  previousOrderLists = new ArrayList<PreviousOrder>();
 		SQLiteDatabase database = this.getReadableDatabase();
 		Cursor cursor = null;

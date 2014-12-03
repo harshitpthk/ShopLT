@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,7 +16,6 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.google.zxing.client.android.CaptureActivity;
 import com.shoplite.UI.Controls;
 import com.shoplite.UI.ItemListAdapter;
 import com.shoplite.Utils.Globals;
@@ -78,7 +76,6 @@ public class ItemsDisplayActivity extends Activity implements ControlsInterface,
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				for(int i = 0 ; i < itemList.size() ;i++){
 					itemList.get(i).setSelected(true);
 				}
@@ -92,7 +89,6 @@ public class ItemsDisplayActivity extends Activity implements ControlsInterface,
 			
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				isImportAll = false;
 				importSelected();
 			}
@@ -153,7 +149,6 @@ public class ItemsDisplayActivity extends Activity implements ControlsInterface,
 	 */
 	@Override
 	public void positive_button_alert_method() {
-		// TODO Auto-generated method stub
 		boolean itemsAlreadyPresent = false;
 		alertDialog.dismiss();
 		Controls.show_loading_dialog(this, "Importing to Cart");
@@ -215,7 +210,6 @@ public class ItemsDisplayActivity extends Activity implements ControlsInterface,
 	 * 
 	 */
 	private void updateItem(Product product) {
-		// TODO Auto-generated method stub
 		Input input = new Input(product.getId(),"productid");
 		product.updateItem(input, this);
 		
@@ -226,75 +220,50 @@ public class ItemsDisplayActivity extends Activity implements ControlsInterface,
 	 */
 	@Override
 	public void negative_button_alert_method() {
-		// TODO Auto-generated method stub
 		alertDialog.dismiss();
 		for(int i = 0 ; i < itemList.size() ;i++){
 			itemList.get(i).setSelected(false);
 		}
 		itemAdapter.notifyDataSetChanged();
 	}
-	/* (non-Javadoc)
-	 * @see com.shoplite.interfaces.ControlsInterface#save_alert_dialog(android.app.AlertDialog)
-	 */
+	
 	@Override
 	public void save_alert_dialog(AlertDialog alertDialog) {
-		// TODO Auto-generated method stub
 		this.alertDialog = alertDialog;
 	}
-	/* (non-Javadoc)
-	 * @see com.shoplite.interfaces.ControlsInterface#neutral_button_alert_method()
-	 */
+	
 	@Override
 	public void neutral_button_alert_method() {
-		// TODO Auto-generated method stub
 		
 	}
-	/* (non-Javadoc)
-	 * @see com.shoplite.interfaces.ItemInterface#getItemList(com.shoplite.models.Product)
-	 */
+	
 	@Override
 	public void getItemList(Product item) {
-		// TODO Auto-generated method stub
 		
 	}
-	/* (non-Javadoc)
-	 * @see com.shoplite.interfaces.ItemInterface#ItemGetSuccess(com.shoplite.models.Product)
-	 */
+	
 	@Override
 	public void ItemGetSuccess(Product item) {
-		// TODO Auto-generated method stub
 		
 	}
-	/* (non-Javadoc)
-	 * @see com.shoplite.interfaces.ItemInterface#ItemGetFailure()
-	 */
+	
 	@Override
 	public void ItemGetFailure() {
-		// TODO Auto-generated method stub
 		
 	}
-	/* (non-Javadoc)
-	 * @see com.shoplite.interfaces.ItemInterface#ItemListGetSuccess(java.util.ArrayList)
-	 */
+	
 	@Override
 	public void ItemListGetSuccess(ArrayList<Product> itemFamily) {
-		// TODO Auto-generated method stub
 		
 	}
-	/* (non-Javadoc)
-	 * @see com.shoplite.interfaces.ItemInterface#getItem()
-	 */
+	
 	@Override
 	public void getItem() {
-		// TODO Auto-generated method stub
 		
 	}
-	/* (non-Javadoc)
-	 * @see com.shoplite.interfaces.ItemInterface#updateItemSuccess(com.shoplite.models.Product)
-	 */
+	
 	@Override
 	public void updateItemSuccess(Product product) {
-		// TODO Auto-generated method stub
 		
 		Globals.item_order_list.add(product); 
 		Globals.cartTotalPrice += product.getTotalPrice();
@@ -304,17 +273,14 @@ public class ItemsDisplayActivity extends Activity implements ControlsInterface,
 			updateCount = 0;
 			Controls.dismiss_progress_dialog();
 			//Toast.makeText(this, "Import Success", Toast.LENGTH_SHORT).show();
-			//CaptureActivity.saveListDialog.dismiss();
+			
 			setResult(Activity.RESULT_OK, null);
 			finish();
 		}
 	}
-	/* (non-Javadoc)
-	 * @see com.shoplite.interfaces.ItemInterface#updateItemFailure(com.shoplite.models.Product)
-	 */
+	
 	@Override
 	public void updateItemFailure() {
-		// TODO Auto-generated method stub
 		
 	}
 }

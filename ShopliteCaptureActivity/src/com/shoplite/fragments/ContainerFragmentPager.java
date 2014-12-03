@@ -10,20 +10,18 @@ public class ContainerFragmentPager extends FragmentPagerAdapter {
 
 	public ContainerFragmentPager(FragmentManager fm) {
 		super(fm);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	@Override
 	public Fragment getItem(int i) {
-		// TODO Auto-generated method stub
-		Fragment fragment = null ;
 		switch(i){
 			case 0:
-				 return  fragment = new OfflineShopFrag();
+				 return  new OfflineShopFrag();
 	        case 1:
-	    	     return   fragment = new CameraFragment();
+	    	     return   new CameraFragment();
 	        case 2:
-	        	 return   fragment = new OrderFragment();
+	        	 return   new OrderFragment();
 		}
 		return null;
 	}

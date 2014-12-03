@@ -9,7 +9,6 @@ import android.util.Log;
 
 import com.google.gson.JsonObject;
 import com.shoplite.Utils.Globals;
-import com.shoplite.Utils.util;
 import com.shoplite.connection.ConnectionInterface;
 import com.shoplite.connection.ServerConnectionMaker;
 import com.shoplite.connection.ServiceProvider;

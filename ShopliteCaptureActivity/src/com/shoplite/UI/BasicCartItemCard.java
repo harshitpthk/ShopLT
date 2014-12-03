@@ -9,9 +9,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -20,8 +17,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.zxing.client.android.CaptureActivity;
-import com.shoplite.Utils.Globals;
 import com.shoplite.models.Product;
 import com.squareup.picasso.Picasso;
 
@@ -191,7 +186,6 @@ public class BasicCartItemCard extends BaseItemCard{
 			
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				// TODO Auto-generated method stub
 				if(isChecked){
 					item.setSelected(true);
 				}
@@ -249,7 +243,6 @@ public class BasicCartItemCard extends BaseItemCard{
 	public void setParentView(ViewGroup container,
 			ArrayList<Product> cartItemListRecieved,
 			ItemListAdapter itemListAdapter) {
-		// TODO Auto-generated method stub
 		this.cartItemList = cartItemListRecieved;
 		this.itemListAdapter = itemListAdapter;
 		setUpView(getmContext(), container);

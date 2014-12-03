@@ -16,9 +16,9 @@
 
 package com.google.zxing.client.android;
 
-import android.app.Activity;
-import android.app.AlertDialog;
+import java.util.Collection;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -33,23 +33,10 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 import com.google.zxing.client.android.camera.CameraManager;
 import com.shoplite.UI.Controls;
-import com.shoplite.Utils.CartGlobals;
-import com.shoplite.Utils.Constants.DBState;
-import com.shoplite.Utils.Globals;
-import com.shoplite.interfaces.ControlsInterface;
-import com.shoplite.interfaces.ItemInterface;
-import com.shoplite.interfaces.PackListInterface;
 import com.shoplite.models.Input;
-import com.shoplite.models.ProductVariance;
 import com.shoplite.models.Product;
-import com.shoplite.models.OrderItemDetail;
-import com.shoplite.models.PackList;
-import com.shoplite.models.Shop;
 
 import eu.livotov.zxscan.R;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * This class handles all the messaging which comprises the state machine for capture.

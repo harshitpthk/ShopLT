@@ -1,11 +1,6 @@
 package com.shoplite.UI;
 
-import com.squareup.picasso.Picasso;
-
 import android.content.Context;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
 
 
 public class ItemThumbnail  {
@@ -15,7 +10,7 @@ public class ItemThumbnail  {
 	 public ItemThumbnail(Context context,String Url) {
 		
 		this.itemThumbnailURL = Url;
-		// TODO Auto-generated constructor stub
+		
 	}
 
 

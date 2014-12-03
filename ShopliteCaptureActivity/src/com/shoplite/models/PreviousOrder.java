@@ -3,7 +3,6 @@
  */
 package com.shoplite.models;
 
-import com.shoplite.Utils.Constants;
 
 
 /**

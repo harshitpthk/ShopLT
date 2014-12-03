@@ -7,7 +7,6 @@ import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.Header;
 import retrofit.http.POST;
-import android.provider.SyncStateContract.Constants;
 
 import com.google.gson.JsonObject;
 import com.shoplite.models.Input;
