@@ -41,9 +41,9 @@ public class CartFragment extends Fragment implements ControlsInterface,PackList
 
 	
 	protected ListView cartItemsListView;
-	protected ItemListAdapter cartAdapter;
+	protected static ItemListAdapter cartAdapter;
 	protected static LinearLayout emptyCartView;
-	private AlertDialog alertDialog;
+	public static AlertDialog alertDialog;
 	private static Button saveListButton;
 	private static Button checkoutButton;
 	
@@ -117,7 +117,12 @@ public class CartFragment extends Fragment implements ControlsInterface,PackList
 		checkoutButton.setVisibility(View.VISIBLE);
 		emptyCartView.setVisibility(View.GONE);
 	}
-	
+	public static void updateCart()
+	{
+		if(cartAdapter != null){
+			cartAdapter.updateCart(Globals.item_order_list);
+		}
+	}
 		
 //	@Override
 //	public boolean onCreateOptionsMenu(Menu menu) {
@@ -152,7 +157,7 @@ public class CartFragment extends Fragment implements ControlsInterface,PackList
 	 */
 	@Override
 	public void positive_button_alert_method() {
-		EditText listNameInput = (EditText) this.alertDialog.findViewById(R.id.list_save_name_input);
+		EditText listNameInput = (EditText) CartFragment.alertDialog.findViewById(R.id.list_save_name_input);
 		listNameInput.setError(null);
 		if(listNameInput.getText().toString().length() <= 0){
 			listNameInput.setError(getString(R.string.error_field_required));
@@ -187,13 +192,13 @@ public class CartFragment extends Fragment implements ControlsInterface,PackList
 	
 	@Override
 	public void negative_button_alert_method() {
-		this.alertDialog.dismiss();
+		CartFragment.alertDialog.dismiss();
 			
 	}
 	
 	@Override
 	public void save_alert_dialog(AlertDialog alertDialog) {
-		this.alertDialog = alertDialog;
+		CartFragment.alertDialog = alertDialog;
 	}
 	
 	@Override

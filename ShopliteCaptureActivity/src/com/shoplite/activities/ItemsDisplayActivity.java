@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,9 +17,11 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.google.zxing.client.android.CaptureActivity;
 import com.shoplite.UI.Controls;
 import com.shoplite.UI.ItemListAdapter;
 import com.shoplite.Utils.Globals;
+import com.shoplite.fragments.CartFragment;
 import com.shoplite.interfaces.ControlsInterface;
 import com.shoplite.interfaces.ItemInterface;
 import com.shoplite.models.Input;
@@ -39,6 +42,7 @@ public class ItemsDisplayActivity extends Activity implements ControlsInterface,
     private Button importSelectedItems;
 	private AlertDialog alertDialog;
 	private boolean isImportAll;
+	private int updateCount = 0;
 	
 	
 	@Override
@@ -96,6 +100,17 @@ public class ItemsDisplayActivity extends Activity implements ControlsInterface,
 		
 		
 	}
+	
+	public int getSelectedCount()
+	{
+		int count = 0;
+		for(int i = 0 ; i < itemList.size() ;i++){
+			if(itemList.get(i).isSelected()){
+				count++;
+			}
+		}
+		return count;
+	}
 	public void importAll()
 	{
 		Controls.show_alert_dialog(this, this, R.layout.confirm_import_all_dialog, 250);
@@ -104,9 +119,11 @@ public class ItemsDisplayActivity extends Activity implements ControlsInterface,
 	}
 	public void importSelected()
 	{
-		
-		Controls.show_alert_dialog(this, this, R.layout.confirm_import_all_dialog, 250);
-		
+		if(getSelectedCount() >0)
+			Controls.show_alert_dialog(this, this, R.layout.confirm_import_all_dialog, 250);
+		else{
+			Toast.makeText(this, "Select some items", Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	@Override
@@ -138,8 +155,9 @@ public class ItemsDisplayActivity extends Activity implements ControlsInterface,
 	public void positive_button_alert_method() {
 		// TODO Auto-generated method stub
 		boolean itemsAlreadyPresent = false;
+		alertDialog.dismiss();
+		Controls.show_loading_dialog(this, "Importing to Cart");
 		if(isImportAll){
-			Controls.show_loading_dialog(this, "Importing List to Cart");
 			for(int i = 0 ; i < itemList.size();i++)
 			{
 				if(!Globals.item_added_list.contains(itemList.get(i).getCurrentItemId())){
@@ -151,20 +169,18 @@ public class ItemsDisplayActivity extends Activity implements ControlsInterface,
 					itemsAlreadyPresent = true;
 				}
 			}
-			Controls.dismiss_progress_dialog();
 			if(itemsAlreadyPresent){
-				Toast.makeText(this, "List"+ listName +" Imported Successfully with certain Items already present", Toast.LENGTH_LONG).show();
+				//Toast.makeText(this, "List"+ listName +" Imported Successfully with certain Items already present", Toast.LENGTH_LONG).show();
 			}
 			else{
-				Toast.makeText(this, "List"+ listName +" Imported Successfully", Toast.LENGTH_LONG).show();
+				//Toast.makeText(this, "List"+ listName +" Imported Successfully", Toast.LENGTH_LONG).show();
 				
 			}
-			finish();
+			
 		}
 		else{
 			for(int i = 0 ; i < itemList.size();i++)
 			{
-				Controls.show_loading_dialog(this, "Importing products to Cart");
 				
 				if(itemList.get(i).isSelected()){
 					if(!Globals.item_added_list.contains(itemList.get(i).getCurrentItemId())){
@@ -177,19 +193,21 @@ public class ItemsDisplayActivity extends Activity implements ControlsInterface,
 						itemsAlreadyPresent = true;
 					}
 				}
-				Controls.dismiss_progress_dialog();
 				if(itemsAlreadyPresent){
-					Toast.makeText(this, "Selected Items Imported Successfully with certain Items already present", Toast.LENGTH_LONG).show();
+					//Toast.makeText(this, "Selected Items Imported Successfully with certain Items already present", Toast.LENGTH_LONG).show();
 				
 				}
 				else{
-					Toast.makeText(this, "Selected Items Imported Successfully", Toast.LENGTH_LONG).show();
+					//Toast.makeText(this, "Selected Items Imported Successfully", Toast.LENGTH_LONG).show();
 				}
-				finish();
+				
 			}
 			
+			
+			
 		}
-		alertDialog.dismiss();
+		//Controls.dismiss_progress_dialog();
+
 		
 	}
 	/**
@@ -280,6 +298,16 @@ public class ItemsDisplayActivity extends Activity implements ControlsInterface,
 		
 		Globals.item_order_list.add(product); 
 		Globals.cartTotalPrice += product.getTotalPrice();
+		CartFragment.updateCart();
+		updateCount++;
+		if(updateCount == getSelectedCount()){
+			updateCount = 0;
+			Controls.dismiss_progress_dialog();
+			//Toast.makeText(this, "Import Success", Toast.LENGTH_SHORT).show();
+			//CaptureActivity.saveListDialog.dismiss();
+			setResult(Activity.RESULT_OK, null);
+			finish();
+		}
 	}
 	/* (non-Javadoc)
 	 * @see com.shoplite.interfaces.ItemInterface#updateItemFailure(com.shoplite.models.Product)

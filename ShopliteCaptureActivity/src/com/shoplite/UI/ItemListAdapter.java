@@ -55,6 +55,7 @@ public class ItemListAdapter extends BaseAdapter {
 		 ThreadPreconditions.checkOnMainThread();   
 		 this.cartItemList = cartItemList;
 	     notifyDataSetChanged();
+	     
 	 }
 	 
 	 

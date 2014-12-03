@@ -119,6 +119,7 @@ import com.shoplite.models.OrderItemDetail;
 import com.shoplite.models.PackList;
 import com.shoplite.models.Product;
 import com.shoplite.models.ProductVariance;
+import com.shoplite.models.SaveList;
 import com.shoplite.models.Shop;
 
 import eu.livotov.zxscan.R;
@@ -198,6 +199,9 @@ ControlsInterface,PackListInterface
 	private LinearLayout mapDialogView;
 	private boolean animationFlipClockWise;
 	private MenuItem importToCart;
+	
+	protected static DialogFragment saveListDialog;
+	public static int SAVE_LIST_REQUEST = 200;
 	//private Shop nearestShop;
 	
 	private OnCameraChangeListener onCameraChange = new OnCameraChangeListener() {
@@ -302,9 +306,6 @@ ControlsInterface,PackListInterface
    //activity methods
    
    
-	
-	
-	
 	
 	@Override
     public void onCreate(Bundle icicle)
@@ -672,9 +673,16 @@ ControlsInterface,PackListInterface
 			public boolean onMenuItemClick(MenuItem item) {
 				// TODO Auto-generated method stub
 				if(!cartFrag.isDetached()){
-					DialogFragment newFragment = SavedListsFragment.newInstance();
-				    newFragment.show(getSupportFragmentManager(), "SaveListDialog"); 
-				    //newFragment.getDialog().setTitle("Your Saved Lists");
+					ArrayList<SaveList> savedLists = Globals.dbhelper.getAllSavedShopList();
+					if(savedLists.size()>0){
+						saveListDialog = SavedListsFragment.newInstance();
+						saveListDialog.show(getSupportFragmentManager(), "SaveListDialog"); 
+						
+					}
+					else{
+						Toast.makeText(getBaseContext(), "You Don't have any Saved List, Create One to Use Import",
+								Toast.LENGTH_LONG).show();
+					}
 				}
 				return true;
 			}
@@ -695,7 +703,21 @@ ControlsInterface,PackListInterface
 		return super.onPrepareOptionsMenu(menu);
     	
     }
+   
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+    	super.onActivityResult(requestCode, resultCode, data);
 
+        if (requestCode == SAVE_LIST_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                if(saveListDialog != null)            	
+                	saveListDialog.dismiss();
+                // Do something with the contact here (bigger example below)
+            }
+        }
+    }
     
     
     //Zxing Library Methods
@@ -1514,7 +1536,7 @@ ControlsInterface,PackListInterface
 		
 		if(itemFetched.getItemList().size()>0){
 			
-			Controls.show_alert_dialog(this, this, R.layout.activity_add_item,450);
+			Controls.show_alert_dialog(this, CaptureActivity.this, R.layout.activity_add_item,450);
 	        
 			BaseCardView itemContainer = (BaseCardView) AddDialog.findViewById(R.id.itemView);
 				 addToItem = new AddItemCard(this, itemFetched);

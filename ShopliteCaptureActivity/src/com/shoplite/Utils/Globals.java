@@ -10,6 +10,7 @@ import android.content.Context;
 import com.google.android.gms.maps.model.LatLng;
 import com.shoplite.UI.BaseItemCard;
 import com.shoplite.database.DbHelper;
+import com.shoplite.fragments.CartFragment;
 import com.shoplite.models.Product;
 import com.shoplite.models.Shop;
 
@@ -84,7 +85,7 @@ public class Globals {
 		item_added_list.clear();
 		item_order_list.clear();
 		cartTotalPrice = 0.00;
-	
+		CartFragment.updateCart();
 	}
 	
 }

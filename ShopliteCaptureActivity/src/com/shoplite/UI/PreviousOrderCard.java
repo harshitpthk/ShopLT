@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -20,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.shoplite.Utils.Constants;
 import com.shoplite.activities.ItemsDisplayActivity;
 import com.shoplite.connection.ConnectionInterface;
@@ -27,7 +27,7 @@ import com.shoplite.connection.ServerConnectionMaker;
 import com.shoplite.connection.ServiceProvider;
 import com.shoplite.models.OrderItemDetail;
 import com.shoplite.models.PreviousOrder;
-
+import com.shoplite.models.Product;
 
 import eu.livotov.zxscan.R;
 
@@ -216,9 +216,25 @@ public class PreviousOrderCard implements ConnectionInterface{
 	public void orderedProductsFetchSuccess(
 			ArrayList<OrderItemDetail> productList) {
 		// TODO Auto-generated method stub
+		ArrayList<Product> orderedProductList= new ArrayList<Product>();
+		for(int i = 0 ; i < productList.size() ;i++){
+			
+			Product product = new Product(productList.get(i).getProductId(),
+					productList.get(i).getProductName());
+			product.setCurrentItemId(productList.get(i).getVarianceId());
+			product.setCurrentMeasure(productList.get(i).getVarianceName());
+			product.setCurrentQty(productList.get(i).getQuantity());
+			product.setCurrentMsrPrice(productList.get(i).getPrice());
+			product.setTotalPrice(product.getCurrentMsrPrice()*product.getCurrentQty());
+			product.setId(productList.get(i).getProductId());
+			orderedProductList.add(product);
+		}
 		Toast.makeText(context, "onclick saved list", Toast.LENGTH_SHORT).show();
 		Intent i = new Intent(context,ItemsDisplayActivity.class);
-		
+		i.putExtra("ListName", Integer.toString(productList.get(0).getOrderId()));
+		Gson gson = new Gson();
+		String jsonString = gson.toJson(orderedProductList);
+		i.putExtra("ItemList", jsonString);
 		context.startActivity(i);
 	}
 }

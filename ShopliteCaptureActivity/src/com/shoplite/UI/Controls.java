@@ -40,7 +40,7 @@ public class Controls {
 		
 		
 		final AlertDialog alertDialog = alert.create();
-		
+		alertDialog.show();
 		ImageButton positive_button = (ImageButton)alertDialog.findViewById(R.id.positive_button);
 		positive_button.setOnClickListener(new OnClickListener() {
 			
@@ -67,7 +67,7 @@ public class Controls {
 		DisplayMetrics metrics = context.getResources().getDisplayMetrics();
 		alertDialog.getWindow().setLayout(LayoutParams.MATCH_PARENT,(int) (metrics.density * size));
 		calling_class_object.save_alert_dialog(alertDialog);
-		alertDialog.show();
+		
 	}
 
 	public static void show_add_item_dialog_spinner(Context context,AlertDialog AddDialog,Product itemFamily)

@@ -5,9 +5,9 @@ package com.shoplite.UI;
 
 import java.util.ArrayList;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.sax.StartElementListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.zxing.client.android.CaptureActivity;
 import com.shoplite.activities.ItemsDisplayActivity;
 import com.shoplite.models.SaveList;
 
@@ -65,7 +66,7 @@ public class SavedListCard {
 				Intent i = new Intent(context,ItemsDisplayActivity.class);
 				i.putExtra("ListName", savedlist.getSaveListName());
 				i.putExtra("ItemList", savedlist.getListEntries());
-				context.startActivity(i);
+				((Activity)context).startActivityForResult(i,CaptureActivity.SAVE_LIST_REQUEST );
 			}
 
 			
