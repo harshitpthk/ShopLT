@@ -2,7 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="5dp"
     android:orientation="vertical"
     tools:context="eu.livotov.zxscan.SettingsActivity" >
     <FrameLayout 
@@ -10,18 +9,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
       ></FrameLayout>
-    <ListView 
-        android:id="@+id/legal_list_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"     
-       >
-        
-    </ListView>
+           
+    
     <TextView 
         android:id="@+id/version_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
+        android:layout_gravity="bottom|center"
+        android:gravity="center"
         android:layout_margin="10dp"
         android:textColor="@color/app_color"
         android:text="Version 0.0.1"/>

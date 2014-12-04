@@ -82,6 +82,8 @@
     <string name="open_source_license">Open Source Licenses</string>
     <string name="import_items">Import Items</string>
     <string name="your_saved_lists">Your Saved Lists</string>
+    <string name="terms_of_use">Terms of Use</string>
+    <string name="privacy_statement">Privacy Statement</string>
     <string name="name">Name</string>
     <string name="title_activity_settings">SettingsActivity</string>
 </resources>

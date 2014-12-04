@@ -17,7 +17,8 @@
     
     </PreferenceCategory>
     <PreferenceCategory
-         android:title="Notifications" >
+         android:title="Notifications"
+          >
         <SwitchPreference
             android:key="notification_preference"
             android:title="Send Notifications"
@@ -29,6 +30,20 @@
     </PreferenceCategory>
     <PreferenceCategory
             android:title="@string/legal">
+        
+		<Preference android:title="@string/terms_of_use" >
+		    <intent android:action="android.intent.action.VIEW"
+		            android:data="http://www.google.com" />
+		</Preference>
+		<Preference android:title="@string/privacy_statement" >
+		    <intent android:action="android.intent.action.VIEW"
+		            android:data="http://www.google.com" />
+		    
+		</Preference>
+		<Preference android:title="@string/open_source_license" >
+		    <intent android:action="android.intent.action.VIEW"
+		            android:data="http://www.google.com" />
+		</Preference>
  		    
     </PreferenceCategory>
 </PreferenceScreen>

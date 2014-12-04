@@ -1,16 +1,20 @@
 package com.shoplite.activities;
 
 import android.app.Activity;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import eu.livotov.zxscan.R;
 
 public class SettingsActivity extends Activity {
-
+	private TextView versionView ;
 	private FrameLayout preferenceContainer = null;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -21,6 +25,18 @@ public class SettingsActivity extends Activity {
 		 getFragmentManager().beginTransaction()
          .replace(R.id.preference_container, new SettingsFragment())
          .commit();
+		 PackageManager packageManager = this.getPackageManager();
+		 String versionName = "0.0.1";
+		
+		 try {
+			versionName = packageManager.getPackageInfo(this.getPackageName(), 0).versionName;
+		} catch (NameNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		 versionView = (TextView)findViewById(R.id.version_text_view);
+		 versionView.setText("Build Version: "+versionName);
+		 
 		}
 
 	@Override
@@ -43,12 +59,15 @@ public class SettingsActivity extends Activity {
 	}
 	
 	public static class SettingsFragment extends PreferenceFragment {
-	    @Override
+	    
+		@Override
 	    public void onCreate(Bundle savedInstanceState) {
 	        super.onCreate(savedInstanceState);
 
 	        // Load the preferences from an XML resource
 	         addPreferencesFromResource(R.xml.preference);
+	         
+	        
 	    }
 	   
 	}
