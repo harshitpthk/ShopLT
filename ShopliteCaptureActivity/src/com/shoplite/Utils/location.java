@@ -18,9 +18,6 @@ import com.shoplite.interfaces.LocationInterface;
 public class location  {
 	public Activity mActivity;
 	public Intent mIntent;
-	public int count = 0;
-	Long timestamp_cursor;
-	Long timestamp_reciever;
 	public static Location  current_location = null;
 	public static boolean made_use_of_location = false;
 	private int location_listened_count = 0;
@@ -29,8 +26,7 @@ public class location  {
 	
 	
 	public void getLocation(final LocationInterface calling_class_object,Activity activity) {
-		
-		//android.os.Debug.waitForDebugger();
+			
 		mActivity= activity;
 		
 		try {

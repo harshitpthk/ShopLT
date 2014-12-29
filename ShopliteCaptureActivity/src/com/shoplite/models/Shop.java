@@ -58,14 +58,10 @@ public class Shop implements ConnectionInterface {
 		ServerConnectionMaker.sendRequest(this);
 		
 	}
-	public void connect_to_shop(ShopInterface calling_class_object , String shopURL, String shopName, Location shopLoc)
+	public void connect_to_shop(ShopInterface calling_class_object )
 	{
 		Shop.calling_class_object = calling_class_object;
 		this.connect_to_shop_bool  = true;
-		this.name = shopName;
-		this.url = shopURL;
-		this.location = shopLoc;
-		shopURL= "https://" + shopURL;
 		ServerConnectionMaker.sendRequest(this);
 		
 	}

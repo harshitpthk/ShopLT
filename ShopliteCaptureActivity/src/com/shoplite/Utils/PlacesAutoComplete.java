@@ -62,7 +62,7 @@ public class PlacesAutoComplete {
 
 			@Override
 			public void failure(RetrofitError response) {
-				// TODO Auto-generated method stub
+				
 				Log.e("Places API Error", response.toString());
 			}
 

@@ -1,74 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<android.support.v4.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/drawer_layout_capture"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
-    <!-- The main content view -->
-   
-   
-	<FrameLayout
-	    	 android:id="@+id/container"
-             android:layout_width="fill_parent"
-             android:layout_height="fill_parent"
-             android:background="#fff"
-             android:padding="0.00dp">
-             
-		<FrameLayout
-		   		 android:id="@+id/fragment_container"
-		   		 android:visibility="invisible"
-	             android:layout_width="fill_parent"
-	             android:layout_height="fill_parent" >
-	 </FrameLayout>
-    
-       <View
-        android:id = "@+id/main_tabs_view"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/abc_action_bar_default_height"
-        android:background="@drawable/actions_view"
-        android:layout_gravity="bottom"
-        android:visibility="invisible"
-        />
-      
-       <ImageButton 
-           android:id="@+id/shop_outside_store"
-           android:layout_width="30dp"
-           android:layout_height="30dp"
-           android:layout_margin="@dimen/abc_action_bar_icon_vertical_padding"
-          android:visibility="invisible"
-           android:background="@drawable/selector_shop_by_list"
-           android:contentDescription="@string/shop_offline"
-           android:layout_gravity="bottom|start"
-           android:onClick="shopOutsideStore"/>
-       
-        <ImageButton android:id="@+id/shop_at_store"
-            android:layout_width="30dp"
-           android:layout_height="30dp"
-           android:layout_margin="@dimen/abc_action_bar_icon_vertical_padding"
-            android:background="@drawable/selector_shop_at_store"
-           android:visibility="invisible"
-           android:layout_gravity="bottom|center"
-           android:contentDescription="@string/shop_at_store"
-           android:onClick="shopAtStore"/>
-       
-       <ImageButton android:id="@+id/orders_list"
-           android:layout_width="30dp"
-           android:layout_height="30dp"
-          android:layout_margin="@dimen/abc_action_bar_icon_vertical_padding"
-            android:layout_gravity="bottom|end"
-            android:visibility="invisible"
-           android:background="@drawable/selector_orders"
-           android:contentDescription="@string/order_history"
-           android:onClick="showOrderHistory"/>
-     
-     	<FrameLayout 
+<?xml version="1.0" encoding="utf-8"?>
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
      	    android:id="@+id/map_container"
      	    android:layout_width="fill_parent"
      	    android:layout_height="fill_parent" 
 	        android:layout_margin="0dp"
 	        android:orientation="vertical">
-	        <fragment
+	        
+			<fragment
 	        android:name="com.google.android.gms.maps.SupportMapFragment"
 	        android:id="@+id/mapFragment"
 	        android:layout_width="fill_parent"
@@ -203,25 +141,7 @@
 		           android:onClick="setDeliveryAnchor"
 		           >
 	        </ImageButton>
-			
-        </FrameLayout>
+</FrameLayout>
 	 
-  		
-
-
-	</FrameLayout>
-
- 
- <ListView android:id="@+id/left_drawer_capture"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_gravity="start"
-        android:choiceMode="singleChoice"
-        android:divider="#5A475E"
-        android:dividerHeight="0dp"
-        android:background="#ffffff"/>
-
- 
-</android.support.v4.widget.DrawerLayout>
-
+    
 

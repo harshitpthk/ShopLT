@@ -102,10 +102,9 @@ import com.shoplite.Utils.Globals;
 import com.shoplite.Utils.PlacesAutoComplete;
 import com.shoplite.Utils.location;
 import com.shoplite.activities.SettingsActivity;
-import com.shoplite.fragments.CameraFragment;
 import com.shoplite.fragments.CartFragment;
 import com.shoplite.fragments.ContainerFragment;
-import com.shoplite.fragments.OrderFragment;
+import com.shoplite.fragments.MapFragment;
 import com.shoplite.fragments.SavedListsFragment;
 import com.shoplite.interfaces.ControlsInterface;
 import com.shoplite.interfaces.ItemInterface;
@@ -141,8 +140,8 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 ControlsInterface,PackListInterface
 {
 
-    private static final String TAG = CaptureActivity.class.getSimpleName();
-    private static final long DEFAULT_INTENT_RESULT_DURATION_MS = 1L;
+    private static final String TAG = CaptureActivity.class.getSimpleName();  // Log tags
+    private static final long DEFAULT_INTENT_RESULT_DURATION_MS = 1L;		  // Capture Activity Intent Result Duration
 	private CameraManager cameraManager;
     private CaptureActivityHandler handler;
     private Result savedResultToShow;
@@ -159,11 +158,12 @@ ControlsInterface,PackListInterface
     
     private FrameLayout mainFragmentContainer;
 	private View mainTabsView;
-    CartFragment cartFrag = new CartFragment();
-    private OrderFragment orderFrag = new OrderFragment();
-    private CameraFragment camFrag = new CameraFragment();
+    
+	CartFragment cartFrag = new CartFragment();
     ContainerFragment conFrag = new ContainerFragment();
-    private SavedListsFragment savedListFragment = new SavedListsFragment();
+    MapFragment mapFrag = new MapFragment();
+   
+    
     private ListView ldrawer;
     private DrawerLayout mDrawerLayout;
     private String[] main_action = {"Groceries","Fruits & Veg","Beverages/Health-Drinks","Dairy/Eggs","Ready to Eat/Packed Foods","Personnel Care","Household","Stationery"};
@@ -174,9 +174,12 @@ ControlsInterface,PackListInterface
 	private Menu MenuReference;
 	public static  SearchView shopSearchView = null;
     public ProgressBar  prgBar;
-    public TextView shopDetailHeading;
-    public TextView shopDetailDescription;
-    public Button startShop;
+   
+    private TextView shopDetailHeading;
+	private LinearLayout shopDetailsView;
+	private TextView shopDetailDescription;
+    private Button startShop;
+    
     
     public static boolean isProgressBarAdded;
     private ImageButton shopByListButton;
@@ -186,13 +189,12 @@ ControlsInterface,PackListInterface
 	//private TextView deliveryDialogText;
 	private String addressText ;
 	private Circle circle;
-	public static AlertDialog AddDialog;
+	private static AlertDialog AddDialog;
     public static AddItemCard addToItem;
     public static ActionBar actionBar;
     private EditText deliveryAddressInput;
     private TextView secondaryAddress;
-	private boolean booleanDeliveryAddressSet;
-	private LinearLayout shopDetailsView;
+	
 	private LinearLayout deliveryAddressView;
 	private LinearLayout mapDialogView;
 	private boolean animationFlipClockWise;
@@ -200,8 +202,7 @@ ControlsInterface,PackListInterface
 	
 	protected static DialogFragment saveListDialog;
 	public static int SAVE_LIST_REQUEST = 200;
-	//private Shop nearestShop;
-	
+		
 	private OnCameraChangeListener onCameraChange = new OnCameraChangeListener() {
 		
 		@Override
@@ -387,10 +388,7 @@ ControlsInterface,PackListInterface
     	
     	
     	
-		shopDetailsView = (LinearLayout)findViewById(R.id.shop_details_view);
-    	shopDetailHeading = (TextView)findViewById(R.id.shop_details_heading);
-    	shopDetailDescription = (TextView)findViewById(R.id.shop_details_description);
-    	startShop = (Button)findViewById(R.id.startShop);
+		
     	  
     	
     	mapDialogView = (LinearLayout) findViewById(R.id.map_dialog);
@@ -398,6 +396,10 @@ ControlsInterface,PackListInterface
     	deliveryAddressInput = (EditText) findViewById(R.id.delivery_address_input);
     	secondaryAddress = (TextView) findViewById(R.id.delivery_address_secondary);
     	
+    	shopDetailsView = (LinearLayout)findViewById(R.id.shop_details_view);
+    	shopDetailHeading = (TextView)findViewById(R.id.shop_details_heading);
+    	shopDetailDescription = (TextView)findViewById(R.id.shop_details_description);
+    	startShop = (Button)findViewById(R.id.startShop);
     	
     	MapUI.mMapFragment = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.mapFragment));
     	MapUI.mMap = MapUI.mMapFragment.getMap();
@@ -1201,11 +1203,6 @@ ControlsInterface,PackListInterface
 		
 	}
 	
-	
-	
-
-	
-	
 	@Override
 	public boolean onMarkerClick(Marker marker) {
 		
@@ -1324,10 +1321,7 @@ ControlsInterface,PackListInterface
 	
 	public void showFullShopDetails(View v)
 	{
-		//LinearLayout shop_details_container = (LinearLayout) findViewById(R.id.shop_details_container);
-		//expand(shop_details_container);
-		//AnimatedLinearLayout fullShopDetailsView = (AnimatedLinearLayout) getLayoutInflater().inflate(R.layout.full_detail_layout, shop_details_container, false);
-		//shop_details_container.addView(fullShopDetailsView);
+		
 		if(Globals.connected_to_shop_success){
 			MapUI.move_map_camera(new LatLng(Globals.connectedShop.getLocation().getLatitude(),
 					Globals.connectedShop.getLocation().getLongitude()));
@@ -1374,11 +1368,8 @@ ControlsInterface,PackListInterface
 	
 	public void connect_to_shop(Shop shopObj) {
 		
-		String shopURL =shopObj.getUrl();
-		String shopName = shopObj.getName();
-		com.shoplite.models.Location shopLoc = shopObj.getLocation();
-		shopObj.connect_to_shop(this,shopURL,shopName,shopLoc);
-		shopDetailHeading.setText("Connecting to " + shopName);
+		shopObj.connect_to_shop(this);
+		//shopDetailHeading.setText("Connecting to " + shopObj.getName());
 		
 	}
 	@Override
@@ -1828,7 +1819,6 @@ ControlsInterface,PackListInterface
 			//deliveryDialogText.setText("Delivery Address" + addressText + "\n Tap home to modify.");
 			//shopDetailHeading.setText("Delivery Address set as");
 			get_shop_list(new Location(centerFromPoint.latitude,centerFromPoint.longitude));
-			booleanDeliveryAddressSet = true;
 			animationFlipClockWise = true;
 		}
 		

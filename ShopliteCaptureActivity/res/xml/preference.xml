@@ -5,16 +5,16 @@
  		<EditTextPreference
                 android:key="name_preference"
                 android:title="@string/name"
-                android:summary="Harshit"
+                android:summary=""
                 android:dialogTitle="Your Name" />
 		
- 		<EditTextPreference
+ 		<ListPreference
                 android:key="address_preference"
                 android:title="@string/address"
-                android:summary="T1 Garden Canopy View Rustum Bagh"
-                android:dialogTitle="Your Address" />
-		
-    
+                android:entries="@array/listentries"
+            	android:entryValues="@array/listvalues" 
+                 />
+                 
     </PreferenceCategory>
     <PreferenceCategory
          android:title="Notifications"

@@ -22,16 +22,18 @@ public class SettingsActivity extends Activity {
 		preferenceContainer =(FrameLayout) findViewById(R.id.preference_container);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActionBar().setTitle(R.string.settings);
-		 getFragmentManager().beginTransaction()
-         .replace(R.id.preference_container, new SettingsFragment())
-         .commit();
+		
+//		getFragmentManager().beginTransaction()
+//         .replace(R.id.preference_container, new SettingsFragment())
+//         .commit();
+		 
 		 PackageManager packageManager = this.getPackageManager();
 		 String versionName = "0.0.1";
 		
 		 try {
 			versionName = packageManager.getPackageInfo(this.getPackageName(), 0).versionName;
 		} catch (NameNotFoundException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		 versionView = (TextView)findViewById(R.id.version_text_view);

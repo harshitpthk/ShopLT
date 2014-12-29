@@ -1,41 +1,39 @@
 package com.example.shoplite;
 
-import com.crashlytics.android.Crashlytics;
 import io.fabric.sdk.android.Fabric;
+
 import java.util.regex.Pattern;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.hardware.Camera;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Patterns;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.example.sholite.R;
 import com.shoplite.UI.Controls;
 import com.shoplite.Utils.Globals;
-import com.shoplite.Utils.util;
 import com.shoplite.connection.ConnectionInterface;
 import com.shoplite.connection.ServerConnectionMaker;
 import com.shoplite.connection.ServiceProvider;
 import com.shoplite.database.DbHelper;
 import com.shoplite.models.User;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.hardware.Camera;
-import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
-import android.util.Patterns;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.Toast;
 import eu.livotov.zxscan.ZXScanHelper;
 
 public class MainActivity extends Activity implements ConnectionInterface  {
@@ -66,11 +64,7 @@ public class MainActivity extends Activity implements ConnectionInterface  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 		Fabric.with(this, new Crashlytics());
-        
-        /*	Set Global Variables
-          */
         setGlobals();
-        	
         String auth_token = Globals.dbhelper.getItem("auth-token");
         String ClientID = Globals.dbhelper.getItem("cliendID");
         
@@ -153,16 +147,6 @@ public class MainActivity extends Activity implements ConnectionInterface  {
 	    return c; // returns null if camera is unavailable
 	}
 
-    private boolean checkCameraHardware() {
-        if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)){
-            // this device has a camera
-            return true;
-        } else {
-            // no camera on this device
-            return false;
-        }
-    }
-    
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		   if (requestCode == 0) {
 		      if (resultCode == RESULT_OK) {
@@ -280,8 +264,6 @@ public class MainActivity extends Activity implements ConnectionInterface  {
 			
 			
 		} else {
-			// Show a progress spinner, and kick off a background task to
-			// perform the user login attempt.
 			
 			Controls.show_loading_dialog(this, "Signing Up");
 			ServerConnectionMaker.sendRequest(this);
@@ -312,17 +294,11 @@ public class MainActivity extends Activity implements ConnectionInterface  {
 					Toast.makeText(getBaseContext(), "Network Error", Toast.LENGTH_LONG).show();
 			    }
 				Toast.makeText(getBaseContext(), arg0.toString(), Toast.LENGTH_LONG).show();
-				//Log.e("Retrofit error", arg0.getUrl());
-				//Log.e("Retrofit error", arg0.getMessage());
 				ServerConnectionMaker.recieveResponse(null);
 			}
 
 			@Override
 			public void success(Integer auth_token, Response response) {
-				
-				
-				//Toast.makeText(getBaseContext(), auth_token.toString(), Toast.LENGTH_LONG).show();
-				
 				Globals.dbhelper.setItem("name", mName);
 				Globals.dbhelper.setItem("email", mEmail);
 				Globals.dbhelper.setItem("phoneNo", mPhoneNo);
@@ -340,7 +316,6 @@ public class MainActivity extends Activity implements ConnectionInterface  {
 
 
 	protected void startVerification() {
-		// TODO Auto-generated method stub
 		this.finish();
     	Intent i = new Intent(this, Verification.class);
     	startActivity(i);

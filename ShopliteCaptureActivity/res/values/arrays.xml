@@ -39,5 +39,20 @@
     <array name="open_source_values">
         <item>Retrofit</item>
     </array>
+    
+	
+    <string-array name="listentries">
+        <item>List item 1</item>
+        <item>List item 2</item>
+        <item>List item 3</item>
+        <item>List item 4</item>
+    </string-array>
+    <string-array name="listvalues">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>      
+
 
 </resources>
