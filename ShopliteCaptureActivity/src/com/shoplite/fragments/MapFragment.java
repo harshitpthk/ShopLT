@@ -40,6 +40,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
@@ -108,7 +109,7 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 	public static MapController  mMapController;
 	public static MapView mMapView;
 	private Button setDeliveryLocation;
-	private Button userAddresses;
+	private ImageButton userAddresses;
 	public static ArrayList<Marker> markerList = new ArrayList<Marker>();
     private OnCameraChangeListener onCameraChange = new OnCameraChangeListener() {
 
@@ -433,7 +434,7 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
     	 map_container = (FrameLayout)rootView.findViewById(R.id.map_container);
     	mMapFragment = ((SupportMapFragment)getChildFragmentManager().findFragmentById(R.id.mapFragment));
     	mMap = mMapFragment.getMap();
-    	userAddresses = (Button)rootView.findViewById(R.id.address_selector);
+    	userAddresses = (ImageButton)rootView.findViewById(R.id.address_selector);
     	userAddresses.setOnClickListener(userAddressFetch);
     	setDeliveryLocation = (Button)rootView.findViewById(R.id.setDeliveryLocation);
     	setDeliveryLocation.setOnClickListener(setDeliveryAnchor);

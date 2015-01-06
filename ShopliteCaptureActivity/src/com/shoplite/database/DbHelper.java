@@ -509,7 +509,7 @@ public class DbHelper extends  SQLiteOpenHelper{
 			Gson gson = new Gson();
 			while(cursor.isAfterLast() == false){
 				Address address = new Address();
-				address = gson.fromJson(cursor.getString(1), Address.class);
+				address = gson.fromJson(cursor.getString(0), Address.class);
 				userAddresses.add(address);
 				cursor.moveToNext();
 			}

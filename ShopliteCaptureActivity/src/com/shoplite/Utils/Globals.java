@@ -21,7 +21,7 @@ public class Globals {
 	public static com.shoplite.models.Location current_location = null;				//users current location
 //	public static com.shoplite.models.Location delivery_location= null;				//delivery Location
 //	public static String delivery_address;
-	public static Address deliveryAddress; 
+	public static Address deliveryAddress = new Address(); 
 	public static ArrayList<Shop> shop_list = new ArrayList<Shop>();				// array  to store shop list
 	public static HashMap<Double,Shop> near_shop_distance_matrix = new HashMap<Double,Shop>();
 		
