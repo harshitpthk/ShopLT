@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <FrameLayout 
+        	xmlns:android="http://schemas.android.com/apk/res/android"
      	    android:id="@+id/map_container"
      	    android:layout_width="fill_parent"
      	    android:layout_height="fill_parent" 
 	        android:layout_margin="0dp"
 	        android:orientation="vertical">
-	        
-			<fragment
+	        <fragment
 	        android:name="com.google.android.gms.maps.SupportMapFragment"
 	        android:id="@+id/mapFragment"
 	        android:layout_width="fill_parent"
@@ -52,7 +52,7 @@
 						    android:padding = "5dp"
 						    android:layout_margin="5dp"
 						    android:text="@string/set_address"
-						    android:onClick="setDeliveryAnchor"
+						    
 						    ></Button>
 					</LinearLayout>
 					<TextView
@@ -115,7 +115,7 @@
 		              	android:textColor="@color/app_color"
 		               android:background="@drawable/button"
 		               android:visibility="invisible"
-		               android:onClick="mapShopContinue"></Button>
+		              ></Button>
 	        	</LinearLayout>
 				
 	        </LinearLayout>
@@ -141,7 +141,21 @@
 		           android:onClick="setDeliveryAnchor"
 		           >
 	        </ImageButton>
-</FrameLayout>
+	        
+	        <ImageButton
+	            android:id="@+id/address_selector"
+	            android:contentDescription="@string/desc_image_button"
+	            android:layout_gravity="bottom|end"
+	            android:layout_margin="25dp"
+	            android:src="@drawable/plus1"
+	            android:alpha="0.85"
+	            android:layout_height="60dp"
+		        android:layout_width="60dp"
+		        android:background="@drawable/button_round"
+			></ImageButton>
+        </FrameLayout>
+			
+
 	 
     
 

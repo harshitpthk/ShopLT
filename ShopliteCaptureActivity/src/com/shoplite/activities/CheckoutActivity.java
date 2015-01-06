@@ -121,7 +121,7 @@ public class CheckoutActivity extends Activity {
 			shopAddress = (TextView) rootView.findViewById(R.id.shop_address_details);
 			homeAddress = (LinearLayout) rootView.findViewById(R.id.home_address_details);
 			primaryHomeAddress = (EditText) rootView.findViewById(R.id.home_address_primary);
-			primaryHomeAddress.setText(Globals.delivery_address);
+			primaryHomeAddress.setText(Globals.deliveryAddress.getAddressString());
 			
 			payOnlineRadio = (RadioButton) rootView.findViewById(R.id.pay_by_card);
 			payCashRadio = (RadioButton) rootView.findViewById(R.id.pay_by_cash);
@@ -220,8 +220,8 @@ public class CheckoutActivity extends Activity {
 			else{
 				submitOrder.setAmount(Globals.cartTotalPrice);
 				submitOrder.setAddress(primaryHomeAddress.getText().toString());
-				submitOrder.setLatitude(Globals.delivery_location.getLatitude());
-				submitOrder.setLongitude(Globals.delivery_location.getLongitude());
+				submitOrder.setLatitude(Globals.deliveryAddress.getDeliveryLocation().getLatitude());
+				submitOrder.setLongitude(Globals.deliveryAddress.getDeliveryLocation().getLongitude());
 				if(isPayOnline){
 					submitOrder.setState(Constants.ORDERStatus.FORHOMEDELIVERY);
 					submitOrder.setRefNumber("xyz");
@@ -248,14 +248,14 @@ public class CheckoutActivity extends Activity {
 		 */
 		@Override
 		public void submitOrderSuccess(Integer orderID) {
-			// TODO Auto-generated method stub
-			
 			Toast.makeText(getActivity(), "Order Submitted Successfully,Check Order Status for more info.", Toast.LENGTH_LONG).show();
 			Globals.dbhelper.storeOrder(orderID, Globals.cartTotalPrice, Globals.item_order_list.size(),Constants.ORDERState.PACKING.ordinal());
 			OrderHistoryFragment.getPreviousOrderLists().clear();
 			OrderHistoryFragment.getPreviousOrderLists().addAll(Globals.dbhelper.getAllOrders());
 			OrderHistoryFragment.getOrderListAdapter().updateOrderLists(Globals.dbhelper.getAllOrders());
 			Globals.resetCartData();
+			boolean deliveryAddressStored = Globals.dbhelper.storeAddress(Globals.deliveryAddress);
+			Toast.makeText(getActivity(), Boolean.toString(deliveryAddressStored), Toast.LENGTH_LONG).show();
 			getActivity().finish();
 		}
 

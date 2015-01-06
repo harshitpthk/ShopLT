@@ -35,6 +35,11 @@ public class PlacesAutoComplete {
 	private static String[] columnNames = {"_id","description"};
 	public static MatrixCursor suggestionCursor  ;
 	
+	public static ArrayList<PlacePrediction> getPlacesList()
+	{
+		return placesList;
+	}
+	
 	public void autocomplete(String input) {
 		if(CaptureActivity.decorView != null && !CaptureActivity.isProgressBarAdded){
 			CaptureActivity.isProgressBarAdded = true;

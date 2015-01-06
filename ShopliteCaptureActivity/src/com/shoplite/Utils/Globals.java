@@ -10,6 +10,7 @@ import android.content.Context;
 import com.google.android.gms.maps.model.LatLng;
 import com.shoplite.database.DbHelper;
 import com.shoplite.fragments.CartFragment;
+import com.shoplite.models.Address;
 import com.shoplite.models.Product;
 import com.shoplite.models.Shop;
 
@@ -18,9 +19,9 @@ public class Globals {
 	public static Context ApplicationContext = null;								//Application Context for use in the non-activity classes
 	public static DbHelper dbhelper = null ;										//DB Helper object to read write to DB.
 	public static com.shoplite.models.Location current_location = null;				//users current location
-	public static com.shoplite.models.Location delivery_location= null;				//delivery Location
-	public static String delivery_address;
-	
+//	public static com.shoplite.models.Location delivery_location= null;				//delivery Location
+//	public static String delivery_address;
+	public static Address deliveryAddress; 
 	public static ArrayList<Shop> shop_list = new ArrayList<Shop>();				// array  to store shop list
 	public static HashMap<Double,Shop> near_shop_distance_matrix = new HashMap<Double,Shop>();
 		

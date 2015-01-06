@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.google.gson.Gson;
+import com.shoplite.models.Address;
 import com.shoplite.models.PreviousOrder;
 import com.shoplite.models.Product;
 import com.shoplite.models.SaveList;
@@ -77,7 +78,16 @@ public class DbHelper extends  SQLiteOpenHelper{
     				SAVED_DATE+ " TEXT NOT NULL," +
     				LIST_ENTRIES +" BLOB NOT NULL "+ 
     				");";
-    				
+    
+    
+    private static final String USER_ADDRESSES_TABLE = "ADDRESSES_TABLE";
+    private static final String ADDRESS_ID = "ADDRESS_ID";
+    private static final String ADDRESS = "ADDRESS";
+    private static final String USER_ADDRESSES_TABLE_CREATE= "CREATE TABLE " + USER_ADDRESSES_TABLE +" ( "+
+    		   		ADDRESS +" BLOB NOT NULL "+
+			");" ;
+    
+    
     public DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -88,6 +98,7 @@ public class DbHelper extends  SQLiteOpenHelper{
         db.execSQL(SHOP_LOCATION_TABLE_CREATE);
         db.execSQL(SHOPPING_LIST_TABLE_CREATE);
         db.execSQL(ORDERS_TABLE_CREATE);
+        db.execSQL(USER_ADDRESSES_TABLE_CREATE);
     }
 
 
@@ -457,4 +468,65 @@ public class DbHelper extends  SQLiteOpenHelper{
 		
 		
 	}
+
+	public boolean storeAddress(Address address){
+	
+		Gson gson = new Gson();
+		String addressString = gson.toJson(address);
+		
+		try {
+			
+			SQLiteDatabase database=  this.getWritableDatabase();
+			ContentValues values = new ContentValues();
+			
+			values.put(ADDRESS, addressString);
+				      
+		    long id = database.insertWithOnConflict(USER_ADDRESSES_TABLE, null, values, SQLiteDatabase.CONFLICT_FAIL);
+		  
+	    	
+	    	if(id != -1)
+	    		return true;
+	    	else
+	    		return false;
+	    	
+			
+		} catch (Exception e) {
+			return false;
+			
+		}
+		
+		
+	}
+	
+	public ArrayList<Address> getStoreAddress()
+	{
+		ArrayList<Address>  userAddresses = new ArrayList<Address>();
+		SQLiteDatabase database = this.getReadableDatabase();
+		Cursor cursor = null;
+		try{
+			cursor = database.query(USER_ADDRESSES_TABLE,new String[]{ADDRESS},null,null,null,null,null);
+			cursor.moveToFirst();
+			Gson gson = new Gson();
+			while(cursor.isAfterLast() == false){
+				Address address = new Address();
+				address = gson.fromJson(cursor.getString(1), Address.class);
+				userAddresses.add(address);
+				cursor.moveToNext();
+			}
+		}
+		catch(Exception e)
+		{
+			return null;
+		}
+		finally 
+        {
+			if(cursor!=null)
+      	  		cursor.close(); 
+        }
+		
+		return userAddresses;
+		
+		
+	}
+
 }

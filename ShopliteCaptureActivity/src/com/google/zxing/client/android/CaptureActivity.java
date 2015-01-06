@@ -6,13 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
-import android.animation.Animator;
-import android.animation.Animator.AnimatorListener;
-import android.animation.AnimatorInflater;
-import android.animation.ObjectAnimator;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.SearchManager;
@@ -23,7 +18,6 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
@@ -57,32 +51,15 @@ import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
 import android.widget.SearchView.OnSuggestionListener;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.GoogleMap.CancelableCallback;
-import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
-import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.CircleOptions;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.VisibleRegion;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 import com.google.zxing.ResultMetadataType;
@@ -94,7 +71,6 @@ import com.shoplite.UI.BaseItemCard.OnClickActionButtonListener;
 import com.shoplite.UI.ButteryProgressBar;
 import com.shoplite.UI.Controls;
 import com.shoplite.UI.DrawerItemAdapter;
-import com.shoplite.UI.MapUI;
 import com.shoplite.Utils.CartGlobals;
 import com.shoplite.Utils.Constants;
 import com.shoplite.Utils.Constants.DBState;
@@ -108,205 +84,70 @@ import com.shoplite.fragments.MapFragment;
 import com.shoplite.fragments.SavedListsFragment;
 import com.shoplite.interfaces.ControlsInterface;
 import com.shoplite.interfaces.ItemInterface;
-import com.shoplite.interfaces.LocationInterface;
+import com.shoplite.interfaces.MapInterface;
 import com.shoplite.interfaces.PackListInterface;
-import com.shoplite.interfaces.ShopInterface;
-import com.shoplite.models.Location;
 import com.shoplite.models.OrderItemDetail;
 import com.shoplite.models.PackList;
 import com.shoplite.models.Product;
 import com.shoplite.models.ProductVariance;
 import com.shoplite.models.SaveList;
-import com.shoplite.models.Shop;
 
 import eu.livotov.zxscan.R;
 import eu.livotov.zxscan.ZXScanHelper;
 
 
-/**
- * This activity opens the camera and does the actual scanning on a background thread. It draws a
- * QRCodeView to help the user place the QRCode correctly, shows feedback as the image processing
- * is happening, and then overlays the results when a scan is successful.
- *
- * @author dswitkin@google.com (Daniel Switkin)
- * @author Sean Owen
- * 
- * 
- * @author Harshit Pathak
- */
 
-public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.Callback,ShopInterface
-,LocationInterface,ItemInterface,OnMarkerClickListener,
+public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.Callback
+,ItemInterface,MapInterface,
 ControlsInterface,PackListInterface
 {
 
     private static final String TAG = CaptureActivity.class.getSimpleName();  // Log tags
     private static final long DEFAULT_INTENT_RESULT_DURATION_MS = 1L;		  // Capture Activity Intent Result Duration
-	private CameraManager cameraManager;
+	
+    private CameraManager cameraManager;
     private CaptureActivityHandler handler;
     private Result savedResultToShow;
     private boolean hasSurface;
     private Collection<BarcodeFormat> decodeFormats;
     private String characterSet;
-    private InactivityTimer inactivityTimer;
+   // private InactivityTimer inactivityTimer;
     private BeepManager beepManager;
     SurfaceHolder.Callback cameraSurfaceCallback = this;
     
    
     public static ButteryProgressBar progressBar;
     public static FrameLayout decorView;
-    
-    private FrameLayout mainFragmentContainer;
-	private View mainTabsView;
-    
-	CartFragment cartFrag = new CartFragment();
-    ContainerFragment conFrag = new ContainerFragment();
-    MapFragment mapFrag = new MapFragment();
-   
-    
+     
     private ListView ldrawer;
     private DrawerLayout mDrawerLayout;
     private String[] main_action = {"Groceries","Fruits & Veg","Beverages/Health-Drinks","Dairy/Eggs","Ready to Eat/Packed Foods","Personnel Care","Household","Stationery"};
     private ActionBarDrawerToggle mDrawerToggle;
-    
-    
+        
     private Window window;
 	private Menu MenuReference;
 	public static  SearchView shopSearchView = null;
     public ProgressBar  prgBar;
-   
-    private TextView shopDetailHeading;
-	private LinearLayout shopDetailsView;
-	private TextView shopDetailDescription;
-    private Button startShop;
-    
-    
     public static boolean isProgressBarAdded;
     private ImageButton shopByListButton;
     private ImageButton shopAtStoreButton;
     private ImageButton orderListButton;
-    private Marker deliveryMarker;
-	//private TextView deliveryDialogText;
-	private String addressText ;
-	private Circle circle;
-	private static AlertDialog AddDialog;
+    private static AlertDialog AddDialog;
     public static AddItemCard addToItem;
     public static ActionBar actionBar;
-    private EditText deliveryAddressInput;
-    private TextView secondaryAddress;
-	
-	private LinearLayout deliveryAddressView;
-	private LinearLayout mapDialogView;
-	private boolean animationFlipClockWise;
-	private MenuItem importToCart;
-	
+    private MenuItem importToCart;
 	protected static DialogFragment saveListDialog;
 	public static int SAVE_LIST_REQUEST = 200;
-		
-	private OnCameraChangeListener onCameraChange = new OnCameraChangeListener() {
-		
-		@Override
-		public void onCameraChange(CameraPosition position) {
-			// TODO Auto-generated method stub
-			if(animationFlipClockWise){
-				ObjectAnimator anim = (ObjectAnimator) AnimatorInflater.loadAnimator(getApplicationContext(), R.anim.flip_anti_clockwise); 
-				anim.setTarget(mapDialogView);
-				anim.setDuration(500);
-				anim.addListener(new AnimatorListener() {
-					@Override
-					public void onAnimationStart(Animator animation) {
-						// TODO Auto-generated method stub
-						shopDetailsView.setRotationX(0);
-						deliveryAddressView.setRotationX(0);
-						deliveryAddressView.setVisibility(View.VISIBLE);
-						shopDetailsView.setVisibility(View.GONE);
-						
-						animationFlipClockWise = false;
-				
-					}
-					@Override
-					public void onAnimationRepeat(Animator animation) {
-						// TODO Auto-generated method stub
-					}
-					@Override
-					public void onAnimationEnd(Animator animation) {
-						// TODO Auto-generated method stub
-						
-							}
-					@Override
-					public void onAnimationCancel(Animator animation) {
-						// TODO Auto-generated method stub
-					}
-				});
-				anim.start();
-			}
-			else{
-				
-			}
-			MapUI.mMap.clear();
-			addressText = null;
-			Geocoder geocoder =
-	                new Geocoder(getApplicationContext(), Locale.getDefault());
-			List<Address> addresses = null;
-			try {
-	            /*
-	             * Return 1 address.
-	             */
-	            addresses = geocoder.getFromLocation(position.target.latitude,
-	            		position.target.longitude, 1);
-	        } catch (IOException e1) {
-	        	Log.e("LocationSampleActivity",
-	                "IO Exception in getFromLocation()");
-	        	e1.printStackTrace();
-	        		
-	        } catch (IllegalArgumentException e2) {
-	            // Error message to post in the log
-	            String errorString = "Illegal arguments " +
-	                    Double.toString(position.target.latitude) +
-	                    " , " +
-	                    Double.toString(position.target.longitude) +
-	                    " passed to address service";
-	            Log.e("LocationSampleActivity", errorString);
-	            e2.printStackTrace();
-	            
-	        }
-			if (addresses != null && addresses.size() > 0) {
-	            // Get the first address
-	            Address address = addresses.get(0);
-	            /*
-	             * Format the first line of address (if available),
-	             * city, and country name.
-	             */
-	             addressText = String.format(
-	                    "%s, %s",
-	                    // If there's a street address, add it
-	                    address.getMaxAddressLineIndex() > 0 ?
-	                            address.getAddressLine(0) : "",
-	                    // Locality is usually a city
-	                    address.getLocality()
-	                   
-	                   );
-	            // Return the text
-	            
-	        } else {
-	        	  addressText = "No address found";
-	        }
-			//shopDetailDescription.setText(addressText);
-			secondaryAddress.setText(addressText);
-			
-			
-			LatLng coordinate = MapUI.mMap.getCameraPosition().target;
-			get_shop_list(new Location(coordinate.latitude,coordinate.longitude));
-			Log.e("camera change listener",coordinate.toString());
-			
-		}
-	};
-	    
-   //activity methods
+	private FrameLayout mainFragmentContainer;
+	private View mainTabsView;
+	CartFragment cartFrag = new CartFragment();
+    ContainerFragment conFrag = new ContainerFragment();
+    MapFragment mapFrag = new MapFragment();
+    MenuItem CartMenuItem = null;
    
-   
-	
-	@Override
+    
+    //activity methods
+   	@Override
     public void onCreate(Bundle icicle)
     {
 		  
@@ -316,20 +157,17 @@ ControlsInterface,PackListInterface
 	    {
 	    	setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 	    }
-       
-        window = getWindow();
-        int scanner_layout = R.layout.scanner_layout_capture;                 	// setting the custom layout on top of capture activity
+	    int scanner_layout = R.layout.scanner_layout_capture;                 	// setting the custom layout on top of capture activity
 		setContentView(scanner_layout);
-        
-		//action Bar
+      
+        window = getWindow();
+       	
+        //action Bar
 		actionBar = getActionBar();
 		actionBar.setTitle(getResources().getText(R.string.pick_delivery_location));
 		actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 		actionBar.setDisplayHomeAsUpEnabled(false);
 		actionBar.setHomeButtonEnabled(false);
-		
-		
-		
 		progressBar = new ButteryProgressBar(this);
         progressBar.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 24)); // create new ProgressBar and style it
         decorView = (FrameLayout) getWindow().getDecorView();			// retrieve the top view of our application
@@ -341,7 +179,7 @@ ControlsInterface,PackListInterface
         // Also note that doing progressBar.setY(136) will not work, because of different
         // screen densities and different sizes of actionBar
         
-       ViewTreeObserver observer = progressBar.getViewTreeObserver();
+        ViewTreeObserver observer = progressBar.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -354,12 +192,12 @@ ControlsInterface,PackListInterface
         });
         
         
-        
         mainFragmentContainer = (FrameLayout)findViewById(R.id.fragment_container);
         mainTabsView = (View) findViewById(R.id.main_tabs_view);
-        shopByListButton = (ImageButton) findViewById(R.id.shop_outside_store);
-    	shopAtStoreButton=(ImageButton) findViewById(R.id.shop_at_store);
-    	orderListButton = (ImageButton) findViewById(R.id.orders_list);
+     
+        shopByListButton  = (ImageButton) findViewById(R.id.shop_outside_store);
+    	shopAtStoreButton = (ImageButton) findViewById(R.id.shop_at_store);
+    	orderListButton   = (ImageButton) findViewById(R.id.orders_list);
     	
        
         
@@ -383,92 +221,35 @@ ControlsInterface,PackListInterface
         ldrawer.setAdapter(new ArrayAdapter<String>(this.getBaseContext(),R.layout.drawer_list_item, main_action));
         ldrawer.setOnItemClickListener(new DrawerItemClickListener());// Set the list's click listener
     	mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, ldrawer);
-    	
-    	
-    	
-    	
-    	
-		
-    	  
-    	
-    	mapDialogView = (LinearLayout) findViewById(R.id.map_dialog);
-    	deliveryAddressView = (LinearLayout)findViewById(R.id.delivery_address_container);
-    	deliveryAddressInput = (EditText) findViewById(R.id.delivery_address_input);
-    	secondaryAddress = (TextView) findViewById(R.id.delivery_address_secondary);
-    	
-    	shopDetailsView = (LinearLayout)findViewById(R.id.shop_details_view);
-    	shopDetailHeading = (TextView)findViewById(R.id.shop_details_heading);
-    	shopDetailDescription = (TextView)findViewById(R.id.shop_details_description);
-    	startShop = (Button)findViewById(R.id.startShop);
-    	
-    	MapUI.mMapFragment = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.mapFragment));
-    	MapUI.mMap = MapUI.mMapFragment.getMap();
-    	View mapView = MapUI.mMapFragment.getView();
-    	View locationButton = ((View) mapView.findViewById(1).getParent()).findViewById(2);
-    	RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
-        // position on right bottom
-        rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
-        rlp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
-        rlp.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
-        rlp.addRule(RelativeLayout.ALIGN_PARENT_START, RelativeLayout.TRUE);
-        rlp.setMargins(30, 30, 30, 40);
-
-    	MapUI.mMap.setOnCameraChangeListener(onCameraChange);
-    	MapUI.mMap.setOnMarkerClickListener(this);
-    	MapUI.mMap.setMyLocationEnabled(true);
-    	
+    		
     	hasSurface = false;
-       // inactivityTimer = new InactivityTimer(this);
+        // inactivityTimer = new InactivityTimer(this);
         beepManager = new BeepManager(this);
 
         if (ZXScanHelper.getUserCallback() != null)
         {
             ZXScanHelper.getUserCallback().onScannerActivityCreated(this);
         }
-        
-        
-       
-		
-		
-        
+               
     }
      
 	@Override
     protected void onResume()
     {
         super.onResume();
-       // inactivityTimer.onResume();
-        if(MapUI.mMap != null){
-	        if(!location.made_use_of_location){
-	        	location loc = new location();
-				loc.getLocation(this,this);
-	        }
-	        else{
-	        	LatLng coordinate = new LatLng(Globals.current_location.getLatitude(), Globals.current_location.getLongitude());
-	    		MapUI.zoomInDeliveryLocation(coordinate);
-	    		
-	        }
-        }
-        else{
-        	FrameLayout map_container = (FrameLayout)findViewById(R.id.map_container);
-        	map_container.setVisibility(View.GONE);
-        }
-		
-        
-        // CameraManager must be initialized here, not in onCreate(). This is necessary because we don't
-        // want to open the camera driver and measure the screen size if we're going to show the help on
-        // first launch. That led to bugs where the scanning rectangle was the wrong size and partially
-        // off screen.
-        
-		
+        // inactivityTimer.onResume();
+       		
 		if(!conFrag.isAdded()){
         	getSupportFragmentManager().beginTransaction().add(R.id.fragment_container,conFrag ).commit();
         	
         }
+		
+		if(!mapFrag.isAdded()){
+			getSupportFragmentManager().beginTransaction().add(R.id.container,mapFrag).commit();
+		}
 		if(!cartFrag.isAdded()){
-        	getSupportFragmentManager().beginTransaction().add(R.id.container,cartFrag ).detach(cartFrag).commit();
-        	
-        }
+    		getSupportFragmentManager().beginTransaction().add(R.id.container,cartFrag ).detach(cartFrag).commit();
+    	}
 	
 		
     }
@@ -526,7 +307,6 @@ ControlsInterface,PackListInterface
             		showCart(null);
                 	
             	}else{
-            		
             		moveTaskToBack (true);
             	}
                 return true;
@@ -550,15 +330,14 @@ ControlsInterface,PackListInterface
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-    	if (mDrawerToggle.onOptionsItemSelected(item)) {
+    	 if (mDrawerToggle.onOptionsItemSelected(item)) {
              return true;
-           }
+          }
     	
     	 if(item.getItemId() == R.id.shopping_cart){
-         
-        	 showCart(null);
+           	 showCart(null);
              return true;
-    	}
+    	 }
     	 else if(item.getItemId() == R.id.settings){
     		 Intent i = new Intent(this, SettingsActivity.class);
     		 startActivity(i);
@@ -573,135 +352,138 @@ ControlsInterface,PackListInterface
         MenuReference = menu;
     	MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.custom_action_bar, menu);
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        shopSearchView = (SearchView)menu.findItem(R.id.search).getActionView();
-        shopSearchView.setQueryHint("Search Your Delivery Location");
-        shopSearchView.setSubmitButtonEnabled(false);
-        shopSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        shopSearchView.setOnQueryTextListener(new OnQueryTextListener(){
-
-			@Override
-			public boolean onQueryTextChange(String newText) {
-				if(newText.length()>= 3){
-					PlacesAutoComplete pl = new PlacesAutoComplete();
-					pl.autocomplete(newText);
-				}
-				return true;
-			}
-
-			@Override
-			public boolean onQueryTextSubmit(String query) {
-				
-				return true;
-			}
-        	
-        });
-        shopSearchView.setOnSuggestionListener(new OnSuggestionListener(){
-
-			@Override
-			public boolean onSuggestionClick(int index) {
-				
-				if(Geocoder.isPresent()) {
-
-				    Geocoder geocoder = new Geocoder(getApplicationContext());
-				    List<Address> addresses = null;
-				    try {
-				        addresses = geocoder.getFromLocationName(PlacesAutoComplete.placesList.get(index).getDescription(), 1);
-				        if (!addresses.isEmpty()) {
-				            Address address = addresses.get(0);
-				            LatLng coordinate = new LatLng(address.getLatitude(),address.getLongitude());
-				            
-				            //using converted address to latlng to query for shops
-				            MapUI.move_map_camera(coordinate);
-				            get_shop_list(new Location(coordinate.latitude,coordinate.longitude));
-				           
-				            //hide keyboard
-				            InputMethodManager inputManager = (InputMethodManager)
-				            getSystemService(Context.INPUT_METHOD_SERVICE); 
-				            inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
-				            InputMethodManager.HIDE_NOT_ALWAYS);
-	                   
-				            
-				        } else {
-				            // No results for your location
-				        }
-				    } catch (IOException e) {
-				        e.printStackTrace();
-				    }
-				}
-				return true;
-			}
-
-			@Override
-			public boolean onSuggestionSelect(int arg0) {
-				//Toast.makeText(getApplicationContext(), Integer.toString(arg0), Toast.LENGTH_SHORT).show();
-				return true;
-			}});
-        MenuItem shopSearch = (MenuItem) menu.findItem(R.id.search);
-        shopSearch.setOnActionExpandListener(new OnActionExpandListener() {
-			
-			@Override
-			public boolean onMenuItemActionExpand(MenuItem item) {
-				
-				FrameLayout map_container = (FrameLayout)findViewById(R.id.map_container);
-				map_container.setVisibility(View.VISIBLE);
-				MapUI.mapVisible = true;
-				return true;
-			}
-			
-			@Override
-			public boolean onMenuItemActionCollapse(MenuItem item) {
-				if(conFrag.isAdded())
-				{
-//					FrameLayout map_container = (FrameLayout)findViewById(R.id.map_container);
-//					map_container.setVisibility(View.INVISIBLE);
-//					MenuItem CartMenuItem = (MenuItem) menu.findItem(R.id.shopping_cart);
-//		            CartMenuItem.setVisible(true);
-//					MapUI.mapVisible = false;
-									
-				}
-				return true;
-			}
-		});
-       
         
-        importToCart = menu.findItem(R.id.import_to_cart);
-        importToCart.setVisible(false);
-        importToCart.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-			
-			@Override
-			public boolean onMenuItemClick(MenuItem item) {
-				// TODO Auto-generated method stub
-				if(!cartFrag.isDetached()){
-					ArrayList<SaveList> savedLists = Globals.dbhelper.getAllSavedShopList();
-					if(savedLists.size()>0){
-						saveListDialog = SavedListsFragment.newInstance();
-						saveListDialog.show(getSupportFragmentManager(), "SaveListDialog"); 
-						
-					}
-					else{
-						Toast.makeText(getBaseContext(), "You Don't have any Saved List, Create One to Use Import",
-								Toast.LENGTH_LONG).show();
-					}
-				}
-				return true;
-			}
-		});
+//        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+//        shopSearchView = (SearchView)menu.findItem(R.id.search).getActionView();
+//        shopSearchView.setQueryHint("Search Your Delivery Location");
+//        shopSearchView.setSubmitButtonEnabled(false);
+//        shopSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+//        shopSearchView.setOnQueryTextListener(new OnQueryTextListener(){
+//
+//			@Override
+//			public boolean onQueryTextChange(String newText) {
+//				if(newText.length()>= 3){
+//					PlacesAutoComplete pl = new PlacesAutoComplete();
+//					pl.autocomplete(newText);
+//				}
+//				return true;
+//			}
+//
+//			@Override
+//			public boolean onQueryTextSubmit(String query) {
+//				
+//				return true;
+//			}
+//        	
+//        });
+//        shopSearchView.setOnSuggestionListener(new OnSuggestionListener(){
+//
+//			@Override
+//			public boolean onSuggestionClick(int index) {
+//				
+//				if(Geocoder.isPresent()) {
+//
+//				    Geocoder geocoder = new Geocoder(getApplicationContext());
+//				    List<Address> addresses = null;
+//				    try {
+//				        addresses = geocoder.getFromLocationName(PlacesAutoComplete.placesList.get(index).getDescription(), 1);
+//				        if (!addresses.isEmpty()) {
+//				           // Address address = addresses.get(0);
+//				            //LatLng coordinate = new LatLng(address.getLatitude(),address.getLongitude());
+//				            
+//				            //using converted address to latlng to query for shops
+//				         //   MapUI.move_map_camera(coordinate);
+//				           // get_shop_list(new Location(coordinate.latitude,coordinate.longitude));
+//				           
+//				            //hide keyboard
+//				            InputMethodManager inputManager = (InputMethodManager)
+//				            getSystemService(Context.INPUT_METHOD_SERVICE); 
+//				            inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+//				            InputMethodManager.HIDE_NOT_ALWAYS);
+//	                   
+//				            
+//				        } else {
+//				            // No results for your location
+//				        }
+//				    } catch (IOException e) {
+//				        e.printStackTrace();
+//				    }
+//				}
+//				return true;
+//			}
+//
+//			@Override
+//			public boolean onSuggestionSelect(int arg0) {
+//				//Toast.makeText(getApplicationContext(), Integer.toString(arg0), Toast.LENGTH_SHORT).show();
+//				return true;
+//			}});
+//        MenuItem shopSearch = (MenuItem) menu.findItem(R.id.search);
+//        shopSearch.setOnActionExpandListener(new OnActionExpandListener() {
+//			
+//			@Override
+//			public boolean onMenuItemActionExpand(MenuItem item) {
+//				
+//				//FrameLayout map_container = (FrameLayout)findViewById(R.id.map_container);
+//				//map_container.setVisibility(View.VISIBLE);
+//				//MapUI.mapVisible = true;
+//				return true;
+//			}
+//			
+//			@Override
+//			public boolean onMenuItemActionCollapse(MenuItem item) {
+//				if(conFrag.isAdded())
+//				{
+////					FrameLayout map_container = (FrameLayout)findViewById(R.id.map_container);
+////					map_container.setVisibility(View.INVISIBLE);
+////					MenuItem CartMenuItem = (MenuItem) menu.findItem(R.id.shopping_cart);
+////		            CartMenuItem.setVisible(true);
+////					MapUI.mapVisible = false;
+//									
+//				}
+//				return true;
+//			}
+//		});
+//       
+//        
+//        importToCart = menu.findItem(R.id.import_to_cart);
+//        importToCart.setVisible(false);
+//        importToCart.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+//			
+//			@Override
+//			public boolean onMenuItemClick(MenuItem item) {
+//				// TODO Auto-generated method stub
+//				if(!cartFrag.isDetached()){
+//					ArrayList<SaveList> savedLists = Globals.dbhelper.getAllSavedShopList();
+//					if(savedLists.size()>0){
+//						saveListDialog = SavedListsFragment.newInstance();
+//						saveListDialog.show(getSupportFragmentManager(), "SaveListDialog"); 
+//						
+//					}
+//					else{
+//						Toast.makeText(getBaseContext(), "You Don't have any Saved List, Create One to Use Import",
+//								Toast.LENGTH_LONG).show();
+//					}
+//				}
+//				return true;
+//			}
+//		});
         return super.onCreateOptionsMenu(menu);
     }
-    
-    
-    
+       
     @Override
     public boolean onPrepareOptionsMenu(Menu menu)
     {
-    	
-    		MenuItem CartMenuItem = (MenuItem) menu.findItem(R.id.shopping_cart);
+    	MenuItem CartMenuItem = (MenuItem) menu.findItem(R.id.shopping_cart);
+    	if(mapFrag.isAdded()){
+    		
             CartMenuItem.setVisible(false);
     	
-        
-		return super.onPrepareOptionsMenu(menu);
-    	
+    	}
+    	else{
+    		CartMenuItem.setVisible(true);
+    	}
+    	return super.onPrepareOptionsMenu(menu);
+    	   
     }
    
     
@@ -725,15 +507,22 @@ ControlsInterface,PackListInterface
     
     public void initCamera(SurfaceHolder surfaceHolder)
     {
+    	 // CameraManager must be initialized here, not in onCreate(). This is necessary because we don't
+        // want to open the camera driver and measure the screen size if we're going to show the help on
+        // first launch. That led to bugs where the scanning rectangle was the wrong size and partially
+        // off screen.
+    	
         if (surfaceHolder == null)
         {
             throw new IllegalStateException("No SurfaceHolder provided");
         }
+        
         if (cameraManager.isOpen())
         {
             Log.w(TAG, "initCamera() while already open -- late SurfaceView callback?");
             return;
         }
+        
         try
         {
             cameraManager.openDriver(surfaceHolder);
@@ -776,7 +565,6 @@ ControlsInterface,PackListInterface
             savedResultToShow = null;
         }
     }
-
     @Override
     public void surfaceCreated(SurfaceHolder holder)
     {
@@ -1008,9 +796,7 @@ ControlsInterface,PackListInterface
         return cameraManager;
     }
 
-      
-    
-  
+        
    
    
     
@@ -1021,11 +807,13 @@ ControlsInterface,PackListInterface
             
         }
     }
-    
-    
-    
+       
     public void startQRScanner(SurfaceView surfaceView)
     {
+    	// CameraManager must be initialized here, not in onCreate(). This is necessary because we don't
+        // want to open the camera driver and measure the screen size if we're going to show the help on
+        // first launch. That led to bugs where the scanning rectangle was the wrong size and partially
+        // off screen.
     	if(conFrag.isAdded()){
     		  										// 1 is kept for shopping at store
     		conFrag.mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener(){
@@ -1042,14 +830,14 @@ ControlsInterface,PackListInterface
 
 				@Override
 				public void onPageSelected(int position) {
-					MenuItem CartMenuItem = (MenuItem) MenuReference.findItem(R.id.shopping_cart);
-					 MenuItem ShopMap = (MenuItem) MenuReference.findItem(R.id.search);
+					
+//					 MenuItem ShopMap = (MenuItem) MenuReference.findItem(R.id.search);
 					if(position == 0){
 						shopAtStoreButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.scan_grey));
 				    	shopByListButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.cart_blue));
 				    	orderListButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.purchase_order_grey));
-						CartMenuItem.setVisible(true);
-			            ShopMap.setVisible(false);
+						
+//			            ShopMap.setVisible(false);
 						getActionBar().setDisplayHomeAsUpEnabled(true);
 			            getActionBar().setHomeButtonEnabled(true);
 						mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, ldrawer);
@@ -1061,8 +849,8 @@ ControlsInterface,PackListInterface
 						shopAtStoreButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.scan_blue));
 				    	shopByListButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.cart_grey));
 				    	orderListButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.purchase_order_grey));
-						CartMenuItem.setVisible(true);
-				        ShopMap.setVisible(false);
+						
+//				        ShopMap.setVisible(false);
 						getActionBar().setDisplayHomeAsUpEnabled(false);
 						getActionBar().setHomeButtonEnabled(false);
 					    window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -1074,8 +862,8 @@ ControlsInterface,PackListInterface
 						shopAtStoreButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.scan_grey));
 				    	shopByListButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.cart_grey));
 				    	orderListButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.purchase_order_blue));
-						CartMenuItem.setVisible(true);
-				        ShopMap.setVisible(false);
+						
+//				        ShopMap.setVisible(false);
 						window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 						getActionBar().setDisplayHomeAsUpEnabled(false);
 						getActionBar().setHomeButtonEnabled(false);
@@ -1092,8 +880,6 @@ ControlsInterface,PackListInterface
 	
 	        handler = null;
 	        resetStatusView();
-	      
-	        
 	        SurfaceHolder surfaceHolder = surfaceView.getHolder();
 	        if (hasSurface)
 	        {
@@ -1107,21 +893,13 @@ ControlsInterface,PackListInterface
 	            surfaceHolder.addCallback(cameraSurfaceCallback);
 	            surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 	        }
-	
-	        
-	
 	        decodeFormats = DecodeFormatManager.QR_CODE_FORMATS; //todo: read from helper
 	        characterSet = "utf-8";
-	
-	        
 	        if (ZXScanHelper.getUserCallback() != null)
 	        {
 	            ZXScanHelper.getUserCallback().onScannerActivityResumed(this);
 	        }
-	        
-	        
-	    	
-	       
+	           
         }
     }
 
@@ -1130,119 +908,12 @@ ControlsInterface,PackListInterface
     	conFrag.mViewPager.setCurrentItem(i);
 	}
     
-    
-   
-    //Google Map Related Methods
-	
-	
-	public void toggle_map()
-	{
-    	
-    	
-    	
-		FrameLayout map_container = (FrameLayout)findViewById(R.id.map_container);
-		
-		if(MapUI.mapVisible){
-			map_container.setVisibility(View.INVISIBLE);
-			MapUI.mapVisible = false;
-		}
-		else{
-			map_container.setVisibility(View.VISIBLE);
-			MapUI.mapVisible = true;
-		}
-	    	
-	}
-	
-	public void mapShopContinue(View v)
-	{   
-		getSupportFragmentManager().executePendingTransactions();
-	        FrameLayout map_container = (FrameLayout)findViewById(R.id.map_container);
-			
-			if(MapUI.mapVisible){
-				map_container.setVisibility(View.INVISIBLE);
-				MapUI.mapVisible = false;
-			}
-			
-			MenuItem CartMenuItem = (MenuItem) MenuReference.findItem(R.id.shopping_cart);
-			CartMenuItem.setVisible(true);
-			MenuItem shopSearch = (MenuItem) MenuReference.findItem(R.id.search);
-			shopSearch.collapseActionView();
-			shopSearch.setVisible(false);
-			Globals.delivery_location = new Location(MapUI.mMap.getCameraPosition().target.latitude,
-					MapUI.mMap.getCameraPosition().target.longitude);
-			actionBar.setTitle(getResources().getText(R.string.app_name));
-			
-			if(deliveryAddressInput.getText().toString().length()>0){
-				Globals.delivery_address = deliveryAddressInput.getText().toString() + addressText;
-				
-			}
-			mainFragmentContainer.setVisibility(View.VISIBLE);
-			mainTabsView.setVisibility(View.VISIBLE);
-			shopAtStoreButton.setVisibility(View.VISIBLE);
-			shopByListButton.setVisibility(View.VISIBLE);
-			orderListButton.setVisibility(View.VISIBLE);
-			
-	    	if(Globals.isInsideShop)
-	    		
-				setCurrentShopping(1);
-			else{
-				getActionBar().setDisplayHomeAsUpEnabled(true);
-	            getActionBar().setHomeButtonEnabled(true);
-				mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, ldrawer);
-		        setCurrentShopping(0);
-			}
-	    	location.removeLocationListener();
-	    	
-	    	MapUI.mMap.setMyLocationEnabled(false);
-	    	MapUI.markerList=null;
-	    	MapUI.mMap = null;
-	    	MapUI.mMapFragment = null;
-	    	MapUI.mMapView = null;
-	    	
-		
-		
-	}
-	
-	@Override
-	public boolean onMarkerClick(Marker marker) {
-		
-		double lat = 	marker.getPosition().latitude;
-		double lng = 	marker.getPosition().longitude;
-		LatLng coordinate = new LatLng(lat, lng);
-		
-		Shop shopObject = Globals.get_shop_from_location(coordinate);
-		if(shopObject == null){
-			Toast.makeText(this, "Can not connect to this shop", Toast.LENGTH_SHORT).show();
-			
-			
-		}
-		else{
-			
-			if(Globals.connectedShop != null && shopObject.getName().equals(Globals.connectedShop.getName())){
-				Toast.makeText(this, ("You are Connected to " + Globals.connectedShop.getName()), Toast.LENGTH_SHORT).show();
-			}
-			else{
-				connect_to_shop(shopObject);
-				
-			}
-		}
-		return true;
-	}
-	
-	
+     	
 	//UI Buttons Methods
-	
-	public void shopsNearLocation(View v)
+    public void showCart(View v)
     {
-		final Animation animScale = AnimationUtils.loadAnimation(this, R.anim.buttonscale);
-    	v.startAnimation(animScale);
-    	toggle_map();
-    }
-	public void showCart(View v)
-    {
-		MenuItem shopSearch = (MenuItem) MenuReference.findItem(R.id.search);
     	
-			
+    	
 			//hiding cart
 			if(!cartFrag.isDetached()){
         		getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_out,R.anim.fade_out).detach(cartFrag).commit();
@@ -1255,8 +926,8 @@ ControlsInterface,PackListInterface
         			handler.resumeDecodeThread();
         		}
         		actionBar.setTitle(getResources().getText(R.string.app_name));
-        		shopSearch.setVisible(false);
-        		importToCart.setVisible(false);
+
+//        		importToCart.setVisible(false);
         	}
 			//showing cart
     		else{
@@ -1265,13 +936,13 @@ ControlsInterface,PackListInterface
         		getSupportFragmentManager().executePendingTransactions();
         		getActionBar().setDisplayHomeAsUpEnabled(false);
     			getActionBar().setHomeButtonEnabled(false);
-    			shopSearch.setVisible(false);
+
     			actionBar.setTitle(getResources().getText(R.string.shopping_cart)+
         				"    " + Double.toString(Math.round(Globals.cartTotalPrice*100.0/100.0)) + " " +getResources().getText(R.string.currency));
-    			importToCart.setVisible(true);
+//    			importToCart.setVisible(true);
     		}
     		mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, ldrawer);
-        	
+    		
     	
 		
     }
@@ -1319,14 +990,9 @@ ControlsInterface,PackListInterface
 	}
 	
 	
-	public void showFullShopDetails(View v)
-	{
-		
-		if(Globals.connected_to_shop_success){
-			MapUI.move_map_camera(new LatLng(Globals.connectedShop.getLocation().getLatitude(),
-					Globals.connectedShop.getLocation().getLongitude()));
-		}
-	}
+	//Item/ProductVariance Methods
+	
+	
 	
 	public  void show_item_siblings(View view,Product item)
 	{
@@ -1340,185 +1006,13 @@ ControlsInterface,PackListInterface
 	    	itemDrawerLayout.openDrawer(itemDrawer);
 	    	getItemList(item);
 	}
-
-	// Shop Methods
 	
-   
-	@Override
-	public void make_use_of_location() {
-		
-		ArrayList<Shop> connectedNearShoplist  = Globals.dbhelper.getNearConnectedShop(Globals.current_location.getLatitude(), Globals.current_location.getLongitude());
-		
-		if(connectedNearShoplist == null){
-			
-			//get_shop_list(Globals.current_location);
-		}
-		
-		else{
-			//get_shop_list(Globals.current_location);
-			//shop_list_success(Globals.current_location,connectedNearShoplist);
-			
-		}
-		LatLng coordinate = new LatLng(Globals.current_location.getLatitude(), Globals.current_location.getLongitude());
-		MapUI.zoomInDeliveryLocation(coordinate);
-		location.made_use_of_location = true;
-	}
-
-	
-	
-	public void connect_to_shop(Shop shopObj) {
-		
-		shopObj.connect_to_shop(this);
-		//shopDetailHeading.setText("Connecting to " + shopObj.getName());
-		
-	}
-	@Override
-	public void shop_connected() {
-		
-		double lat =  Globals.connectedShop.getLocation().getLatitude();
-		double lng =  Globals.connectedShop.getLocation().getLongitude();
-		
-		LatLng coordinate = new LatLng(lat, lng);
-		//MapUI.mMap.addMarker(new MarkerOptions().position(coordinate).draggable(false).title(Globals.connected_shop_name).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-		
-		shopDetailHeading.setText("Welcome to " + Globals.connectedShop.getName());
-		
-		shopDetailDescription.setText("You can shop various " +
-				"products through your cam scanner " +
-				"or through the list at an affordable prices.\nHappy Shopping!");
-		
-		startShop.setVisibility(View.VISIBLE);
-	}
-
-	public void get_shop_list(Location areaLocation)
-	{
-		Shop shopObj = new Shop();
-		shopObj.get_shop_list(this,areaLocation);
-	}
-	
-	@Override
-	public void shop_list_success(Location areaLocation,ArrayList<Shop> shopList) {
-		
-			//MapUI.mMap.clear();
-			
-			if( shopList != null && shopList.size()>0){
-				double map_center_lat = areaLocation.getLatitude();     // current lat and lng to create a range for blue marker representing shop in the range of 200 mtr
-				double map_center_lng = areaLocation.getLongitude();
-				
-				//building markers and storing them
-				for(int i = 0; i < shopList.size() ; i++ ){
-					double shopLat =  shopList.get(i).getLocation().getLatitude();
-					double shopLng =  shopList.get(i).getLocation().getLongitude();
-					Marker shop_marker = null;
-					
-					if((Globals.current_location.getLatitude()<shopLat+0.0003) 
-							&& (Globals.current_location.getLatitude() > shopLat-0.0003))
-					{
-						if((Globals.current_location.getLongitude() < shopLng+0.0003) 
-								&& (Globals.current_location.getLongitude() > shopLng - 0.0003))
-						{
-							LatLng coordinate = new LatLng(shopLat, shopLng);
-							Globals.add_to_sd_matrix(shopList.get(i),shopLat,shopLng);
-							
-							//add center  for shops
-							shop_marker = MapUI.mMap.addMarker(new MarkerOptions().position(coordinate)
-									.draggable(false).title(shopList.get(i).getName())
-									.icon(BitmapDescriptorFactory.fromResource(R.drawable.shop_small)));
-							//add circle boundary for shops
-//							Circle  shopCircle = MapUI.mMap.addCircle(new CircleOptions()
-//						     .center(coordinate)
-//						     .radius(2000)
-//						     .strokeColor(getResources().getColor(R.color.app_color))
-//						     .strokeWidth(5)
-//						     .fillColor(getResources().getColor(R.color.transparent_white)));
-							MapUI.markerList.add(shop_marker);
-							continue;
-						}
-					}
-					
-					LatLng coordinate = new LatLng(shopLat, shopLng);
-					shop_marker = MapUI.mMap.addMarker(new MarkerOptions().position(coordinate).snippet("Shop")
-							.draggable(false).title(shopList.get(i).getName())
-							.icon(BitmapDescriptorFactory.fromResource(R.drawable.shop_small)));
-					MapUI.markerList.add(shop_marker);
-					//add circle boundary for shops
-//					Circle  shopCircle = MapUI.mMap.addCircle(new CircleOptions()
-//				     .center(coordinate)
-//				     .radius(2000)
-//				     .strokeColor(getResources().getColor(R.color.app_color))
-//				     .strokeWidth(5)
-//				     .fillColor(getResources().getColor(R.color.transparent_white)));
-//    	    
-				}
-				if(!Globals.near_shop_distance_matrix.isEmpty()){
-					Shop shpObject = Globals.min_sd_matrix();				//find the shop which is very near to the location set by the camera
-						//inside the shop
-					connect_to_shop(shpObject);
-					Globals.isInsideShop = true;
-					shopDetailHeading.setText("Welcome to " + shpObject.getName());
-					shopDetailDescription.setText("Happy Shopping!");
-					startShop.setVisibility(View.VISIBLE);	
-				}
-					
-				else 
-				{
-					// nearby the shop  
-					Globals.isInsideShop = false;
-					//shopDetailHeading.setText("Select a shop near your delivery location");
-					if(!animationFlipClockWise){
-						deliveryAddressView.setVisibility(View.VISIBLE);
-						shopDetailsView.setVisibility(View.GONE);
-					}else{
-						if(shopList.size()>1){
-						 shopDetailHeading.setText("");
-						 shopDetailDescription.setText("Multiple Shops found tap shop marker to connect or drag map to change delivery location");
-						 startShop.setVisibility(View.GONE);
-						}
-						else{
-							shopDetailHeading.setText("");
-							connect_to_shop( shopList.get(0));
-							shopDetailDescription.setText("");
-							startShop.setVisibility(View.GONE);	
-						}
-					}
-					
-				}
-							
-			}
-			else{
-				// no shop found
-				shopDetailHeading.setText("No Shops to serve in this area");
-				deliveryAddressView.setVisibility(View.GONE);
-				shopDetailsView.setVisibility(View.VISIBLE);
-				shopDetailDescription.setText("Drag map to change delivery Location");
-				startShop.setVisibility(View.GONE);
-			}
-			
-			   	       
-		
-//		Shop shpObject =new Shop();
-//		shpObject.setName("CIty FOod Center");
-//		shpObject.setUrl("planetp1940097436trial.hanatrial.ondemand.com/shop-sys/");
-//		shpObject.setLocation(Globals.current_location);
-//		connect_to_shop(shpObject);
-		
-		
-	}
-	
-	
-
-
-	
-	//ProductVariance Methods
-	
-
 	@Override
 	public void getItemList(Product item) {
 		
 		ProductVariance itm = new ProductVariance(0, null, 0, 0);
     	itm.getItems(this,item.getBrandId());
 	}
-
 	
 	@Override
 	public void ItemGetSuccess(final Product itemFetched) {
@@ -1591,17 +1085,11 @@ ControlsInterface,PackListInterface
 		handler.restartPreviewAndDecode();
 		
 	}
-
-
-
 	@Override
 	public void negative_button_alert_method() {
 		AddDialog.dismiss();
 		handler.restartPreviewAndDecode();
 	}
-
-
-
 	@Override
 	public void save_alert_dialog(AlertDialog alertDialog) {
 			CaptureActivity.AddDialog = alertDialog;
@@ -1615,7 +1103,11 @@ ControlsInterface,PackListInterface
 	
 	
 	
-	//PackList Method
+	/*
+	 * 
+	 * PackList Interface Method
+	 */
+	
 	
 	/* (non-Javadoc)
 	 * @see com.shoplite.interfaces.PackListInterface#sendPackList()
@@ -1692,144 +1184,13 @@ ControlsInterface,PackListInterface
 	}
 	
 	
-	public void setDeliveryAnchor(View v)
-	{
-		if(deliveryAddressInput.getText().toString().length() <=0 ){
-			deliveryAddressInput.setError(getResources().getString(R.string.error_field_required));
-		}
-		else{
-			deliveryAddressInput.setError(null);
-			
-			//hide keyboard
-			InputMethodManager inputManager = (InputMethodManager)
-		            getSystemService(Context.INPUT_METHOD_SERVICE); 
-		            inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
-		            InputMethodManager.HIDE_NOT_ALWAYS);
-		     
-			
-		    //get camera center
-			VisibleRegion visibleRegion = MapUI.mMap.getProjection().getVisibleRegion();
-			Point x = MapUI.mMap.getProjection().toScreenLocation(visibleRegion.farRight);
-			Point y = MapUI.mMap.getProjection().toScreenLocation(visibleRegion.nearLeft);
-			
-			Point centerPoint = new Point(x.x / 2, y.y / 2);
-	
-			LatLng centerFromPoint = MapUI.mMap.getProjection().fromScreenLocation(
-			                    centerPoint);
-			if(deliveryMarker == null){
-			 deliveryMarker = MapUI.mMap.addMarker(new MarkerOptions().position(centerFromPoint)
-					.draggable(false).title(getResources().getString(R.string.delivery_anchor_title)));
-					//.icon(BitmapDescriptorFactory.fromResource(R.drawable.home_small)));
-			}
-			else{
-				deliveryMarker.remove();
-				deliveryMarker = MapUI.mMap.addMarker(new MarkerOptions().position(centerFromPoint)
-						.draggable(false).title(getResources().getString(R.string.delivery_anchor_title)));
-				
-			}
-			
-			//Make circle
-			MapUI.mMap.setOnCameraChangeListener(null);
-		    
-			MapUI.zoomOutDeliveryLocation(centerFromPoint, new CancelableCallback() {
-				
-				@Override
-				public void onFinish() {
-					// TODO Auto-generated method stub
-					      /* Do something… */
-					final Handler handler = new Handler();
-					handler.postDelayed(new Runnable() {
-					  @Override
-					  public void run() {
-					   
-						  MapUI.mMap.setOnCameraChangeListener(onCameraChange);
-							//Do something after 100ms
-					  }
-					}, 500);  
-							
-					  
-				}
-				
-				@Override
-				public void onCancel() {
-					// TODO Auto-generated method stub
-				}
-			});
-			
-			if(circle == null){
-			  circle = MapUI.mMap.addCircle(new CircleOptions()
-		     .center(centerFromPoint)
-		     .radius(2000)
-		     .strokeColor(getResources().getColor(R.color.app_color))
-		     .strokeWidth(5)
-		     .fillColor(getResources().getColor(R.color.transparent_white)));
-			}
-			else{
-				circle.remove();
-				circle = MapUI.mMap.addCircle(new CircleOptions()
-			     .center(centerFromPoint)
-			     .radius(2000)
-			     .strokeColor(getResources().getColor(R.color.app_color))
-			     .strokeWidth(5)
-			     .fillColor(getResources().getColor(R.color.transparent_white)));
-			}
-			
-			ObjectAnimator anim = (ObjectAnimator) AnimatorInflater.loadAnimator(this, R.anim.flip_clockwise); 
-			anim.setTarget(mapDialogView);
-			anim.setDuration(500);
-
-			
-			
-			anim.addListener(new AnimatorListener() {
-				
-				
-				@Override
-				public void onAnimationStart(Animator animation) {
-					// TODO Auto-generated method stub
-					shopDetailsView.setRotationX(180);
-					deliveryAddressView.setRotationX(180);
-					deliveryAddressView.setVisibility(View.GONE);
-					shopDetailsView.setVisibility(View.VISIBLE);
-					animationFlipClockWise = true;
-					
-				}
-				
-				@Override
-				public void onAnimationRepeat(Animator animation) {
-					
-				}
-				
-				@Override
-				public void onAnimationEnd(Animator animation) {
-						
-					//MapUI.mMap.setOnCameraChangeListener(onCameraChange);
-				    
-				}
-				
-				@Override
-				public void onAnimationCancel(Animator animation) {
-						
-				}
-			});
-			anim.start();
-			
-			
-		    
-			//v.setVisibility(View.GONE);
-			//deliveryDialogText.setText("Delivery Address" + addressText + "\n Tap home to modify.");
-			//shopDetailHeading.setText("Delivery Address set as");
-			get_shop_list(new Location(centerFromPoint.latitude,centerFromPoint.longitude));
-			animationFlipClockWise = true;
-		}
-		
-	}
 
 	/* (non-Javadoc)
 	 * @see com.shoplite.interfaces.ItemInterface#ItemGetFailure()
 	 */
 	@Override
 	public void ItemGetFailure() {
-		// TODO Auto-generated method stub
+		
 		handler.restartPreviewAndDecode();
 	}
 
@@ -1838,7 +1199,6 @@ ControlsInterface,PackListInterface
 	 */
 	@Override
 	public void getItem() {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -1847,7 +1207,6 @@ ControlsInterface,PackListInterface
 	 */
 	@Override
 	public void updateItemSuccess(Product product) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -1856,7 +1215,31 @@ ControlsInterface,PackListInterface
 	 */
 	@Override
 	public void updateItemFailure() {
-		// TODO Auto-generated method stub
 		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.shoplite.interfaces.MapInterface#mapShopStart()
+	 */
+	@Override
+	public void mapShopStart() {
+		location.removeLocationListener();
+		getSupportFragmentManager().beginTransaction().detach(mapFrag).commit();
+		actionBar.setTitle(getResources().getText(R.string.app_name));
+		mainFragmentContainer.setVisibility(View.VISIBLE);
+		mainTabsView.setVisibility(View.VISIBLE);
+		shopAtStoreButton.setVisibility(View.VISIBLE);
+		shopByListButton.setVisibility(View.VISIBLE);
+		orderListButton.setVisibility(View.VISIBLE);
+				
+    	if(Globals.isInsideShop)
+    		
+			setCurrentShopping(1);
+		else{
+			getActionBar().setDisplayHomeAsUpEnabled(true);
+            getActionBar().setHomeButtonEnabled(true);
+			mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, ldrawer);
+	        setCurrentShopping(0);
+		}
 	}
 }

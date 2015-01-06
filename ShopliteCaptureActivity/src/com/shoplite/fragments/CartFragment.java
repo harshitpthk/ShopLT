@@ -1,14 +1,20 @@
 package com.shoplite.fragments;
 
 
+import java.util.ArrayList;
+
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
@@ -38,14 +44,14 @@ import eu.livotov.zxscan.R;
 
 public class CartFragment extends Fragment implements ControlsInterface,PackListInterface {
 
-	
+	private MenuItem importToCart;
 	protected ListView cartItemsListView;
 	protected static ItemListAdapter cartAdapter;
 	protected static LinearLayout emptyCartView;
 	public static AlertDialog alertDialog;
 	private static Button saveListButton;
 	private static Button checkoutButton;
-	
+	protected static DialogFragment saveListDialog;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -67,7 +73,7 @@ public class CartFragment extends Fragment implements ControlsInterface,PackList
 		checkoutButton = (Button) root.findViewById(R.id.checkout_button);
 		cartItemsListView = (ListView)root.findViewById(R.id.cart_item_list_view);
 		emptyCartView = (LinearLayout)root.findViewById(R.id.empty_cart_view);
-		       
+		 setHasOptionsMenu(true);
         return root;
     }
 		
@@ -123,12 +129,35 @@ public class CartFragment extends Fragment implements ControlsInterface,PackList
 		}
 	}
 		
-//	@Override
-//	public boolean onCreateOptionsMenu(Menu menu) {
+	@Override
+	public void onCreateOptionsMenu(Menu menu,MenuInflater inflater) {
 //		// Inflate the menu; this adds products to the action bar if it is present.
 //		super.onCreateOptionsMenu(menu, getActivity().getMenuInflater());
 //		return false;
-//	}
+		inflater.inflate(R.menu.import_to_cart,menu);
+	   importToCart = menu.findItem(R.id.import_to_cart);
+//       importToCart.setVisible(true);
+       importToCart.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+			
+			@Override
+			public boolean onMenuItemClick(MenuItem item) {
+				// TODO Auto-generated method stub
+				//if(!cartFrag.isDetached()){
+					ArrayList<SaveList> savedLists = Globals.dbhelper.getAllSavedShopList();
+					if(savedLists.size()>0){
+						saveListDialog = SavedListsFragment.newInstance();
+						saveListDialog.show(getChildFragmentManager(), "SaveListDialog"); 
+						
+					}
+					else{
+						Toast.makeText(getActivity(), "You Don't have any Saved List, Create One to Use Import",
+								Toast.LENGTH_LONG).show();
+					}
+				//}
+				return true;
+			}
+		});
+	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
