@@ -17,8 +17,10 @@ import android.animation.Animator.AnimatorListener;
 import android.animation.AnimatorInflater;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.database.MatrixCursor;
 import android.graphics.Point;
@@ -37,6 +39,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -110,10 +113,11 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 	public static MapView mMapView;
 	private Button setDeliveryLocation;
 	private ImageButton userAddresses;
+	private FrameLayout map_container;
+	MapInterface mCallback = null;
+	ArrayList<com.shoplite.models.Address> userAddress = Globals.dbhelper.getStoreAddress();
 	public static ArrayList<Marker> markerList = new ArrayList<Marker>();
     private OnCameraChangeListener onCameraChange = new OnCameraChangeListener() {
-
-		
 		@Override
 		public void onCameraChange(CameraPosition position) {
 			// TODO Auto-generated method stub
@@ -201,6 +205,7 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 	        	  addressText = "No address found";
 	        }
 			//shopDetailDescription.setText(addressText);
+			deliveryAddressInput.setText("");
 			secondaryAddress.setText(addressText);
 			
 			
@@ -210,17 +215,65 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 			
 		}
 	};
-	private FrameLayout map_container;
-	MapInterface mCallback = null;
+	
 	
 	private OnClickListener userAddressFetch = new OnClickListener() {
 		
 		@Override
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
-			ArrayList<com.shoplite.models.Address> userAddress = Globals.dbhelper.getStoreAddress();
+			
 			if(userAddress != null){
-				Toast.makeText(getActivity(), userAddress.get(0).getAddressString(), Toast.LENGTH_LONG).show();
+				AlertDialog.Builder builderSingle = new AlertDialog.Builder(
+	                    getActivity());
+	            builderSingle.setIcon(R.drawable.home_small);
+	            builderSingle.setTitle("Select Delivery Address");
+	            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+	                    getActivity(),
+	                    android.R.layout.select_dialog_singlechoice);
+	            for(int i = 0 ; i < userAddress.size();i++){
+	            	arrayAdapter.add(userAddress.get(i).getAddressString());
+	            }
+	            
+
+	            builderSingle.setNegativeButton("Cancel",
+	                    new DialogInterface.OnClickListener() {
+
+	                        @Override
+	                        public void onClick(DialogInterface dialog, int which) {
+	                            dialog.dismiss();
+	                        }
+	                    });
+
+	            builderSingle.setAdapter(arrayAdapter,
+	                    new DialogInterface.OnClickListener() {
+
+	                        @Override
+	                        public void onClick(DialogInterface dialog, int which) {
+	                            String deliveryAddress = arrayAdapter.getItem(which);
+	                            Location deliveryLocation = userAddress.get(which).getDeliveryLocation();
+	                            deliveryAddressInput.setText(deliveryAddress);
+	                            move_map_camera(new LatLng(deliveryLocation.getLatitude(), deliveryLocation.getLongitude()),
+	                            		new CancelableCallback() {
+											
+											@Override
+											public void onFinish() {
+												// TODO Auto-generated method stub
+												setDeliveryAnchor.onClick(null);
+											}
+											
+											@Override
+											public void onCancel() {
+												// TODO Auto-generated method stub
+												
+											}
+										});
+	                            	
+	                            
+	                        }
+	                    });
+	            builderSingle.show();
+//				Toast.makeText(getActivity(), userAddress.get(0).getAddressString(), Toast.LENGTH_LONG).show();
 			}
 		}
 	};
@@ -355,8 +408,7 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 					
 					
 					if(deliveryAddressInput.getText().toString().length()>0){
-						Globals.deliveryAddress.setAddressString((String) deliveryAddressInput.getText().toString() + addressText);
-						
+						Globals.deliveryAddress.setAddressString((String) deliveryAddressInput.getText().toString() + " " +addressText);
 					}
 				    
 				}
@@ -370,9 +422,7 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 			
 			
 		    
-			//v.setVisibility(View.GONE);
-			//deliveryDialogText.setText("Delivery Address" + addressText + "\n Tap home to modify.");
-			//shopDetailHeading.setText("Delivery Address set as");
+			
 			get_shop_list(new Location(centerFromPoint.latitude,centerFromPoint.longitude));
 			animationFlipClockWise = true;
 		}
@@ -381,10 +431,17 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 	};	
 	
 	
+	public interface MoveCameraInterface{
+		public void moveCameraFinish();
+		public void moveCameraCancel();
+	}	
 	
-	public static void move_map_camera(LatLng coordinate) {
+	
+	public static void move_map_camera(LatLng coordinate, final CancelableCallback callBack) {
 		CameraUpdate yourLocation = CameraUpdateFactory.newLatLngZoom(coordinate, 13);
-	    mMap.moveCamera(yourLocation);
+	   mMap.animateCamera(yourLocation, callBack);
+		//mMap.moveCamera(yourLocation);
+	    
 	}
 	public static void zoomInDeliveryLocation(LatLng coordinate)
 	{
@@ -431,11 +488,12 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
     	shopDetailDescription = (TextView)rootView.findViewById(R.id.shop_details_description);
     	mapDialogView = (LinearLayout) rootView.findViewById(R.id.map_dialog);
     	deliveryAddressView = (LinearLayout)rootView.findViewById(R.id.delivery_address_container);
-    	 map_container = (FrameLayout)rootView.findViewById(R.id.map_container);
+    	map_container = (FrameLayout)rootView.findViewById(R.id.map_container);
     	mMapFragment = ((SupportMapFragment)getChildFragmentManager().findFragmentById(R.id.mapFragment));
     	mMap = mMapFragment.getMap();
     	userAddresses = (ImageButton)rootView.findViewById(R.id.address_selector);
     	userAddresses.setOnClickListener(userAddressFetch);
+    	
     	setDeliveryLocation = (Button)rootView.findViewById(R.id.setDeliveryLocation);
     	setDeliveryLocation.setOnClickListener(setDeliveryAnchor);
     	View mapView = mMapFragment.getView();
@@ -497,7 +555,12 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 	        	
 	        	map_container.setVisibility(View.GONE);
 	        }
-		
+		 if(userAddress.size() <= 0){
+	    		userAddresses.setVisibility(View.INVISIBLE);
+	    	}
+		 else{
+			 userAddresses.setVisibility(View.VISIBLE);
+		 }
 	}
 	
 	@Override
@@ -548,7 +611,7 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 					            LatLng coordinate = new LatLng(address.getLatitude(),address.getLongitude());
 					            
 					            //using converted address to latlng to query for shops
-					            move_map_camera(coordinate);
+					            move_map_camera(coordinate,null);
 					            get_shop_list(new Location(coordinate.latitude,coordinate.longitude));
 					           
 					            //hide keyboard
@@ -659,7 +722,7 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 		
 		if(Globals.connected_to_shop_success){
 			move_map_camera(new LatLng(Globals.connectedShop.getLocation().getLatitude(),
-					Globals.connectedShop.getLocation().getLongitude()));
+					Globals.connectedShop.getLocation().getLongitude()),null);
 		}
 	}
 	
