@@ -114,7 +114,9 @@ public class location  {
     }
 	
 	public static void removeLocationListener(){
-		lm.removeUpdates(locationListener);
+		if(lm != null){
+			lm.removeUpdates(locationListener);
+		}
 		
 	}
 	private final Handler handler = new Handler() {

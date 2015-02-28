@@ -34,7 +34,8 @@ public class Globals {
 	public static ArrayList<Integer> item_added_list = new ArrayList<Integer>();	//keeps track of items added
 	
 	public static Double cartTotalPrice = 0.00;
-	
+	public static String PREFS_NAME = "Dictionary";
+	public static String PREFS_KEY = "LastAddress";
 	public static boolean isInsideShop;
 	
 	//Method to Return Shop object which is at minimum distance from current location inside the 200 meters radius

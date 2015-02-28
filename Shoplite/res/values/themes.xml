@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="CustomActionBarTheme"
-           parent="@android:style/Theme.Holo.Light">
-        <item name="android:actionBarStyle">@style/MyActionBar</item>
+    <style name="CustomActionBarTheme" parent="Theme.AppCompat.Light">
+        <!--  <item name="android:actionBarStyle">@style/MyActionBar</item>-->
+        <item name="colorPrimary">@color/app_color</item>
+        
     </style>
 
     <!-- ActionBar styles -->

@@ -4,6 +4,8 @@
 package com.shoplite.fragments;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -117,6 +119,8 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 	MapInterface mCallback = null;
 	ArrayList<com.shoplite.models.Address> userAddress = Globals.dbhelper.getStoreAddress();
 	public static ArrayList<Marker> markerList = new ArrayList<Marker>();
+	
+	public static SimpleCursorAdapter  suggestionAdapter;
     private OnCameraChangeListener onCameraChange = new OnCameraChangeListener() {
 		@Override
 		public void onCameraChange(CameraPosition position) {
@@ -283,6 +287,7 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 		
 			@Override
 			public void onClick(View v) {
+				location.removeLocationListener();
 				mCallback.mapShopStart();
 		
 			}
@@ -577,14 +582,15 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 	        shopSearchView.setQueryHint("Search Your Delivery Location");
 	        shopSearchView.setSubmitButtonEnabled(false);
 	        shopSearchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+	       
 	        shopSearchView.setOnQueryTextListener(new OnQueryTextListener(){
-
+	        	PlacesAutoComplete pl = new PlacesAutoComplete();
 				@Override
 				public boolean onQueryTextChange(String newText) {
-					if(newText.length()>= 3){
-						PlacesAutoComplete pl = new PlacesAutoComplete();
+					//if(newText.length()>= 3){
+						
 						pl.autocomplete(newText);
-					}
+					//}
 					return true;
 				}
 
@@ -905,6 +911,7 @@ public static class PlacesAutoComplete {
 	public ServiceProvider serviceProvider = null;
 	public JsonArray placesPrediction = new JsonArray();
 	public static ArrayList<PlacePrediction> placesList;
+	public ArrayList<String> placesName ;
 	private String[] columnNames = {"_id","description"};
 	public MatrixCursor suggestionCursor  ;
 	
@@ -919,6 +926,7 @@ public static class PlacesAutoComplete {
 			CaptureActivity.decorView.addView(CaptureActivity.progressBar);
 		}
 		placesList = new ArrayList<PlacePrediction>();
+		
 		suggestionCursor  = new MatrixCursor(columnNames);
 	    StringBuilder sb = new StringBuilder(PLACES_API_BASE + TYPE_AUTOCOMPLETE + OUT_JSON);
 	    sb.append("?key=" + API_KEY);
@@ -926,7 +934,12 @@ public static class PlacesAutoComplete {
 	    sb.append("&location="+Globals.current_location.getLatitude().toString()+
 	    		","+Globals.current_location.getLongitude().toString());
         sb.append("&components=country:in");
-        sb.append("&input=" + input);
+        try {
+			sb.append("&input=" + URLEncoder.encode(input, "utf8"));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
         String url = sb.toString();
 	    RestAdapter restAdapter = new RestAdapter.Builder()
@@ -958,6 +971,7 @@ public static class PlacesAutoComplete {
 		        }
 				int[] to = {R.id.searchText};
 				SimpleCursorAdapter  suggestionAdapter  = new SimpleCursorAdapter(Globals.ApplicationContext, R.layout.list_item,suggestionCursor,new String[]{columnNames[1]},to, 0);
+				MapFragment.suggestionAdapter = suggestionAdapter;
 				shopSearchView.setSuggestionsAdapter(suggestionAdapter);
 				if(CaptureActivity.decorView != null){
 					CaptureActivity.isProgressBarAdded = false;

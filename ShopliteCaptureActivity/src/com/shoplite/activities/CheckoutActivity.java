@@ -1,8 +1,13 @@
 package com.shoplite.activities;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,9 +25,11 @@ import android.widget.Toast;
 import com.shoplite.UI.Controls;
 import com.shoplite.Utils.Constants;
 import com.shoplite.Utils.Globals;
+import com.shoplite.database.InternalStorage;
 import com.shoplite.fragments.OrderHistoryFragment;
 import com.shoplite.interfaces.ControlsInterface;
 import com.shoplite.interfaces.SubmitOrderInterface;
+import com.shoplite.models.Address;
 import com.shoplite.models.SubmitOrderDetails;
 
 import eu.livotov.zxscan.R;
@@ -204,6 +211,36 @@ public class CheckoutActivity extends Activity {
 			// TODO Auto-generated method stub
 			
 			SubmitOrderDetails submitOrder = new SubmitOrderDetails();
+			
+			Address lastAddress = Globals.deliveryAddress;
+			
+			/* try {
+				InternalStorage.writeObject(getActivity(), "lastAddress", lastAddress);
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			 try {
+				Address lastadd = (Address) InternalStorage.readObject(getActivity(), "lastAddress");
+				Toast.makeText(getActivity(), lastadd.getAddressString(), Toast.LENGTH_LONG).show();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			 */
+
+			
+			// Storing last address data into shared preference
+			String serializedData = lastAddress.serialize();
+			SharedPreferences preferencesReader = Globals.ApplicationContext.getSharedPreferences(Globals.PREFS_NAME, Context.MODE_PRIVATE);
+			SharedPreferences.Editor editor = preferencesReader.edit();
+			editor.putString(Globals.PREFS_KEY, serializedData);
+			editor.commit();
+			 
 			if(isOrderTakeAway){
 				submitOrder.setAmount(Globals.cartTotalPrice);
 				submitOrder.setAddress("takeAway");
@@ -230,6 +267,7 @@ public class CheckoutActivity extends Activity {
 					submitOrder.setState(Constants.ORDERStatus.FORHOMEDELIVERYPAYMENT);
 						}
 			}
+			
 			submitOrder(submitOrder);
 			alertDialog.dismiss();
 			Controls.show_loading_dialog(getActivity(), getResources().getString(R.string.confirming_order));

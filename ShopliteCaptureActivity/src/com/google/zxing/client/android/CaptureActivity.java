@@ -13,6 +13,7 @@ import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -78,6 +79,7 @@ import com.shoplite.Utils.Globals;
 import com.shoplite.Utils.PlacesAutoComplete;
 import com.shoplite.Utils.location;
 import com.shoplite.activities.SettingsActivity;
+import com.shoplite.database.InternalStorage;
 import com.shoplite.fragments.CartFragment;
 import com.shoplite.fragments.ContainerFragment;
 import com.shoplite.fragments.MapFragment;
@@ -86,20 +88,21 @@ import com.shoplite.interfaces.ControlsInterface;
 import com.shoplite.interfaces.ItemInterface;
 import com.shoplite.interfaces.MapInterface;
 import com.shoplite.interfaces.PackListInterface;
+import com.shoplite.interfaces.ShopInterface;
+import com.shoplite.models.Location;
 import com.shoplite.models.OrderItemDetail;
 import com.shoplite.models.PackList;
 import com.shoplite.models.Product;
 import com.shoplite.models.ProductVariance;
 import com.shoplite.models.SaveList;
+import com.shoplite.models.Shop;
 
 import eu.livotov.zxscan.R;
 import eu.livotov.zxscan.ZXScanHelper;
 
 
 
-public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.Callback
-,ItemInterface,MapInterface,
-ControlsInterface,PackListInterface
+public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.Callback,ItemInterface,MapInterface,ShopInterface,ControlsInterface,PackListInterface
 {
 
     private static final String TAG = CaptureActivity.class.getSimpleName();  // Log tags
@@ -242,11 +245,31 @@ ControlsInterface,PackListInterface
 		if(!conFrag.isAdded()){
         	getSupportFragmentManager().beginTransaction().add(R.id.fragment_container,conFrag ).commit();
         	
-        }
+        }	
 		
-		if(!mapFrag.isAdded()){
+		SharedPreferences preferencesReader = getSharedPreferences(Globals.PREFS_NAME, Context.MODE_PRIVATE);
+		String serializedDataFromPreference = preferencesReader.getString(Globals.PREFS_KEY, null);
+		com.shoplite.models.Address lastRecentAddress  = com.shoplite.models.Address.create(serializedDataFromPreference);
+
+		/*try {
+			lastRecentAddress = (com.shoplite.models.Address) InternalStorage.readObject(this, "lastAddress");
+		} catch (ClassNotFoundException e) {
+			
+			e.printStackTrace();
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}*/
+		
+		if(lastRecentAddress == null){
 			getSupportFragmentManager().beginTransaction().add(R.id.container,mapFrag).commit();
 		}
+		else{
+			Location lastAddressLocation = lastRecentAddress.getDeliveryLocation();
+			Shop shopObj = new Shop();
+			shopObj.get_shop_list(this,lastAddressLocation);
+		}
+		
 		if(!cartFrag.isAdded()){
     		getSupportFragmentManager().beginTransaction().add(R.id.container,cartFrag ).detach(cartFrag).commit();
     	}
@@ -265,8 +288,8 @@ ControlsInterface,PackListInterface
 	            handler.quitSynchronously();
 	            handler = null;
 	        }
-	        
-	        cameraManager.closeDriver();
+	        if(cameraManager != null)
+	        	cameraManager.closeDriver();
 	        if (!hasSurface)
 	        {
 	            SurfaceView surfaceView = (SurfaceView) findViewById(R.id.preview_view);
@@ -1223,7 +1246,7 @@ ControlsInterface,PackListInterface
 	 */
 	@Override
 	public void mapShopStart() {
-		location.removeLocationListener();
+		
 		getSupportFragmentManager().beginTransaction().detach(mapFrag).commit();
 		actionBar.setTitle(getResources().getText(R.string.app_name));
 		mainFragmentContainer.setVisibility(View.VISIBLE);
@@ -1241,5 +1264,26 @@ ControlsInterface,PackListInterface
 			mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, ldrawer);
 	        setCurrentShopping(0);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see com.shoplite.interfaces.ShopInterface#shop_list_success(com.shoplite.models.Location, java.util.ArrayList)
+	 */
+	@Override
+	public void shop_list_success(Location areaLocation,
+			ArrayList<Shop> shoplist) {
+		// TODO Auto-generated method stub
+		Shop mostNearByShop = shoplist.get(0);
+		mostNearByShop.connect_to_shop(this);
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.shoplite.interfaces.ShopInterface#shop_connected()
+	 */
+	@Override
+	public void shop_connected() {
+		// TODO Auto-generated method stub
+		mapShopStart();
 	}
 }

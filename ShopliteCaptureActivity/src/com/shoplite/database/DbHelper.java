@@ -529,4 +529,11 @@ public class DbHelper extends  SQLiteOpenHelper{
 		
 	}
 
+	public Address getLastRecentDeliveredAddress()
+	{
+		Address lastRecentAddress = new Address();
+		return null;
+		
+		
+	}
 }

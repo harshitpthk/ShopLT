@@ -3,12 +3,16 @@
  */
 package com.shoplite.models;
 
+import java.io.Serializable;
+
+import com.google.gson.Gson;
+
 
 /**
  * @author I300291
  *
  */
-public class Address {
+public class Address implements Serializable{
 	
 	private Location deliveryLocation;
 	private String addressString;
@@ -25,6 +29,17 @@ public class Address {
 	public void setAddressString(String addressString) {
 		this.addressString = addressString;
 	}
+	public String serialize() {
+        // Serialize this class into a JSON string using GSON
+        Gson gson = new Gson();
+        return gson.toJson(this);
+    }
+ 
+    static public Address create(String serializedData) {
+        // Use GSON to instantiate this class using the JSON representation of the state
+        Gson gson = new Gson();
+        return gson.fromJson(serializedData, Address.class);
+    }
 	
 	
 
