@@ -1,14 +1,12 @@
 package com.shoplite.activities;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,7 +23,6 @@ import android.widget.Toast;
 import com.shoplite.UI.Controls;
 import com.shoplite.Utils.Constants;
 import com.shoplite.Utils.Globals;
-import com.shoplite.database.InternalStorage;
 import com.shoplite.fragments.OrderHistoryFragment;
 import com.shoplite.interfaces.ControlsInterface;
 import com.shoplite.interfaces.SubmitOrderInterface;
@@ -34,13 +31,13 @@ import com.shoplite.models.SubmitOrderDetails;
 
 import eu.livotov.zxscan.R;
 
-public class CheckoutActivity extends Activity {
+public class CheckoutActivity extends ActionBarActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_checkout);
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		
 		if (savedInstanceState == null) {
 			getFragmentManager().beginTransaction()

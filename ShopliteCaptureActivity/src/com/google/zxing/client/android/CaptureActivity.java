@@ -5,12 +5,10 @@ package com.google.zxing.client.android;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
-import android.app.ActionBar;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -21,27 +19,27 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
-import android.location.Address;
-import android.location.Geocoder;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.DrawerLayout.DrawerListener;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MenuItem.OnActionExpandListener;
-import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
@@ -49,16 +47,15 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
-import android.widget.SearchView.OnQueryTextListener;
-import android.widget.SearchView.OnSuggestionListener;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
@@ -76,25 +73,24 @@ import com.shoplite.Utils.CartGlobals;
 import com.shoplite.Utils.Constants;
 import com.shoplite.Utils.Constants.DBState;
 import com.shoplite.Utils.Globals;
-import com.shoplite.Utils.PlacesAutoComplete;
-import com.shoplite.Utils.location;
 import com.shoplite.activities.SettingsActivity;
-import com.shoplite.database.InternalStorage;
 import com.shoplite.fragments.CartFragment;
 import com.shoplite.fragments.ContainerFragment;
 import com.shoplite.fragments.MapFragment;
-import com.shoplite.fragments.SavedListsFragment;
+import com.shoplite.fragments.OfflineShopFrag;
+import com.shoplite.interfaces.CategoryInterface;
 import com.shoplite.interfaces.ControlsInterface;
 import com.shoplite.interfaces.ItemInterface;
 import com.shoplite.interfaces.MapInterface;
 import com.shoplite.interfaces.PackListInterface;
 import com.shoplite.interfaces.ShopInterface;
+import com.shoplite.models.Category;
+import com.shoplite.models.Input;
 import com.shoplite.models.Location;
 import com.shoplite.models.OrderItemDetail;
 import com.shoplite.models.PackList;
 import com.shoplite.models.Product;
 import com.shoplite.models.ProductVariance;
-import com.shoplite.models.SaveList;
 import com.shoplite.models.Shop;
 
 import eu.livotov.zxscan.R;
@@ -102,7 +98,7 @@ import eu.livotov.zxscan.ZXScanHelper;
 
 
 
-public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.Callback,ItemInterface,MapInterface,ShopInterface,ControlsInterface,PackListInterface
+public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder.Callback,CategoryInterface ,ItemInterface,MapInterface,ShopInterface,ControlsInterface,PackListInterface
 {
 
     private static final String TAG = CaptureActivity.class.getSimpleName();  // Log tags
@@ -118,13 +114,14 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
     private BeepManager beepManager;
     SurfaceHolder.Callback cameraSurfaceCallback = this;
     
-   
+    private LinearLayout drawerSearch ;
     public static ButteryProgressBar progressBar;
     public static FrameLayout decorView;
      
     private ListView ldrawer;
     private DrawerLayout mDrawerLayout;
-    private String[] main_action = {"Groceries","Fruits & Veg","Beverages/Health-Drinks","Dairy/Eggs","Ready to Eat/Packed Foods","Personnel Care","Household","Stationery"};
+    private FrameLayout mainDrawerContainer;
+    
     private ActionBarDrawerToggle mDrawerToggle;
         
     private Window window;
@@ -137,7 +134,7 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
     private ImageButton orderListButton;
     private static AlertDialog AddDialog;
     public static AddItemCard addToItem;
-    public static ActionBar actionBar;
+    public static android.support.v7.app.ActionBar actionBar;
     private MenuItem importToCart;
 	protected static DialogFragment saveListDialog;
 	public static int SAVE_LIST_REQUEST = 200;
@@ -147,10 +144,18 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
     ContainerFragment conFrag = new ContainerFragment();
     MapFragment mapFrag = new MapFragment();
     MenuItem CartMenuItem = null;
-   
+    ArrayList<String>  mainCategories = new ArrayList<String>();
+	private ArrayList<Category> categoryMap;
+    public static Toolbar toolbar ;
+    
+    private TextView drawerHeaderName;
+    private TextView drawerHeaderAddress;
+    private TextView drawerHeaderShop;
+    private ImageButton drawerChangeDelivery;
     
     //activity methods
-   	@Override
+   	@SuppressLint("NewApi")
+	@Override
     public void onCreate(Bundle icicle)
     {
 		  
@@ -164,13 +169,21 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 		setContentView(scanner_layout);
       
         window = getWindow();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+           
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(getResources().getColor(R.color.status_bar_app_color));
+        }
        	
+         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         //action Bar
-		actionBar = getActionBar();
-		actionBar.setTitle(getResources().getText(R.string.pick_delivery_location));
+		actionBar = getSupportActionBar();
+		
 		actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-		actionBar.setDisplayHomeAsUpEnabled(false);
-		actionBar.setHomeButtonEnabled(false);
+		
+		
+		
 		progressBar = new ButteryProgressBar(this);
         progressBar.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 24)); // create new ProgressBar and style it
         decorView = (FrameLayout) getWindow().getDecorView();			// retrieve the top view of our application
@@ -195,36 +208,55 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
         });
         
         
+        
         mainFragmentContainer = (FrameLayout)findViewById(R.id.fragment_container);
+        
         mainTabsView = (View) findViewById(R.id.main_tabs_view);
-     
+        
         shopByListButton  = (ImageButton) findViewById(R.id.shop_outside_store);
     	shopAtStoreButton = (ImageButton) findViewById(R.id.shop_at_store);
     	orderListButton   = (ImageButton) findViewById(R.id.orders_list);
-    	
-       
-        
-        mDrawerLayout = (DrawerLayout)this.findViewById(R.id.drawer_layout_capture);
-        mDrawerToggle = new ActionBarDrawerToggle(this,mDrawerLayout,R.drawable.navigation_drawer,R.string.drawer_open,R.string.drawer_open)
+    	mDrawerLayout = (DrawerLayout)this.findViewById(R.id.drawer_layout_capture);
+        mainDrawerContainer = (FrameLayout)this.findViewById(R.id.left_drawer_container);
+        mDrawerToggle = new ActionBarDrawerToggle(this,mDrawerLayout,R.string.drawer_open,R.string.drawer_close)
         					{
 					        	public void onDrawerClosed(View view) {
 					                super.onDrawerClosed(view);
-					                //getActionBar().setTitle(mTitle);
+					                //getSupportActionBar().setTitle(mTitle);
 					            }
 					
 					            /** Called when a drawer has settled in a completely open state. */
 					            public void onDrawerOpened(View drawerView) {
 					                super.onDrawerOpened(drawerView);
-					                //getActionBar().setTitle(mDrawerTitle);
+					                //getSupportActionBar().setTitle(mDrawerTitle);
 					            }
         	
         				   };
+        drawerSearch= (LinearLayout)findViewById(R.id.navigation_search_box);
+        drawerSearch.setOnClickListener(new OnClickListener() {
+        						
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				mDrawerLayout.closeDrawer(mainDrawerContainer);
+				showSearchItems();
+			}
+		});
 	    mDrawerLayout.setDrawerListener(mDrawerToggle);
         ldrawer = (ListView)this.findViewById(R.id.left_drawer_capture);
-        ldrawer.setAdapter(new ArrayAdapter<String>(this.getBaseContext(),R.layout.drawer_list_item, main_action));
-        ldrawer.setOnItemClickListener(new DrawerItemClickListener());// Set the list's click listener
-    	mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, ldrawer);
+        mDrawerToggle.setDrawerIndicatorEnabled(false);
+        actionBar.setHomeButtonEnabled(false);
+		actionBar.setDisplayHomeAsUpEnabled(false);
+		toolbar.setNavigationIcon(null);
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mainDrawerContainer);
     		
+        drawerChangeDelivery = (ImageButton)findViewById(R.id.drawer_change_delivery);
+        drawerHeaderName = (TextView)findViewById(R.id.drawer_user_name);
+        drawerHeaderAddress = (TextView)findViewById(R.id.drawer_delivery_address);
+        drawerHeaderShop = (TextView)findViewById(R.id.drawer_shop);
+        
+        
+        
     	hasSurface = false;
         // inactivityTimer = new InactivityTimer(this);
         beepManager = new BeepManager(this);
@@ -236,6 +268,9 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
                
     }
      
+	
+	
+
 	@Override
     protected void onResume()
     {
@@ -246,30 +281,23 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
         	getSupportFragmentManager().beginTransaction().add(R.id.fragment_container,conFrag ).commit();
         	
         }	
-		
-		SharedPreferences preferencesReader = getSharedPreferences(Globals.PREFS_NAME, Context.MODE_PRIVATE);
-		String serializedDataFromPreference = preferencesReader.getString(Globals.PREFS_KEY, null);
-		com.shoplite.models.Address lastRecentAddress  = com.shoplite.models.Address.create(serializedDataFromPreference);
-
-		/*try {
-			lastRecentAddress = (com.shoplite.models.Address) InternalStorage.readObject(this, "lastAddress");
-		} catch (ClassNotFoundException e) {
+		/*if(Globals.connectedShop == null){
+			SharedPreferences preferencesReader = getSharedPreferences(Globals.PREFS_NAME, Context.MODE_PRIVATE);
+			String serializedDataFromPreference = preferencesReader.getString(Globals.PREFS_KEY, null);
+			com.shoplite.models.Address lastRecentAddress  = com.shoplite.models.Address.create(serializedDataFromPreference);
+	
 			
-			e.printStackTrace();
-		} catch (IOException e) {
 			
-			e.printStackTrace();
+			if(lastRecentAddress == null){
+				getSupportFragmentManager().beginTransaction().add(R.id.container,mapFrag).commit();
+			}
+			else{
+				Globals.deliveryAddress = lastRecentAddress;
+				Location lastAddressLocation = lastRecentAddress.getDeliveryLocation();
+				Shop shopObj = new Shop();
+				shopObj.get_shop_list(this,lastAddressLocation);
+			}
 		}*/
-		
-		if(lastRecentAddress == null){
-			getSupportFragmentManager().beginTransaction().add(R.id.container,mapFrag).commit();
-		}
-		else{
-			Location lastAddressLocation = lastRecentAddress.getDeliveryLocation();
-			Shop shopObj = new Shop();
-			shopObj.get_shop_list(this,lastAddressLocation);
-		}
-		
 		if(!cartFrag.isAdded()){
     		getSupportFragmentManager().beginTransaction().add(R.id.container,cartFrag ).detach(cartFrag).commit();
     	}
@@ -375,136 +403,24 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
         MenuReference = menu;
     	MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.custom_action_bar, menu);
-        
-//        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-//        shopSearchView = (SearchView)menu.findItem(R.id.search).getActionView();
-//        shopSearchView.setQueryHint("Search Your Delivery Location");
-//        shopSearchView.setSubmitButtonEnabled(false);
-//        shopSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-//        shopSearchView.setOnQueryTextListener(new OnQueryTextListener(){
-//
-//			@Override
-//			public boolean onQueryTextChange(String newText) {
-//				if(newText.length()>= 3){
-//					PlacesAutoComplete pl = new PlacesAutoComplete();
-//					pl.autocomplete(newText);
-//				}
-//				return true;
-//			}
-//
-//			@Override
-//			public boolean onQueryTextSubmit(String query) {
-//				
-//				return true;
-//			}
-//        	
-//        });
-//        shopSearchView.setOnSuggestionListener(new OnSuggestionListener(){
-//
-//			@Override
-//			public boolean onSuggestionClick(int index) {
-//				
-//				if(Geocoder.isPresent()) {
-//
-//				    Geocoder geocoder = new Geocoder(getApplicationContext());
-//				    List<Address> addresses = null;
-//				    try {
-//				        addresses = geocoder.getFromLocationName(PlacesAutoComplete.placesList.get(index).getDescription(), 1);
-//				        if (!addresses.isEmpty()) {
-//				           // Address address = addresses.get(0);
-//				            //LatLng coordinate = new LatLng(address.getLatitude(),address.getLongitude());
-//				            
-//				            //using converted address to latlng to query for shops
-//				         //   MapUI.move_map_camera(coordinate);
-//				           // get_shop_list(new Location(coordinate.latitude,coordinate.longitude));
-//				           
-//				            //hide keyboard
-//				            InputMethodManager inputManager = (InputMethodManager)
-//				            getSystemService(Context.INPUT_METHOD_SERVICE); 
-//				            inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
-//				            InputMethodManager.HIDE_NOT_ALWAYS);
-//	                   
-//				            
-//				        } else {
-//				            // No results for your location
-//				        }
-//				    } catch (IOException e) {
-//				        e.printStackTrace();
-//				    }
-//				}
-//				return true;
-//			}
-//
-//			@Override
-//			public boolean onSuggestionSelect(int arg0) {
-//				//Toast.makeText(getApplicationContext(), Integer.toString(arg0), Toast.LENGTH_SHORT).show();
-//				return true;
-//			}});
-//        MenuItem shopSearch = (MenuItem) menu.findItem(R.id.search);
-//        shopSearch.setOnActionExpandListener(new OnActionExpandListener() {
-//			
-//			@Override
-//			public boolean onMenuItemActionExpand(MenuItem item) {
-//				
-//				//FrameLayout map_container = (FrameLayout)findViewById(R.id.map_container);
-//				//map_container.setVisibility(View.VISIBLE);
-//				//MapUI.mapVisible = true;
-//				return true;
-//			}
-//			
-//			@Override
-//			public boolean onMenuItemActionCollapse(MenuItem item) {
-//				if(conFrag.isAdded())
-//				{
-////					FrameLayout map_container = (FrameLayout)findViewById(R.id.map_container);
-////					map_container.setVisibility(View.INVISIBLE);
-////					MenuItem CartMenuItem = (MenuItem) menu.findItem(R.id.shopping_cart);
-////		            CartMenuItem.setVisible(true);
-////					MapUI.mapVisible = false;
-//									
-//				}
-//				return true;
-//			}
-//		});
-//       
-//        
-//        importToCart = menu.findItem(R.id.import_to_cart);
-//        importToCart.setVisible(false);
-//        importToCart.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-//			
-//			@Override
-//			public boolean onMenuItemClick(MenuItem item) {
-//				// TODO Auto-generated method stub
-//				if(!cartFrag.isDetached()){
-//					ArrayList<SaveList> savedLists = Globals.dbhelper.getAllSavedShopList();
-//					if(savedLists.size()>0){
-//						saveListDialog = SavedListsFragment.newInstance();
-//						saveListDialog.show(getSupportFragmentManager(), "SaveListDialog"); 
-//						
-//					}
-//					else{
-//						Toast.makeText(getBaseContext(), "You Don't have any Saved List, Create One to Use Import",
-//								Toast.LENGTH_LONG).show();
-//					}
-//				}
-//				return true;
-//			}
-//		});
         return super.onCreateOptionsMenu(menu);
     }
        
+    //map activity changes
     @Override
     public boolean onPrepareOptionsMenu(Menu menu)
     {
     	MenuItem CartMenuItem = (MenuItem) menu.findItem(R.id.shopping_cart);
-    	if(mapFrag.isAdded()){
+    	/*if(mapFrag.isAdded()){
     		
             CartMenuItem.setVisible(false);
     	
     	}
     	else{
     		CartMenuItem.setVisible(true);
-    	}
+    	}*/
+    	
+    	
     	return super.onPrepareOptionsMenu(menu);
     	   
     }
@@ -519,7 +435,7 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
             if (resultCode == RESULT_OK) {
                 if(saveListDialog != null)            	
                 	saveListDialog.dismiss();
-                // Do something with the contact here (bigger example below)
+                // calledfor importList
             }
         }
     }
@@ -827,8 +743,15 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            
+        	mDrawerLayout.closeDrawer(mainDrawerContainer);
+        	showSubCategories(position);
+        	
         }
+
+		/**
+		 * 
+		 */
+		
     }
        
     public void startQRScanner(SurfaceView surfaceView)
@@ -861,9 +784,11 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 				    	orderListButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.purchase_order_grey));
 						
 //			            ShopMap.setVisible(false);
-						getActionBar().setDisplayHomeAsUpEnabled(true);
-			            getActionBar().setHomeButtonEnabled(true);
-						mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, ldrawer);
+				    	toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha));
+						getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+			            getSupportActionBar().setHomeButtonEnabled(true);
+			            mDrawerToggle.setDrawerIndicatorEnabled(true);
+						mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, mainDrawerContainer);
 						window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 						 
 						
@@ -874,10 +799,12 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 				    	orderListButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.purchase_order_grey));
 						
 //				        ShopMap.setVisible(false);
-						getActionBar().setDisplayHomeAsUpEnabled(false);
-						getActionBar().setHomeButtonEnabled(false);
+						getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+						getSupportActionBar().setHomeButtonEnabled(false);
+						mDrawerToggle.setDrawerIndicatorEnabled(false);
+						toolbar.setNavigationIcon(null);
 					    window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-					    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, ldrawer);
+					    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mainDrawerContainer);
 					    handler.resumeDecodeThread();
 					   
 					}
@@ -888,9 +815,11 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 						
 //				        ShopMap.setVisible(false);
 						window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-						getActionBar().setDisplayHomeAsUpEnabled(false);
-						getActionBar().setHomeButtonEnabled(false);
-			    		mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, ldrawer);
+						getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+						getSupportActionBar().setHomeButtonEnabled(false);
+						 mDrawerToggle.setDrawerIndicatorEnabled(false);
+						toolbar.setNavigationIcon(null);
+			    		mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mainDrawerContainer);
 			    		
 			    		
 					}
@@ -942,8 +871,10 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
         		getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_out,R.anim.fade_out).detach(cartFrag).commit();
         		getSupportFragmentManager().executePendingTransactions();
         		if(conFrag.mViewPager.getCurrentItem() == 0){
-        			getActionBar().setDisplayHomeAsUpEnabled(true);
-        			getActionBar().setHomeButtonEnabled(true);
+        			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        			getSupportActionBar().setHomeButtonEnabled(true);
+        			 mDrawerToggle.setDrawerIndicatorEnabled(true);
+        			 mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, mainDrawerContainer);
         		}
         		else if(conFrag.mViewPager.getCurrentItem() == 1){
         			handler.resumeDecodeThread();
@@ -957,14 +888,16 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
     			
     			getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in,R.anim.fade_in).attach(cartFrag ).addToBackStack(null).commit();
         		getSupportFragmentManager().executePendingTransactions();
-        		getActionBar().setDisplayHomeAsUpEnabled(false);
-    			getActionBar().setHomeButtonEnabled(false);
+        		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+    			getSupportActionBar().setHomeButtonEnabled(false);
+    			 mDrawerToggle.setDrawerIndicatorEnabled(false);
+    			 mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mainDrawerContainer);
 
     			actionBar.setTitle(getResources().getText(R.string.shopping_cart)+
         				"    " + Double.toString(Math.round(Globals.cartTotalPrice*100.0/100.0)) + " " +getResources().getText(R.string.currency));
 //    			importToCart.setVisible(true);
     		}
-    		mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, ldrawer);
+    		
     		
     	
 		
@@ -1057,7 +990,8 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 		}
 		else{
 			Toast.makeText(this, "Our Apologies, Product is out of Stock", Toast.LENGTH_LONG).show();
-			handler.restartPreviewAndDecode();
+			if(handler != null && conFrag.mViewPager.getCurrentItem() == 1)
+				handler.restartPreviewAndDecode();
 		}
 		//itemCard.setActionButtonText("More");
 		
@@ -1105,13 +1039,15 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 		//}
 		
 		sendPackList();
-		handler.restartPreviewAndDecode();
+		if(handler != null && conFrag.mViewPager.getCurrentItem() == 1)
+			handler.restartPreviewAndDecode();
 		
 	}
 	@Override
 	public void negative_button_alert_method() {
 		AddDialog.dismiss();
-		handler.restartPreviewAndDecode();
+		if(handler != null && conFrag.mViewPager.getCurrentItem() == 1)
+			handler.restartPreviewAndDecode();
 	}
 	@Override
 	public void save_alert_dialog(AlertDialog alertDialog) {
@@ -1119,7 +1055,8 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 	}
 	@Override
 	public void neutral_button_alert_method() {
-		handler.restartPreviewAndDecode();
+		if(handler != null && conFrag.mViewPager.getCurrentItem() == 1)
+			handler.restartPreviewAndDecode();
 	}
 
 	
@@ -1213,8 +1150,8 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 	 */
 	@Override
 	public void ItemGetFailure() {
-		
-		handler.restartPreviewAndDecode();
+		if(handler != null && conFrag.mViewPager.getCurrentItem()== 1)
+			handler.restartPreviewAndDecode();
 	}
 
 	/* (non-Javadoc)
@@ -1247,43 +1184,158 @@ public class CaptureActivity extends FragmentActivity  implements SurfaceHolder.
 	@Override
 	public void mapShopStart() {
 		
-		getSupportFragmentManager().beginTransaction().detach(mapFrag).commit();
+		/*getSupportFragmentManager().beginTransaction().detach(mapFrag).commit();
 		actionBar.setTitle(getResources().getText(R.string.app_name));
 		mainFragmentContainer.setVisibility(View.VISIBLE);
 		mainTabsView.setVisibility(View.VISIBLE);
 		shopAtStoreButton.setVisibility(View.VISIBLE);
 		shopByListButton.setVisibility(View.VISIBLE);
 		orderListButton.setVisibility(View.VISIBLE);
+		drawerHeaderShop.setText(Globals.connectedShop.getName());
+		drawerHeaderAddress.setText(Globals.deliveryAddress.getAddressString());
+		drawerHeaderName.setText(Globals.dbhelper.getItem("name"));
+		
+		drawerChangeDelivery.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				mDrawerLayout.closeDrawer(mainDrawerContainer);
+				mDrawerLayout.setDrawerListener(new DrawerListener() {
+								
+					
+					@Override
+					public void onDrawerClosed(View arg0) {
+						// TODO Auto-generated method stub
+						getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+						getSupportActionBar().setHomeButtonEnabled(false);
+						mDrawerToggle.setDrawerIndicatorEnabled(false);
+						toolbar.setNavigationIcon(null);
+						if(!mapFrag.isAdded())
+							getSupportFragmentManager().beginTransaction().add(R.id.container,mapFrag).commit();
+						getSupportFragmentManager().beginTransaction().attach(mapFrag).commit();
+						mDrawerLayout.setDrawerListener(mDrawerToggle);
+					}
+
+					@Override
+					public void onDrawerOpened(View arg0) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void onDrawerSlide(View arg0, float arg1) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void onDrawerStateChanged(int arg0) {
+						// TODO Auto-generated method stub
+						
+					}
+				});
+				 
+				
+			}
+		});
 				
     	if(Globals.isInsideShop)
     		
 			setCurrentShopping(1);
 		else{
-			getActionBar().setDisplayHomeAsUpEnabled(true);
-            getActionBar().setHomeButtonEnabled(true);
-			mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, ldrawer);
+			toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha));
+			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+
+			mDrawerToggle.setDrawerIndicatorEnabled(true);
+			mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, mainDrawerContainer);
 	        setCurrentShopping(0);
+		}
+		*/
+    	if(mainCategories.size()<= 0)
+    		loadCategories();
+    		
+    	
+	}
+
+	
+	private void loadCategories() {
+		prgBar = new ProgressBar(this);
+    	FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
+    	lp.gravity = Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL;
+    	mainDrawerContainer.addView(prgBar,lp);
+		Category cat = new Category();
+		cat.getCategories(this);
+		
+	}
+	private void showSubCategories(int position) {
+		// TODO Auto-generated method stub
+		OfflineShopFrag offlineFrag = (OfflineShopFrag) conFrag.mContainerFragPager.getCurrentFragment();
+		if(offlineFrag != null){
+			Log.e("ItemClicked",categoryMap.get(position).getName());
+			offlineFrag.loadChildCategories(categoryMap.get(position).getChildList(),categoryMap.get(position).getName());
+		}
+		
+	}
+	protected void showSearchItems() {
+		// TODO Auto-generated method stub
+		OfflineShopFrag offlineFrag = (OfflineShopFrag) conFrag.mContainerFragPager.getCurrentFragment();
+		if(offlineFrag != null){
+			offlineFrag.showSearchItems();
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.shoplite.interfaces.ShopInterface#shop_list_success(com.shoplite.models.Location, java.util.ArrayList)
-	 */
+	
 	@Override
 	public void shop_list_success(Location areaLocation,
 			ArrayList<Shop> shoplist) {
-		// TODO Auto-generated method stub
+		
+		for(int i = 0 ; i < shoplist.size(); i++){
+			Log.e("ShopNames",shoplist.get(i).getName());
+		}
 		Shop mostNearByShop = shoplist.get(0);
 		mostNearByShop.connect_to_shop(this);
 		
 	}
 
-	/* (non-Javadoc)
-	 * @see com.shoplite.interfaces.ShopInterface#shop_connected()
-	 */
+	
 	@Override
 	public void shop_connected() {
-		// TODO Auto-generated method stub
+		
 		mapShopStart();
 	}
+
+	
+	@Override
+	public void getCategorySuccess(ArrayList<Category> categories) {
+		 
+		//{"Groceries","Fruits & Veg","Beverages/Health-Drinks","Dairy/Eggs","Ready to Eat/Packed Foods","Personnel Care","Household","Stationery"};
+		categoryMap = categories;
+		for(int i = 0 ; i < categories.size();i++){
+			mainCategories.add(categories.get(i).getName());
+		}
+		
+		mainDrawerContainer.removeView(prgBar);
+		ldrawer.setAdapter(new ArrayAdapter<String>(this.getBaseContext(),R.layout.drawer_list_item, mainCategories));
+        ldrawer.setOnItemClickListener(new DrawerItemClickListener());// Set the list's click listener
+	}
+
+	
+	@Override
+	public void productsGetFailure() {
+		
+	}
+
+	
+	@Override
+	public void productsGetSuccess(ArrayList<Product> productList) {
+		
+	}
+
+	
+	@Override
+	public void getProducts(Input input) {
+		
+	}
+	
 }

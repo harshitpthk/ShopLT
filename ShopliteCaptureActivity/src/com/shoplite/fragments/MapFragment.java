@@ -20,7 +20,6 @@ import android.animation.AnimatorInflater;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
@@ -30,13 +29,13 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.MenuItem.OnActionExpandListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -48,9 +47,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.SearchView;
-import android.widget.SearchView.OnQueryTextListener;
-import android.widget.SearchView.OnSuggestionListener;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -93,7 +89,7 @@ import eu.livotov.zxscan.R;
  *
  */
 public class MapFragment extends BaseMapfragment implements ShopInterface,OnMarkerClickListener,LocationInterface{
-	View rootView;
+	static View  rootView;
 	private TextView shopDetailHeading;
 	private LinearLayout shopDetailsView;
 	private TextView shopDetailDescription;
@@ -485,7 +481,17 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
         Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-		rootView = inflater.inflate(R.layout.map_fragment_layout, container, false);
+		if (rootView != null) {
+	        ViewGroup parent = (ViewGroup) rootView.getParent();
+	        if (parent != null)
+	            parent.removeView(rootView);
+	    }
+		try{
+			rootView = inflater.inflate(R.layout.map_fragment_layout, container, false);
+		}catch(InflateException e){
+			e.printStackTrace();
+		}
+		
 		shopDetailsView = (LinearLayout)rootView.findViewById(R.id.shop_details_view);
     	shopDetailHeading = (TextView)rootView.findViewById(R.id.shop_details_heading);
     	deliveryAddressInput = (EditText) rootView.findViewById(R.id.delivery_address_input);
@@ -501,7 +507,15 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
     	
     	setDeliveryLocation = (Button)rootView.findViewById(R.id.setDeliveryLocation);
     	setDeliveryLocation.setOnClickListener(setDeliveryAnchor);
+    	//CaptureActivity.actionBar.setTitle(getResources().getText(R.string.pick_delivery_location));
+        
+    	startShop = (Button)rootView.findViewById(R.id.startShop);
+    	startShop.setOnClickListener(mapShopContinue);
+    	mMap.setOnCameraChangeListener(onCameraChange);
+    	mMap.setOnMarkerClickListener(this);
+    	mMap.setMyLocationEnabled(true);
     	View mapView = mMapFragment.getView();
+    	if(mapView!= null){
     	Resources r = getResources();
     	float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25, r.getDisplayMetrics());
     	View locationButton = ((View) mapView.findViewById(1).getParent()).findViewById(2);
@@ -513,11 +527,7 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
         rlp.addRule(RelativeLayout.ALIGN_PARENT_START, RelativeLayout.TRUE);
         rlp.setMargins(30, 30, 30, (int) px);
         
-    	startShop = (Button)rootView.findViewById(R.id.startShop);
-    	startShop.setOnClickListener(mapShopContinue);
-    	mMap.setOnCameraChangeListener(onCameraChange);
-    	mMap.setOnMarkerClickListener(this);
-    	mMap.setMyLocationEnabled(true);
+        
     	
     	View zoomControls = ((View) mapView.findViewById(1).getParent()).findViewById(1);
     	RelativeLayout.LayoutParams rlp1 = (RelativeLayout.LayoutParams) zoomControls.getLayoutParams();
@@ -527,7 +537,7 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
         rlp1.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
         rlp1.addRule(RelativeLayout.ALIGN_PARENT_START, RelativeLayout.TRUE);
         rlp1.setMargins(30, 30, 30, 250);
-    	
+    	}
     	
     	mMap.getUiSettings().setZoomControlsEnabled(true);
     	setHasOptionsMenu(true);
@@ -577,7 +587,7 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		    MenuReference = menu;
 	    	inflater.inflate(R.menu.places_search_menu, menu);
-	        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+	       /* SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
 	        shopSearchView = (SearchView)menu.findItem(R.id.search).getActionView();
 	        shopSearchView.setQueryHint("Search Your Delivery Location");
 	        shopSearchView.setSubmitButtonEnabled(false);
@@ -666,7 +676,7 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 					return true;
 				}
 			});
-	       
+	       */
 	        
 	      
 	        return;
@@ -921,10 +931,10 @@ public static class PlacesAutoComplete {
 	}
 	
 	public void autocomplete(String input) {
-		if(CaptureActivity.decorView != null && !CaptureActivity.isProgressBarAdded){
+		/*if(CaptureActivity.decorView != null && !CaptureActivity.isProgressBarAdded){
 			CaptureActivity.isProgressBarAdded = true;
 			CaptureActivity.decorView.addView(CaptureActivity.progressBar);
-		}
+		}*/
 		placesList = new ArrayList<PlacePrediction>();
 		
 		suggestionCursor  = new MatrixCursor(columnNames);
@@ -972,11 +982,11 @@ public static class PlacesAutoComplete {
 				int[] to = {R.id.searchText};
 				SimpleCursorAdapter  suggestionAdapter  = new SimpleCursorAdapter(Globals.ApplicationContext, R.layout.list_item,suggestionCursor,new String[]{columnNames[1]},to, 0);
 				MapFragment.suggestionAdapter = suggestionAdapter;
-				shopSearchView.setSuggestionsAdapter(suggestionAdapter);
-				if(CaptureActivity.decorView != null){
+				//shopSearchView.setSuggestionsAdapter(suggestionAdapter);
+				/*if(CaptureActivity.decorView != null){
 					CaptureActivity.isProgressBarAdded = false;
 					CaptureActivity.decorView.removeView(CaptureActivity.progressBar);
-				}
+				}*/
 
 			}
 			

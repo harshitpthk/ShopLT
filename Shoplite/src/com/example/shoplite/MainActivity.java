@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -36,7 +37,7 @@ import com.shoplite.models.User;
 
 import eu.livotov.zxscan.ZXScanHelper;
 
-public class MainActivity extends Activity implements ConnectionInterface  {
+public class MainActivity extends ActionBarActivity implements ConnectionInterface  {
 
 
 	LayoutInflater inflater;

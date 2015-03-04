@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android" 
+    
+    xmlns:shoplite="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/search"
           android:title="@string/map_search_text"
           android:icon="@android:drawable/ic_menu_search"
-          android:showAsAction="collapseActionView|ifRoom"
+           shoplite:showAsAction="collapseActionView|ifRoom"
           android:capitalize="words"
           android:actionViewClass="android.widget.SearchView"
          

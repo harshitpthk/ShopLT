@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,7 +28,7 @@ import com.shoplite.models.Product;
 
 import eu.livotov.zxscan.R;
 
-public class ItemsDisplayActivity extends Activity implements ControlsInterface,ItemInterface{
+public class ItemsDisplayActivity extends ActionBarActivity implements ControlsInterface,ItemInterface{
 
 	private ArrayList<Product> itemList;
 	private String listName;
@@ -46,14 +47,14 @@ public class ItemsDisplayActivity extends Activity implements ControlsInterface,
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		setContentView(R.layout.activity_items_display);
 		itemsListView = (ListView) findViewById(R.id.items_display_list);
 		
 		listName = getIntent().getStringExtra("ListName"); 
 		String ItemListJson = getIntent().getStringExtra("ItemList");
 		
-		getActionBar().setTitle(listName);
+		getSupportActionBar().setTitle(listName);
 		
 		Gson gson = new Gson();
 		itemList = gson.fromJson(ItemListJson, listType);
@@ -281,6 +282,30 @@ public class ItemsDisplayActivity extends Activity implements ControlsInterface,
 	
 	@Override
 	public void updateItemFailure() {
+		
+	}
+	/* (non-Javadoc)
+	 * @see com.shoplite.interfaces.ItemInterface#productsGetFailure()
+	 */
+	@Override
+	public void productsGetFailure() {
+		// TODO Auto-generated method stub
+		
+	}
+	/* (non-Javadoc)
+	 * @see com.shoplite.interfaces.ItemInterface#productsGetSuccess()
+	 */
+	@Override
+	public void productsGetSuccess(ArrayList<Product> productList) {
+		// TODO Auto-generated method stub
+		
+	}
+	/* (non-Javadoc)
+	 * @see com.shoplite.interfaces.ItemInterface#getProducts()
+	 */
+	@Override
+	public void getProducts(Input input) {
+		// TODO Auto-generated method stub
 		
 	}
 }

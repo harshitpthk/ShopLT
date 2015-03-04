@@ -27,6 +27,7 @@ public class ContainerFragment extends Fragment {
 		mContainerFragPager = new ContainerFragmentPager(getFragmentManager());
 		mViewPager = (ViewPager) rootView.findViewById(R.id.container_pager);
     	mViewPager.setAdapter(mContainerFragPager);
+    	mViewPager.setOffscreenPageLimit(3);
         return rootView;
     }
 	

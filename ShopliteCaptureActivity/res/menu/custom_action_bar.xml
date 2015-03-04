@@ -1,33 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"  >
     
-    <!-- initialSearch bar -->
-    <!-- <item android:id="@+id/search"
-          android:title="@string/map_search_text"
-          android:icon="@android:drawable/ic_menu_search"
-          android:showAsAction="collapseActionView|ifRoom"
-          android:actionViewClass="android.widget.SearchView"
-         
-          
-           /> -->
-
     
-   
-     
-    
-    <!--  <item android:id="@+id/import_to_cart"
-        android:icon="@drawable/add"
-        android:showAsAction="ifRoom"
-        android:title="@string/import_items"></item>-->
     <!-- Cart -->
     <item android:id="@+id/shopping_cart"
           android:icon="@drawable/cart"
           android:orderInCategory="10"
           android:menuCategory="system"
-          android:showAsAction="ifRoom"
+          app:showAsAction="always"
           android:title="@string/shopping_cart" />
     <item android:id="@+id/settings"
-          android:showAsAction="never"
+          app:showAsAction="never"
           android:menuCategory="system"
           android:title="@string/settings"/>
+    
 </menu>

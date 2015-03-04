@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-
 import android.util.Log;
 
 import com.shoplite.Utils.Globals;
@@ -32,7 +31,7 @@ public class Product implements ConnectionInterface{
 	private boolean isSelected;
 	
 	
-	private static ItemInterface calling_class_object;
+	private  ItemInterface calling_class_object;
 	private Input ItemInput;
 	private Input brandInput;
 	
@@ -40,6 +39,8 @@ public class Product implements ConnectionInterface{
 	private boolean update_item_bool;
 	private boolean get_item_bool;
 	private boolean get_items_from_brand_bool;
+	private Input catInput;
+	private boolean get_items_from_cat;
 	
 	public boolean isSelected() {
 		return isSelected;
@@ -172,27 +173,36 @@ public class Product implements ConnectionInterface{
 	
 	public  void getItem(Input input, ItemInterface calling_class_object) {
 		
-		Product.calling_class_object = calling_class_object;
+		this.calling_class_object = calling_class_object;
 		this.get_item_bool = true;
-		ItemInput = input;
+		this.ItemInput = input;
 		ServerConnectionMaker.sendRequest(this);
 		
 	}
 	
 	public  void updateItem(Input input, ItemInterface calling_class_object) {
 		
-		Product.calling_class_object = calling_class_object;
+		this.calling_class_object = calling_class_object;
 		this.update_item_bool = true;
-		ItemInput = input;
+		this.ItemInput = input;
 		ServerConnectionMaker.sendRequest(this);
 		
 	}
 	
 	public  void getItems( ItemInterface calling_class_object,int brandId) {
 		
-		Product.calling_class_object = calling_class_object;
+		this.calling_class_object = calling_class_object;
 		this.get_items_from_brand_bool = true;
-		brandInput = new Input(brandId,"brand");
+		this.brandInput = new Input(brandId,"brand");
+		
+		ServerConnectionMaker.sendRequest(this);
+		
+	}
+	public  void getproducts( ItemInterface calling_class_object,Input input) {
+		
+		this.calling_class_object = calling_class_object;
+		this.get_items_from_cat = true;
+		this.catInput = input;
 		
 		ServerConnectionMaker.sendRequest(this);
 		
@@ -205,6 +215,7 @@ public class Product implements ConnectionInterface{
 	@Override
 	public void sendRequest(ServiceProvider serviceProvider) {
 		// TODO Auto-generated method stub
+		final Product thisProductObject = this;
 		if(this.get_items_from_brand_bool == true ){
 			serviceProvider.getItems( brandInput,new Callback<ArrayList<Product>>(){
 
@@ -226,9 +237,35 @@ public class Product implements ConnectionInterface{
 					
 					ServerConnectionMaker.recieveResponse(response);
 					Globals.simmilar_item_list = itemFamily;
-					Product.calling_class_object.ItemListGetSuccess(itemFamily);
+					thisProductObject.calling_class_object.ItemListGetSuccess(itemFamily);
 				}
 				
+			});
+		}
+		else if(this.get_items_from_cat == true){
+			serviceProvider.getProducts(catInput, new Callback<ArrayList<Product>>() {
+
+				@Override
+				public void failure(RetrofitError response) {
+					// TODO Auto-generated method stub
+					if (response.isNetworkError()) {
+						Log.e("Service Unavailable", "503"); 	
+				    }
+					else{
+						Log.e("Get ProductVariance Failure",response.getMessage());
+					}
+					
+					ServerConnectionMaker.recieveResponse(null);
+					thisProductObject.calling_class_object.productsGetFailure();
+				}
+
+				@Override
+				public void success(ArrayList<Product> productList, Response response) {
+					// TODO Auto-generated method stub
+
+					ServerConnectionMaker.recieveResponse(response);
+					thisProductObject.calling_class_object.productsGetSuccess(productList);
+				}
 			});
 		}
 		else if(this.get_item_bool == true){
@@ -244,7 +281,7 @@ public class Product implements ConnectionInterface{
 					}
 					
 					ServerConnectionMaker.recieveResponse(null);
-					Product.calling_class_object.ItemGetFailure();
+					thisProductObject.calling_class_object.ItemGetFailure();
 				}
 
 				@Override
@@ -253,14 +290,14 @@ public class Product implements ConnectionInterface{
 					ServerConnectionMaker.recieveResponse(response);
 					Globals.fetched_item_category = item;
 								//Currently calling all the products at the same time of the item fetch, have to move it to demand based fetching
-					Product.calling_class_object.ItemGetSuccess(item);
+					thisProductObject.calling_class_object.ItemGetSuccess(item);
 					
 				}
 				
 			});
 		}
 		else if(this.update_item_bool == true){
-			final Product originalProduct = this;
+			
 			serviceProvider.getItem( ItemInput,new Callback<Product>(){
 
 				@Override
@@ -273,26 +310,26 @@ public class Product implements ConnectionInterface{
 					}
 					
 					ServerConnectionMaker.recieveResponse(null);
-					Product.calling_class_object.updateItemFailure();
+					thisProductObject.calling_class_object.updateItemFailure();
 				}
 
 				@Override
 				public void success(Product updatedProduct, Response response) {
 					
 					ServerConnectionMaker.recieveResponse(response);
-					updatedProduct.setCurrentItemId(originalProduct.getCurrentItemId());
-					updatedProduct.setCurrentMeasure(originalProduct.getCurrentMeasure());
+					updatedProduct.setCurrentItemId(thisProductObject.getCurrentItemId());
+					updatedProduct.setCurrentMeasure(thisProductObject.getCurrentMeasure());
 					for(int i = 0 ; i < updatedProduct.getItemList().size();i++)
 					{
 						if(updatedProduct.getItemList().get(i).getId() == updatedProduct.getCurrentItemId()){
 							if(updatedProduct.getItemList().get(i).getQuantity()<
-									originalProduct.getCurrentQty())
+									thisProductObject.getCurrentQty())
 							{
 								updatedProduct.setCurrentQty(updatedProduct.getItemList().get(i).getQuantity());
 								
 							}
 							else{
-								updatedProduct.setCurrentQty(originalProduct.getCurrentQty());
+								updatedProduct.setCurrentQty(thisProductObject.getCurrentQty());
 							}
 							updatedProduct.setCurrentMsrPrice(updatedProduct.getItemList().get(i).getPrice());
 							break;
@@ -304,7 +341,7 @@ public class Product implements ConnectionInterface{
 					Log.e("updation",updatedProduct.toString());
 					
 					
-					Product.calling_class_object.updateItemSuccess(updatedProduct);
+					thisProductObject.calling_class_object.updateItemSuccess(updatedProduct);
 					
 				}
 				

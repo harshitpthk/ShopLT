@@ -5,13 +5,14 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import eu.livotov.zxscan.R;
 
-public class SettingsActivity extends Activity {
+public class SettingsActivity extends ActionBarActivity {
 	private TextView versionView ;
 	private FrameLayout preferenceContainer = null;
 	
@@ -20,8 +21,8 @@ public class SettingsActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_settings);
 		preferenceContainer =(FrameLayout) findViewById(R.id.preference_container);
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-		getActionBar().setTitle(R.string.settings);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setTitle(R.string.settings);
 		
 //		getFragmentManager().beginTransaction()
 //         .replace(R.id.preference_container, new SettingsFragment())

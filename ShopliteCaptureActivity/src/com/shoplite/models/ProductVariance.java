@@ -14,7 +14,7 @@ import com.shoplite.interfaces.ItemInterface;
 
 public class ProductVariance implements ConnectionInterface {
 
-	private static ItemInterface calling_class_object;
+	private  ItemInterface calling_class_object;
 	private int id;
 	private String name;
 	private int itemCategory;
@@ -66,7 +66,7 @@ public class ProductVariance implements ConnectionInterface {
 	
 	public  void getItem( ItemInterface calling_class_object) {
 		
-		ProductVariance.calling_class_object = calling_class_object;
+		this.calling_class_object = calling_class_object;
 		this.get_item_bool = true;
 		ItemInput = new Input(this.getId(),"productid");
 		ServerConnectionMaker.sendRequest(this);
@@ -75,7 +75,7 @@ public class ProductVariance implements ConnectionInterface {
 	
 	public  void getItems( ItemInterface calling_class_object,int brandId) {
 		
-		ProductVariance.calling_class_object = calling_class_object;
+		this.calling_class_object = calling_class_object;
 		this.get_items_from_brand_bool = true;
 		brandInput = new Input(brandId,"brand");
 		
@@ -85,6 +85,7 @@ public class ProductVariance implements ConnectionInterface {
 	
 	@Override
 	public void sendRequest(ServiceProvider serviceProvider) {
+		final ProductVariance thisProductVObj = this;
 		if(this.get_items_from_brand_bool == true ){
 			serviceProvider.getItems( brandInput,new Callback<ArrayList<Product>>(){
 
@@ -106,7 +107,7 @@ public class ProductVariance implements ConnectionInterface {
 					
 					ServerConnectionMaker.recieveResponse(response);
 					Globals.simmilar_item_list = itemFamily;
-					ProductVariance.calling_class_object.ItemListGetSuccess(itemFamily);
+					thisProductVObj.calling_class_object.ItemListGetSuccess(itemFamily);
 				}
 				
 			});
@@ -124,7 +125,7 @@ public class ProductVariance implements ConnectionInterface {
 					}
 					
 					ServerConnectionMaker.recieveResponse(null);
-					ProductVariance.calling_class_object.ItemGetFailure();
+					thisProductVObj.calling_class_object.ItemGetFailure();
 				}
 
 				@Override
@@ -133,7 +134,7 @@ public class ProductVariance implements ConnectionInterface {
 					ServerConnectionMaker.recieveResponse(response);
 					Globals.fetched_item_category = item;
 								//Currently calling all the products at the same time of the item fetch, have to move it to demand based fetching
-					ProductVariance.calling_class_object.ItemGetSuccess(item);
+					thisProductVObj.calling_class_object.ItemGetSuccess(item);
 					
 				}
 				

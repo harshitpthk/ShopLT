@@ -40,6 +40,7 @@
      <color name="app_color">#563C5C</color>
      <color name="white">#ffffff</color>
      <color name="dark_app_color">#563C5C</color>
+     <color name="status_bar_app_color">#2E2031</color>
      <!-- <color name="dark_app_color">#413344</color>-->
      <color name="orange_peel">#FF9F00</color>
       <color name="orange_tea_rose">#FF9F00</color>

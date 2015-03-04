@@ -9,6 +9,7 @@ import retrofit.http.Header;
 import retrofit.http.POST;
 
 import com.google.gson.JsonObject;
+import com.shoplite.models.Category;
 import com.shoplite.models.Input;
 import com.shoplite.models.OrderItemDetail;
 import com.shoplite.models.Product;
@@ -40,6 +41,9 @@ public interface ServiceProvider {
 	
 	@POST("/getshoplist")
 	void getshoplist(@Body  com.shoplite.models.Location loc, Callback<ArrayList<Shop>> callback);
+	
+	@POST("/getproducts")
+	void getProducts(@Body Input input, Callback<ArrayList<Product>> callback);
 
 	
 	@POST("/packproducts")
@@ -56,5 +60,8 @@ public interface ServiceProvider {
 	
 	@GET("/")
 	void getPlacesSuggestion(Callback<JsonObject> callback);
+	
+	@GET("/getcategories")
+	void getCategories(Callback<ArrayList<Category>> callback);
 	
 }

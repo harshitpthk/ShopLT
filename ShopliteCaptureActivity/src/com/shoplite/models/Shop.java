@@ -19,7 +19,7 @@ public class Shop implements ConnectionInterface {
 	private int id;
 	private String url;
 	private Location location;
-	private static ShopInterface calling_class_object;
+	private ShopInterface calling_class_object;
 	private boolean get_shop_list_bool;
 	private boolean connect_to_shop_bool;
 	private static Location areaLocation;
@@ -52,7 +52,7 @@ public class Shop implements ConnectionInterface {
 	
 	public void get_shop_list(ShopInterface calling_class_object,Location areaLocation)
 	{
-		Shop.calling_class_object = calling_class_object;
+		this.calling_class_object = calling_class_object;
 		this.get_shop_list_bool = true;
 		Shop.areaLocation = areaLocation;
 		ServerConnectionMaker.sendRequest(this);
@@ -60,7 +60,7 @@ public class Shop implements ConnectionInterface {
 	}
 	public void connect_to_shop(ShopInterface calling_class_object )
 	{
-		Shop.calling_class_object = calling_class_object;
+		this.calling_class_object = calling_class_object;
 		this.connect_to_shop_bool  = true;
 		ServerConnectionMaker.sendRequest(this);
 		
@@ -69,10 +69,10 @@ public class Shop implements ConnectionInterface {
 	
 	@Override
 	public void sendRequest(ServiceProvider serviceProvider) {
-			
+		final Shop thisShopObject = this;
 		if(this.connect_to_shop_bool){
-			final Shop shopToConnect = this;
-			serviceProvider.loginShop(shopToConnect.getId(), new Callback<JsonObject>(){
+			
+			serviceProvider.loginShop(thisShopObject.getId(), new Callback<JsonObject>(){
 
 				@Override
 				public void failure(RetrofitError arg0) {
@@ -93,9 +93,9 @@ public class Shop implements ConnectionInterface {
 					Log.e("Retrofit Success", result.toString());
 					ServerConnectionMaker.recieveResponse(response);
 					Globals.connected_to_shop_success = true;
-					Globals.connectedShop = shopToConnect;
-					Globals.dbhelper.storeShopLocation(shopToConnect.getName(), shopToConnect.getUrl(), shopToConnect.getLocation().getLatitude(), shopToConnect.getLocation().getLongitude());
-					Shop.calling_class_object.shop_connected();
+					Globals.connectedShop = thisShopObject;
+					Globals.dbhelper.storeShopLocation(thisShopObject.getName(), thisShopObject.getUrl(), thisShopObject.getLocation().getLatitude(), thisShopObject.getLocation().getLongitude());
+					thisShopObject.calling_class_object.shop_connected();
 					
 				}
 
@@ -126,7 +126,7 @@ public class Shop implements ConnectionInterface {
 					Globals.shop_list.addAll(shoplist);
 					Log.e("Retrofit Success", response.toString());
 					ServerConnectionMaker.recieveResponse(response);
-					Shop.calling_class_object.shop_list_success(areaLocation,shoplist);
+					thisShopObject.calling_class_object.shop_list_success(areaLocation,shoplist);
 						
 					
 					
