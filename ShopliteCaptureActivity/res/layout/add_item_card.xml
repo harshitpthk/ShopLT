@@ -123,7 +123,7 @@
            android:layout_margin="20dp"
            android:textColor="#DB9E36"
            android:gravity="center"
-           android:layout_gravity="bottom|start"
+           android:layout_gravity="bottom|end"
            android:textSize="20sp"	           
 	            />
 <Button 

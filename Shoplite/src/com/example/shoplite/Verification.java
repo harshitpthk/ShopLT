@@ -12,6 +12,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.util.Log;
@@ -28,9 +29,12 @@ import com.shoplite.Utils.Globals;
 import com.shoplite.connection.ConnectionInterface;
 import com.shoplite.connection.ServerConnectionMaker;
 import com.shoplite.connection.ServiceProvider;
+import com.shoplite.interfaces.LoginInterface;
 import com.shoplite.models.User;
 
-public class Verification extends Activity implements ConnectionInterface {
+import eu.livotov.zxscan.ZXScanHelper;
+
+public class Verification extends Activity implements ConnectionInterface,LoginInterface {
 
 	private String phoneNo = null;
 	private EditText phoneView = null;
@@ -39,6 +43,7 @@ public class Verification extends Activity implements ConnectionInterface {
 	private boolean resend = false;
 	final Verification vf = this;
 	private Integer authToken = 0;
+	static final int PICK_DELIVERY_REQUEST = 1;
 	
 	private IntentFilter inf = new IntentFilter();
 	
@@ -128,6 +133,20 @@ public class Verification extends Activity implements ConnectionInterface {
 	  unregisterReceiver(VerificationSMSReciever);
 	  super.onStop();
 	 }
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+		if (requestCode == PICK_DELIVERY_REQUEST) {
+		      if (resultCode == RESULT_OK) {
+		    	 
+		    	  ZXScanHelper.setCustomScanSound(R.raw.atone);
+				  ZXScanHelper.scan(this,0);
+		         
+		      } else if (resultCode == RESULT_CANCELED) {
+		         
+		      }
+		}
+		  
+		}
 	public void signup_again(View view)
 	{
 		Globals.dbhelper.setItem("auth-token",null);
@@ -229,6 +248,20 @@ public class Verification extends Activity implements ConnectionInterface {
 				}
 			});
 		}
+		
+	}
+
+	@Override
+	public void loginSuccess() {
+		// TODO Auto-generated method stub
+			
+			startActivityForResult(new Intent(this,com.shoplite.activities.MapActivity.class), PICK_DELIVERY_REQUEST);
+		
+	}
+
+	@Override
+	public void loginFailure() {
+		// TODO Auto-generated method stub
 		
 	}
 	

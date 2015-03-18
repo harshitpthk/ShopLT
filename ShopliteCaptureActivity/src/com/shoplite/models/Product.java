@@ -41,6 +41,8 @@ public class Product implements ConnectionInterface{
 	private boolean get_items_from_brand_bool;
 	private Input catInput;
 	private boolean get_items_from_cat;
+	private boolean search_items_from_text;
+	private String search_text;
 	
 	public boolean isSelected() {
 		return isSelected;
@@ -207,6 +209,13 @@ public class Product implements ConnectionInterface{
 		ServerConnectionMaker.sendRequest(this);
 		
 	}
+	public void searchProducts(ItemInterface calling_class_object,String query ){
+		this.calling_class_object = calling_class_object;
+		this.search_items_from_text = true;
+		this.search_text = query;
+		
+		ServerConnectionMaker.sendRequest(this);
+	}
 	
 	/* (non-Javadoc)
 	 * @see com.shoplite.connection.ConnectionInterface#sendRequest(com.shoplite.connection.ServiceProvider)
@@ -241,6 +250,30 @@ public class Product implements ConnectionInterface{
 				}
 				
 			});
+		}
+		else if(search_items_from_text == true){
+			serviceProvider.searchProducts(thisProductObject.search_text, new Callback <ArrayList<Product>>(){
+
+				@Override
+				public void failure(RetrofitError response) {
+					// TODO Auto-generated method stub
+					if (response.isNetworkError()) {
+						Log.e("Service Unavailable", "503"); 	
+				    }
+					else{
+						Log.e("Search Failure",response.getMessage());
+					}
+					
+					ServerConnectionMaker.recieveResponse(null);
+					thisProductObject.calling_class_object.searchProductFailure();
+				}
+
+				@Override
+				public void success(ArrayList<Product> productList, Response response) {
+					// TODO Auto-generated method stub
+					ServerConnectionMaker.recieveResponse(response);
+					thisProductObject.calling_class_object.productSearchSuccess(productList);
+				}});
 		}
 		else if(this.get_items_from_cat == true){
 			serviceProvider.getProducts(catInput, new Callback<ArrayList<Product>>() {

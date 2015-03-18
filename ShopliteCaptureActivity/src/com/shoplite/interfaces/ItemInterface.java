@@ -33,4 +33,14 @@ public interface ItemInterface {
 	 */
 	public void productsGetSuccess(ArrayList<Product> productList);
 	public void getProducts(Input input);
+
+	/**
+	 * 
+	 */
+	public void searchProductFailure();
+
+	/**
+	 * @param productList
+	 */
+	public void productSearchSuccess(ArrayList<Product> productList);
 }

@@ -25,8 +25,7 @@
 		             android:padding="0.00dp">
 		     	<FrameLayout
 				   	 android:id="@+id/fragment_container"
-				   	 android:visibility="invisible"
-			         android:layout_width="fill_parent"
+				   	 android:layout_width="fill_parent"
 			         android:layout_height="fill_parent" >
 			   </FrameLayout>
 		    
@@ -36,7 +35,7 @@
 		        android:layout_height="50dp"
 		        android:background="@drawable/actions_view"
 		        android:layout_gravity="bottom"
-		        android:visibility="invisible"
+		        
 		        />
 		      
 		       <ImageButton 
@@ -44,7 +43,7 @@
 		           android:layout_width="30dp"
 		           android:layout_height="30dp"
 		           android:layout_margin="10dp"
-		          android:visibility="invisible"
+		         
 		           android:background="@drawable/selector_shop_by_list"
 		           android:contentDescription="@string/shop_offline"
 		           android:layout_gravity="bottom|start"
@@ -55,7 +54,7 @@
 		           android:layout_height="30dp"
 		           android:layout_margin="10dp"
 		            android:background="@drawable/selector_shop_at_store"
-		           android:visibility="invisible"
+		          
 		           android:layout_gravity="bottom|center"
 		           android:contentDescription="@string/shop_at_store"
 		           android:onClick="shopAtStore"/>
@@ -65,7 +64,7 @@
 		           android:layout_height="30dp"
 		           android:layout_margin="10dp"
 		           android:layout_gravity="bottom|end"
-		           android:visibility="invisible"
+		           
 		           android:background="@drawable/selector_orders"
 		           android:contentDescription="@string/order_history"
 		           android:onClick="showOrderHistory"/>

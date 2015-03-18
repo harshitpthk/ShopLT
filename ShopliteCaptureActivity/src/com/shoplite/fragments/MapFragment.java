@@ -692,7 +692,7 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
             mCallback = (MapInterface) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnHeadlineSelectedListener");
+                    + " must implement MapInterface");
         }
     }
 	

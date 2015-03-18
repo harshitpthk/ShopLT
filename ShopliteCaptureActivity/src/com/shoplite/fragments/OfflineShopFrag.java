@@ -2,16 +2,17 @@ package com.shoplite.fragments;
 
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import android.app.AlertDialog;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
@@ -22,17 +23,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.shoplite.UI.AddItemCard;
-import com.shoplite.UI.BaseCardView;
-import com.shoplite.UI.BaseItemCard.OnClickActionButtonListener;
 import com.shoplite.UI.Controls;
+import com.shoplite.UI.ProductAdapter;
 import com.shoplite.UI.SubCategoryAdapter;
-import com.shoplite.UI.productAdapter;
 import com.shoplite.Utils.Globals;
 import com.shoplite.interfaces.CategoryAdapterCallback;
 import com.shoplite.interfaces.ControlsInterface;
@@ -46,6 +44,12 @@ import eu.livotov.zxscan.R;
 
 public class OfflineShopFrag extends Fragment implements ItemInterface, CategoryAdapterCallback,ProductAdapterCallback,ControlsInterface {
 		View rootView;
+		
+		
+		private RecyclerView mSearchRecyclerView;
+		private RecyclerView.Adapter mSearchAdapter;
+		private RecyclerView.LayoutManager mSearchLayoutManager;
+		
 		private RecyclerView mRecyclerView;
 	    private RecyclerView.Adapter mAdapter;
 	    private RecyclerView.LayoutManager mLayoutManager;
@@ -60,7 +64,14 @@ public class OfflineShopFrag extends Fragment implements ItemInterface, Category
 		private AlertDialog addDialog;
 		private AddItemCard addToItem;
 		private ProgressBar prgBar;
-	    
+		private ArrayList<Product> searchedProductList = new ArrayList<Product>();
+		private ArrayList<Product> currentProductlist = new ArrayList<Product>();
+
+		private TextView subCatView;
+
+
+		private TextView parentCatView;
+		
 		@Override
 	    public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	        Bundle savedInstanceState) {
@@ -68,6 +79,14 @@ public class OfflineShopFrag extends Fragment implements ItemInterface, Category
 			rootView = inflater.inflate(R.layout.offline_shop, container, false);
 			mItemSearchView = (LinearLayout) rootView.findViewById(R.id.item_search_container);
 			mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+			mRecyclerView.setHasFixedSize(true);
+			
+			mSearchRecyclerView = (RecyclerView) rootView.findViewById(R.id.search_recycler_view);
+			mSearchRecyclerView.setHasFixedSize(true);
+			mSearchLayoutManager = new LinearLayoutManager(getActivity());
+			mSearchRecyclerView.setLayoutManager(mSearchLayoutManager);
+			
+			
 			catLevelView = (LinearLayout)rootView.findViewById(R.id.cat_level_container);
 			searchToolbar = (Toolbar) rootView.findViewById(R.id.search_toolbar);
 			searchToolbar.inflateMenu(R.menu.dashboard);
@@ -77,10 +96,7 @@ public class OfflineShopFrag extends Fragment implements ItemInterface, Category
 			searchMenuItem = searchToolbar.getMenu().findItem( R.id.action_search ); // get my MenuItem with placeholder submenu
 			itemSearchView = (SearchView) searchMenuItem.getActionView();
 			itemSearchView.setQueryHint("Search Products");
-			//itemSearchView.onActionViewExpanded();
-			mRecyclerView.setHasFixedSize(true);
-			//searchMenuItem.expandActionView();
-			
+			mSearchAdapter = new ProductAdapter(searchedProductList,this);
 			 searchToolbar.setOnClickListener(new OnClickListener() {
 				
 				@Override
@@ -93,16 +109,51 @@ public class OfflineShopFrag extends Fragment implements ItemInterface, Category
 					searchMenuItem.expandActionView(); // Expand the search menu item in order to show by default the query
 				}
 			});
-			float minheight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 56, resources.getDisplayMetrics());
-			//CaptureActivity.toolbar.setMinimumHeight(Float.floatToIntBits(minheight));
-	        
-	       
+			 itemSearchView.setOnQueryTextListener(new OnQueryTextListener() {
+				
+				@Override
+				public boolean onQueryTextSubmit(String query) {
+					// TODO Auto-generated method stub
+					return false;
+				}
+				
+				@Override
+				public boolean onQueryTextChange(String query) {
+					// TODO Auto-generated method stub
+					if(query.length() ==3){
+						searchProducts(query);
+						// Turn it on
+					    getActivity().setProgressBarIndeterminateVisibility(true);
+					    // And when you want to turn it off
+					   
+					}
+					else if(query.length() > 3){
+						filter(query);
+					}
+					else{
+						mSearchRecyclerView.setAdapter(null);
+					}
+					
+					return false;
+				}
+			});
+			
+			  subCatView = new TextView(getActivity());
 
-	        // specify an adapter (see also next example)
+				 parentCatView = new TextView(getActivity());
+				
 	        
 	        return rootView;
 	    }
 		
+		/**
+		 * @param query
+		 */
+		protected void searchProducts(String query) {
+			Product pd = new Product(0,null);
+			pd.searchProducts(this, query);
+		}
+
 		@Override
 		public void onActivityCreated (Bundle savedInstanceState) {
 		    super.onActivityCreated(savedInstanceState);
@@ -138,7 +189,6 @@ public class OfflineShopFrag extends Fragment implements ItemInterface, Category
 			mAdapter = new SubCategoryAdapter(childLists,this);
 			currentChildLists = childLists;
 			catLevelView.removeAllViews();
-			TextView parentCatView = new TextView(getActivity());
 			parentCatView.setText(parentCat+ "  >");
 			parentCatView.setTextColor(getResources().getColor(R.color.white));
 			
@@ -157,6 +207,7 @@ public class OfflineShopFrag extends Fragment implements ItemInterface, Category
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
 					loadChildCategories(currentChildLists,parentCat);
+					//parentCatView.setBackgroundColor(Globals.ApplicationContext.getResources().getColor(R.color.dark_app_color));
 				}
 			});
 	    	mRecyclerView.setAdapter(mAdapter);
@@ -257,7 +308,8 @@ public class OfflineShopFrag extends Fragment implements ItemInterface, Category
 			// TODO Auto-generated method stub
 			mLayoutManager = new LinearLayoutManager(getActivity());
 	        mRecyclerView.setLayoutManager(mLayoutManager);
-	        mAdapter = new productAdapter(productList,this);
+	        mAdapter = new ProductAdapter(productList,this);
+	        
 	        mRecyclerView.setAdapter(mAdapter);
 		}
 
@@ -277,20 +329,21 @@ public class OfflineShopFrag extends Fragment implements ItemInterface, Category
 		@Override
 		public void onCategoryClicked(Category cat) {
 			// TODO Auto-generated method stub
-			TextView parentCatView = new TextView(Globals.ApplicationContext);
-			parentCatView.setText(cat.getName());
-			parentCatView.setTextColor(Globals.ApplicationContext.getResources().getColor(R.color.white));
+			subCatView.setText(cat.getName());
+			subCatView.setTextColor(Globals.ApplicationContext.getResources().getColor(R.color.white));
 			
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 			params.weight = 1.0f;
 			params.gravity = Gravity.CENTER_VERTICAL;
 
-		
-			parentCatView.setLayoutParams(params);
-			catLevelView.addView(parentCatView);
-			parentCatView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+			//parentCatView.setBackgroundColor(Globals.ApplicationContext.getResources().getColor(R.color.status_bar_app_color));
+			subCatView.setLayoutParams(params);
+			catLevelView.addView(subCatView);
+			subCatView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+			
 			Input input = new Input(cat.getId(),"category");
 			getProducts(input);
+			Controls.show_loading_dialog(getActivity(), "Fetching Products...");
 		}
 
 		/* (non-Javadoc)
@@ -337,5 +390,56 @@ public class OfflineShopFrag extends Fragment implements ItemInterface, Category
 		public void neutral_button_alert_method() {
 			// TODO Auto-generated method stub
 			
+		}
+
+		/* (non-Javadoc)
+		 * @see com.shoplite.interfaces.ItemInterface#searchProductFailure()
+		 */
+		@Override
+		public void searchProductFailure() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		/* (non-Javadoc)
+		 * @see com.shoplite.interfaces.ItemInterface#productSearchSuccess(java.util.ArrayList)
+		 */
+		@Override
+		public void productSearchSuccess(ArrayList<Product> productList) {
+			 getActivity().setProgressBarIndeterminateVisibility(false);
+			// TODO Auto-generated method stub
+			searchedProductList.addAll(productList);
+			currentProductlist = productList;
+	        mSearchAdapter = new ProductAdapter(currentProductlist,this);
+	        mSearchRecyclerView.setAdapter(mSearchAdapter);	
+		}
+		
+		public void filter(String charText) {
+			charText = charText.toLowerCase(Locale.getDefault());
+			charText = charText.replaceAll("[!?,]", "");
+			String[] words = charText.split("\\s+");
+			int count;
+			currentProductlist.clear();
+			if (charText.length() == 0) {
+				currentProductlist.addAll(searchedProductList);
+			} 
+			else 
+			{
+				for (Product product : searchedProductList) 
+				{
+					count= 0;
+					for(String word : words){
+						if (product.getName().toLowerCase().contains(word)) 
+						{
+							count++;
+						}
+					}
+					if(count == words.length){
+						currentProductlist.add(product);
+					}
+				}
+			}
+			mSearchAdapter = new ProductAdapter(currentProductlist,this);
+	        mSearchRecyclerView.setAdapter(mSearchAdapter);
 		}
 }

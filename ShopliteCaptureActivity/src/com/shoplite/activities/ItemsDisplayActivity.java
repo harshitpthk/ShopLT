@@ -308,4 +308,20 @@ public class ItemsDisplayActivity extends ActionBarActivity implements ControlsI
 		// TODO Auto-generated method stub
 		
 	}
+	/* (non-Javadoc)
+	 * @see com.shoplite.interfaces.ItemInterface#searchProductFailure()
+	 */
+	@Override
+	public void searchProductFailure() {
+		// TODO Auto-generated method stub
+		
+	}
+	/* (non-Javadoc)
+	 * @see com.shoplite.interfaces.ItemInterface#productSearchSuccess(java.util.ArrayList)
+	 */
+	@Override
+	public void productSearchSuccess(ArrayList<Product> productList) {
+		// TODO Auto-generated method stub
+		
+	}
 }

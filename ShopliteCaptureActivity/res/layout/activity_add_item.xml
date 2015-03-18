@@ -32,11 +32,7 @@
 					android:layout_height="wrap_content"
 					android:layout_gravity="bottom"
 					>
-		             <View
-		                 android:layout_marginTop="20dp"
-	       				 android:layout_width="1dp"
-	       				 android:layout_height="30dp" 
-	        			 android:background="#c1c1c1"/>
+		             
     
 					    <ImageButton 
 					        android:layout_weight="1"

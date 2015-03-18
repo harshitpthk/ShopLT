@@ -91,7 +91,7 @@ public class SubCategoryAdapter extends RecyclerView.Adapter<SubCategoryAdapter.
 		Category subCat = subCategories.get(index);
     	holder.mNameView.setText(subCat.getName());
     	 Picasso.with(Globals.ApplicationContext) 
-    	 .load("http://www.muscleandfitness.com/sites/muscleandfitness.com/files/images/bread.jpg")
+    	 .load("http://s3-ap-southeast-1.amazonaws.com/static.shoplite/product_image/"+subCat.getId()+".jpg")
     	 .placeholder(R.drawable.placeholder)
     	.into(holder.mImageView);
     	

@@ -92,6 +92,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.google.zxing.client.android.CaptureActivity" />
         </activity>
+         <activity
+            android:name="com.shoplite.activities.MapActivity"
+            android:label="@string/pick_delivery_location" 
+            android:theme="@style/AppActionBarTheme">
+        </activity>
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"

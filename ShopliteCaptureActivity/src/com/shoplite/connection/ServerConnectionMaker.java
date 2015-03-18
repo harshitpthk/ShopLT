@@ -3,14 +3,15 @@ package com.shoplite.connection;
 
 import java.util.List;
 
-import com.google.zxing.client.android.CaptureActivity;
-import com.shoplite.UI.Controls;
-import com.shoplite.Utils.util;
-import android.util.Log;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.client.Header;
 import retrofit.client.Response;
+import android.util.Log;
+
+import com.google.zxing.client.android.CaptureActivity;
+import com.shoplite.UI.Controls;
+import com.shoplite.Utils.util;
 
 
 public class ServerConnectionMaker  {
@@ -21,31 +22,29 @@ public class ServerConnectionMaker  {
 	public static String userSessionID = null;
 
 	public  static ServiceProvider serviceProvider = null;
+	
+   
 
 	 
 	
 	public static  void sendRequest(ConnectionInterface ci){
 			
 		//adding of custom headers in the service provider
+		
 		RequestInterceptor requestInterceptor = new RequestInterceptor() {
-			  
-
-			@Override
-			  public void intercept(RequestFacade request) {
-			    request.addHeader("Access-Control-Allow-Star", "shoplite");
-			    request.addHeader("Cookie", star_sessionID);
-			    			   
-			  }
-			  
-			  
-			};
+			  @Override
+				  public void intercept(RequestFacade request) {
+				    request.addHeader("Access-Control-Allow-Star", "shoplite");
+				    request.addHeader("Cookie", star_sessionID);
+				  }
+		};
 				
 		RestAdapter restAdapter = new RestAdapter.Builder()
 		.setEndpoint(util.starURL)
 		.setRequestInterceptor(requestInterceptor)
 		.setLogLevel(RestAdapter.LogLevel.FULL)
 		.build();
-		
+
 		if(CaptureActivity.decorView != null && !CaptureActivity.isProgressBarAdded){
 			CaptureActivity.isProgressBarAdded = true;
 			CaptureActivity.decorView.addView(CaptureActivity.progressBar);

@@ -1,14 +1,18 @@
-package eu.livotov.zxscan;
-
-import com.shoplite.fragments.MapFragment;
+package com.shoplite.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MapActivity extends ActionBarActivity {
+import com.shoplite.fragments.MapFragment;
+import com.shoplite.interfaces.MapInterface;
+
+import eu.livotov.zxscan.R;
+
+public class MapActivity extends ActionBarActivity implements MapInterface {
 	MapFragment mapFrag = new MapFragment();
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -34,5 +38,17 @@ public class MapActivity extends ActionBarActivity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.shoplite.interfaces.MapInterface#mapShopStart()
+	 */
+	@Override
+	public void mapShopStart() {
+		// TODO Auto-generated method stub
+		Intent resultIntent = new Intent();
+		// TODO Add extras or a data URI to this intent as appropriate.
+		setResult(RESULT_OK, resultIntent);
+		finish();
 	}
 }

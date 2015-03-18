@@ -64,4 +64,7 @@ public interface ServiceProvider {
 	@GET("/getcategories")
 	void getCategories(Callback<ArrayList<Category>> callback);
 	
+	@POST("/getsearchresults")
+	void searchProducts(@Body String query, Callback<ArrayList <Product>> callback);
+	
 }

@@ -2,6 +2,8 @@ package com.example.shoplite;
 
 import io.fabric.sdk.android.Fabric;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.regex.Pattern;
 
 import retrofit.Callback;
@@ -12,10 +14,11 @@ import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.hardware.Camera;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,11 +36,18 @@ import com.shoplite.connection.ConnectionInterface;
 import com.shoplite.connection.ServerConnectionMaker;
 import com.shoplite.connection.ServiceProvider;
 import com.shoplite.database.DbHelper;
+import com.shoplite.interfaces.LoginInterface;
+import com.shoplite.models.Location;
+import com.shoplite.models.Shop;
 import com.shoplite.models.User;
+import com.squareup.okhttp.OkHttpClient;
+
+import retrofit.client.OkClient;
+
 
 import eu.livotov.zxscan.ZXScanHelper;
 
-public class MainActivity extends ActionBarActivity implements ConnectionInterface  {
+public class MainActivity extends ActionBarActivity implements ConnectionInterface,LoginInterface  {
 
 
 	LayoutInflater inflater;
@@ -52,10 +62,9 @@ public class MainActivity extends ActionBarActivity implements ConnectionInterfa
 	private EditText mEmailView;
 	private EditText mNameView;
 	private EditText mPhoneNoView ;
-		
+	static final int PICK_DELIVERY_REQUEST = 1;
 	
 	 private void setGlobals() {
-			
 		 Globals.ApplicationContext = this.getApplicationContext();
 		 Globals.dbhelper = new DbHelper(Globals.ApplicationContext);
 	 }
@@ -132,48 +141,27 @@ public class MainActivity extends ActionBarActivity implements ConnectionInterfa
  					}
  				});
     }
-	
-    
-    
-    
-    
-    public static Camera getCameraInstance(){
-	    Camera c = null;
-	    try {
-	        c = Camera.open(); // attempt to get a Camera instance
-	    }
-	    catch (Exception e){
-	        // Camera is not available (in use or does not exist)
-	    }
-	    return c; // returns null if camera is unavailable
-	}
+   
 
+	
+	@Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		   if (requestCode == 0) {
+		   
+		if (requestCode == PICK_DELIVERY_REQUEST) {
 		      if (resultCode == RESULT_OK) {
-		        // String contents = intent.getStringExtra("SCAN_RESULT");
-		         String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
-		         // Handle successful scan
-		         String scannedCode = ZXScanHelper.getScannedCode(intent);
-		        boolean val = true;
-		       // Controls.show_alert_with_input("The product found", scannedCode, this);
-		         while(val){
-		        	 
-		         
-		        }
-		        // Toast.makeText(this, "returned OK" + scannedCode, Toast.LENGTH_SHORT).show();
-		         
+		    	 
+		    	  ZXScanHelper.setCustomScanSound(R.raw.atone);
+				  ZXScanHelper.scan(this,0);
 		         
 		      } else if (resultCode == RESULT_CANCELED) {
-		         // Handle cancel
-		    	//  Toast.makeText(this, "returned null  ", Toast.LENGTH_SHORT).show();
+		         
 		      }
-		   }
+		}
+		   
 		}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds products to the action bar if it is present.
        
         return true;
     }
@@ -289,12 +277,13 @@ public class MainActivity extends ActionBarActivity implements ConnectionInterfa
 		serviceProvider.signup(user, new Callback<Integer>(){
 
 			@Override
-			public void failure(RetrofitError arg0) {
+			public void failure(RetrofitError response) {
 				
-				if (arg0.isNetworkError()) {
-					Toast.makeText(getBaseContext(), "Network Error", Toast.LENGTH_LONG).show();
-			    }
-				Toast.makeText(getBaseContext(), arg0.toString(), Toast.LENGTH_LONG).show();
+//				if (response.httpError(response.getUrl(), response, converter, successType)) {
+//					Toast.makeText(getBaseContext(), "Network Error", Toast.LENGTH_LONG).show();
+//			    }
+//				else if(response.networkError(response.getUrl(), ))
+				
 				ServerConnectionMaker.recieveResponse(null);
 			}
 
@@ -320,6 +309,31 @@ public class MainActivity extends ActionBarActivity implements ConnectionInterfa
 		this.finish();
     	Intent i = new Intent(this, Verification.class);
     	startActivity(i);
+	}
+
+
+	@Override
+	public void loginSuccess() {
+		SharedPreferences preferencesReader = getSharedPreferences(Globals.PREFS_NAME, Context.MODE_PRIVATE);
+		String serializedDataFromPreference = preferencesReader.getString(Globals.PREFS_KEY, null);
+		com.shoplite.models.Address lastRecentAddress  = com.shoplite.models.Address.create(serializedDataFromPreference);
+		if(lastRecentAddress == null){
+			startActivityForResult(new Intent(this,com.shoplite.activities.MapActivity.class), PICK_DELIVERY_REQUEST);
+		}
+		else{
+			Globals.deliveryAddress = lastRecentAddress;
+			ZXScanHelper.setCustomScanSound(R.raw.atone);
+			ZXScanHelper.scan(this,0);
+		}
+		
+		
+	}
+
+
+	@Override
+	public void loginFailure() {
+		
+		
 	}
 
 

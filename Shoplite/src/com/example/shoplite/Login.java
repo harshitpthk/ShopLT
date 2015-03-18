@@ -8,6 +8,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import com.example.sholite.R;
@@ -16,14 +17,16 @@ import com.shoplite.Utils.util;
 import com.shoplite.connection.ConnectionInterface;
 import com.shoplite.connection.ServerConnectionMaker;
 import com.shoplite.connection.ServiceProvider;
+import com.shoplite.interfaces.LoginInterface;
 
 import eu.livotov.zxscan.ZXScanHelper;
 
 public class Login implements ConnectionInterface {
 	private String email = null;
 	private String authCode = null;
-	private Context mContext = null;
-
+	
+	private LoginInterface callee;
+	
 	public  void generateAuthCode(String key) {
 		// TODO Auto-generated method stub
 		GregorianCalendar calendar = new GregorianCalendar();
@@ -46,17 +49,18 @@ public class Login implements ConnectionInterface {
 		System.out.println("authcode "+ authcode);
 		this.authCode =  authcode;
 	}
-	public  void login(String key,String email,Context context){
-		Controls.show_loading_dialog(context, "Logging In");
+	public  void login(String key,String email,LoginInterface callee){
+		//Controls.show_loading_dialog(context, "Logging In");
 		generateAuthCode(key);
 		this.email = email;
-		this.mContext = context;
+		this.callee = callee;
 		ServerConnectionMaker.sendRequest(this);
 	}
 
 	@Override
 	public void sendRequest(ServiceProvider serviceProvider) {
 		// TODO Auto-generated method stub
+		final Login thisLoginObj = this;
 		serviceProvider.login(this.authCode,this.email, new Callback<String>(){
 
 			@Override
@@ -69,6 +73,7 @@ public class Login implements ConnectionInterface {
 				//Log.e("Retrofit error", arg0.getUrl());
 				//Log.e("Retrofit error", arg0.getMessage());
 				ServerConnectionMaker.recieveResponse(null);
+				thisLoginObj.callee.loginFailure();
 			}
 
 			@Override
@@ -80,12 +85,11 @@ public class Login implements ConnectionInterface {
 				ServerConnectionMaker.recieveResponse(response);
 
 				// code lines to initiate scanner activity
+				thisLoginObj.callee.loginSuccess();
 				
-				Activity act = (Activity) mContext;
-				act.finish();
-			    ZXScanHelper.setCustomScanSound(R.raw.atone);
-			    ZXScanHelper.scan(act,0);
+				
 			    
 			}});
 	}
+	
 }

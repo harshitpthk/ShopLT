@@ -4,6 +4,7 @@
 package com.shoplite.UI;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -11,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,8 +28,9 @@ import eu.livotov.zxscan.R;
  * @author I300291
  *
  */
-public class productAdapter extends RecyclerView.Adapter<productAdapter.ViewHolder>  {
-	private ArrayList<Product> productList;
+public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHolder> implements Filterable {
+	private ArrayList<Product> allProductList = new ArrayList<Product>();
+	private ArrayList<Product> visibleProductList;
 	private ProductAdapterCallback callback;
 	
 	
@@ -35,9 +39,10 @@ public class productAdapter extends RecyclerView.Adapter<productAdapter.ViewHold
     	public void productClick(Product product);
     }
 	
-	public productAdapter(ArrayList<Product> productList,ProductAdapterCallback callback ){
+	public ProductAdapter(ArrayList<Product> productList,ProductAdapterCallback callback ){
 		
-		this.productList = productList;
+		this.visibleProductList = productList;
+		allProductList.addAll(allProductList);
 		this.callback = callback;
 	}
 	
@@ -81,18 +86,18 @@ public class productAdapter extends RecyclerView.Adapter<productAdapter.ViewHold
 	
 	@Override
 	public int getItemCount() {
-		return productList.size();
+		return visibleProductList.size();
 	}
 
 	
 	@Override
 	public void onBindViewHolder(ViewHolder holder, int index) {
-		Product product = productList.get(index);
+		Product product = visibleProductList.get(index);
     	
 		holder.mNameView.setText(product.getName());
     	
 		Picasso.with(Globals.ApplicationContext) 
-    	 .load("http://www.muscleandfitness.com/sites/muscleandfitness.com/files/images/bread.jpg")
+    	 .load("http://s3-ap-southeast-1.amazonaws.com/static.shoplite/product_image/"+product.getId()+".jpg")
     	 .placeholder(R.drawable.placeholder)
     	.into(holder.mImageView);
     	
@@ -123,6 +128,22 @@ public class productAdapter extends RecyclerView.Adapter<productAdapter.ViewHold
 			return vh;
 		
 	}
+
+
+	/* (non-Javadoc)
+	 * @see android.widget.Filterable#getFilter()
+	 */
+	@Override
+	public Filter getFilter() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+
+	/* (non-Javadoc)
+	 * @see android.widget.Filterable#getFilter()
+	 */
+	
 
 
 	/* (non-Javadoc)
