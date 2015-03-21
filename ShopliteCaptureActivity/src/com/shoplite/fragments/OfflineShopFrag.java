@@ -6,6 +6,7 @@ import java.util.Locale;
 
 import android.app.AlertDialog;
 import android.content.res.Resources;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -14,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils.TruncateAt;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -29,9 +31,9 @@ import android.widget.TextView;
 
 import com.shoplite.UI.AddItemCard;
 import com.shoplite.UI.Controls;
+import com.shoplite.UI.DividerItemDecoration;
 import com.shoplite.UI.ProductAdapter;
 import com.shoplite.UI.SubCategoryAdapter;
-import com.shoplite.Utils.Globals;
 import com.shoplite.interfaces.CategoryAdapterCallback;
 import com.shoplite.interfaces.ControlsInterface;
 import com.shoplite.interfaces.ItemInterface;
@@ -85,7 +87,7 @@ public class OfflineShopFrag extends Fragment implements ItemInterface, Category
 			mSearchRecyclerView.setHasFixedSize(true);
 			mSearchLayoutManager = new LinearLayoutManager(getActivity());
 			mSearchRecyclerView.setLayoutManager(mSearchLayoutManager);
-			
+		   
 			
 			catLevelView = (LinearLayout)rootView.findViewById(R.id.cat_level_container);
 			searchToolbar = (Toolbar) rootView.findViewById(R.id.search_toolbar);
@@ -189,9 +191,10 @@ public class OfflineShopFrag extends Fragment implements ItemInterface, Category
 			mAdapter = new SubCategoryAdapter(childLists,this);
 			currentChildLists = childLists;
 			catLevelView.removeAllViews();
-			parentCatView.setText(parentCat+ "  >");
-			parentCatView.setTextColor(getResources().getColor(R.color.white));
-			
+			parentCatView.setText(parentCat.toUpperCase());
+			parentCatView.setTextColor(getResources().getColor(R.color.app_yellow));
+
+			parentCatView.setPaintFlags(parentCatView.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 			params.weight = 1.0f;
 			params.gravity = Gravity.CENTER_VERTICAL;
@@ -199,14 +202,21 @@ public class OfflineShopFrag extends Fragment implements ItemInterface, Category
 			
 			parentCatView.setLayoutParams(params);
 			catLevelView.addView(parentCatView);
-			
+			parentCatView.setEllipsize(TruncateAt.END);
+			parentCatView.setHorizontallyScrolling(false);
+			parentCatView.setSingleLine();
 			parentCatView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+			
 			parentCatView.setOnClickListener(new OnClickListener() {
 				
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
 					loadChildCategories(currentChildLists,parentCat);
+					parentCatView.setTextColor(getResources().getColor(R.color.app_yellow));
+					parentCatView.setPaintFlags(parentCatView.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
+
+					
 					//parentCatView.setBackgroundColor(Globals.ApplicationContext.getResources().getColor(R.color.dark_app_color));
 				}
 			});
@@ -308,9 +318,12 @@ public class OfflineShopFrag extends Fragment implements ItemInterface, Category
 			// TODO Auto-generated method stub
 			mLayoutManager = new LinearLayoutManager(getActivity());
 	        mRecyclerView.setLayoutManager(mLayoutManager);
+	        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+
 	        mAdapter = new ProductAdapter(productList,this);
 	        
 	        mRecyclerView.setAdapter(mAdapter);
+	        
 		}
 
 		/* (non-Javadoc)
@@ -329,18 +342,28 @@ public class OfflineShopFrag extends Fragment implements ItemInterface, Category
 		@Override
 		public void onCategoryClicked(Category cat) {
 			// TODO Auto-generated method stub
-			subCatView.setText(cat.getName());
-			subCatView.setTextColor(Globals.ApplicationContext.getResources().getColor(R.color.white));
+			//subCatView.setPaintFlags(subCatView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+			parentCatView.setPaintFlags(parentCatView.getPaintFlags() & ~Paint.FAKE_BOLD_TEXT_FLAG);
+			parentCatView.setTextColor(getResources().getColor(R.color.white));
+			
+			subCatView.setPaintFlags(parentCatView.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
+			
+			subCatView.setText(cat.getName().toUpperCase());
+			subCatView.setTextColor(getResources().getColor(R.color.app_yellow));
+			
 			
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 			params.weight = 1.0f;
+			params.leftMargin=20;
 			params.gravity = Gravity.CENTER_VERTICAL;
 
 			//parentCatView.setBackgroundColor(Globals.ApplicationContext.getResources().getColor(R.color.status_bar_app_color));
 			subCatView.setLayoutParams(params);
 			catLevelView.addView(subCatView);
 			subCatView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-			
+			subCatView.setEllipsize(TruncateAt.END);
+			subCatView.setHorizontallyScrolling(false);
+			subCatView.setSingleLine();
 			Input input = new Input(cat.getId(),"category");
 			getProducts(input);
 			Controls.show_loading_dialog(getActivity(), "Fetching Products...");
@@ -411,6 +434,8 @@ public class OfflineShopFrag extends Fragment implements ItemInterface, Category
 			searchedProductList.addAll(productList);
 			currentProductlist = productList;
 	        mSearchAdapter = new ProductAdapter(currentProductlist,this);
+	        mSearchRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+
 	        mSearchRecyclerView.setAdapter(mSearchAdapter);	
 		}
 		

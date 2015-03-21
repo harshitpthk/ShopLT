@@ -70,7 +70,7 @@
 			    
 
 	</FrameLayout>
-	<FrameLayout
+	<!--  <FrameLayout
 	    android:id="@+id/simmilar_item_container"
 	    android:layout_width="180dp" 
 	    android:layout_height="match_parent"
@@ -84,6 +84,6 @@
 	        android:choiceMode="singleChoice"
 	        android:id="@+id/left_drawer_add_item"
 	        android:background="#fff"/>
-	</FrameLayout>
+	</FrameLayout>-->
 	
 </com.shoplite.UI.CustomDrawer>

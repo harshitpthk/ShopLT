@@ -61,23 +61,23 @@ public class AddItemCard extends BaseItemCard {
 		
 		itemNameView = (TextView) view.findViewById(R.id.item_name);
 		itemImageView = (ImageView) view.findViewById(R.id.item_image);
-		itemButton = (Button)view.findViewById(R.id.item_button);
-		itemButton.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View view) {
-				// TODO Auto-generated method stub
-				getActionButtonOnClick().onClick(null, view);
-				
-			}
-		});
+//		itemButton = (Button)view.findViewById(R.id.item_button);
+//		itemButton.setOnClickListener(new OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View view) {
+//				// TODO Auto-generated method stub
+//				getActionButtonOnClick().onClick(null, view);
+//				
+//			}
+//		});
 		totalPriceView = (TextView) view.findViewById(R.id.total_price);
 		measurePicker= (NumberPicker) view.findViewById(R.id.item_measure_picker);
 		qtyPicker = (NumberPicker) view.findViewById(R.id.item_quantity_picker);
 		updateView();
 		initMeasurePicker();
 		initQtyPicker();
-		String url = "http://qph.is.quoracdn.net/main-qimg-1f61abfcc3055f0cef7cc5233c5904db?convert_to_webp=true";
+		String url = "http://s3-ap-southeast-1.amazonaws.com/static.shoplite/product_image/"+item.getId()+".jpg";
 		
 		fetchItemImage(url);
 	}

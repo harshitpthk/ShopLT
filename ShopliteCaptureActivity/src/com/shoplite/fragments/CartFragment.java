@@ -24,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.zxing.client.android.CaptureActivity;
 import com.shoplite.UI.Controls;
 import com.shoplite.UI.ItemListAdapter;
 import com.shoplite.Utils.CartGlobals;
@@ -83,7 +84,9 @@ public class CartFragment extends Fragment implements ControlsInterface,PackList
 	{
 		super.onResume();	
 		cartAdapter = new ItemListAdapter(getActivity(), Globals.item_order_list,"cartItem");
-		
+		CaptureActivity.actionBar.setTitle(getResources().getText(R.string.shopping_cart)+
+				"    " + Double.toString(Math.round(Globals.cartTotalPrice*100.0/100.0)) + " " +getResources().getText(R.string.currency));
+		CaptureActivity.productsNumberView.setText(String.valueOf(Globals.item_order_list.size()));
 		if(Globals.item_order_list.size() == 0){
 			emptyCartState();
 			cartAdapter.updateCart(Globals.item_order_list);
@@ -135,6 +138,7 @@ public class CartFragment extends Fragment implements ControlsInterface,PackList
 //		super.onCreateOptionsMenu(menu, getActivity().getMenuInflater());
 //		return false;
 		inflater.inflate(R.menu.import_to_cart,menu);
+		CaptureActivity.productsNumberView.setText(String.valueOf(Globals.item_order_list.size()));
 	   importToCart = menu.findItem(R.id.import_to_cart);
 //       importToCart.setVisible(true);
        importToCart.setOnMenuItemClickListener(new OnMenuItemClickListener() {

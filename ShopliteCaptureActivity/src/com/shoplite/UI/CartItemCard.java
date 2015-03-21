@@ -232,7 +232,7 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 		initQtyPicker();
 		updateView();
 		
-		String  url = "http://cadbury.screaminteractive.com.my/images/products/CADBURY%20DAIRY%20MILK/Cadbury%20Dairy%20Milk/Cadbury-Dairy-Milk75.png";
+		String url = "http://s3-ap-southeast-1.amazonaws.com/static.shoplite/product_image/"+item.getId()+".jpg";
 		fetchItemImage(url);
 				
 		
@@ -349,7 +349,7 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 	 	Globals.cartTotalPrice -= item.getTotalPrice();
 	 	CaptureActivity.actionBar.setTitle(r.getText(R.string.shopping_cart)+
 				 "    "+  Double.toString(Math.round(Globals.cartTotalPrice*100.0/100.0))+" " + r.getText(R.string.currency));
-	 	
+	 	CaptureActivity.productsNumberView.setText(String.valueOf(Globals.item_added_list.size()));
 		if(getItem().isSent()){
 			OrderItemDetail itemToDelete = new OrderItemDetail(item.getCurrentItemId(), item.getCurrentQty());
 			deletePackList(itemToDelete);

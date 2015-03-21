@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
  <selector xmlns:android="http://schemas.android.com/apk/res/android">
-     <item android:state_activated="true"    android:drawable="@drawable/purchase_order_blue" /> <!-- pressed -->
-     <item android:state_pressed="true"       android:drawable="@drawable/purchase_order_blue" /> <!-- pressed -->
-     <item android:state_focused="true"      android:drawable="@drawable/purchase_order_blue" /> <!-- focused -->
-     <item android:drawable="@drawable/purchase_order_grey" /> <!-- default -->
+     <item android:state_activated="true"    android:drawable="@drawable/list_active" /> <!-- pressed -->
+     <item android:state_pressed="true"       android:drawable="@drawable/list_active" /> <!-- pressed -->
+     <item android:state_focused="true"      android:drawable="@drawable/list_active" /> <!-- focused -->
+     <item android:drawable="@drawable/list_grey" /> <!-- default -->
  </selector>

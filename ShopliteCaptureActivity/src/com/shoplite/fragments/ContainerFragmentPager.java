@@ -32,9 +32,9 @@ public class ContainerFragmentPager extends FragmentPagerAdapter {
 		switch(i){
 			case 0:
 				 return  new OfflineShopFrag();
-			case 1:
-	    	     return   new CameraFragment();
-	        case 2:
+//			case 1:
+//	    	     return   new CameraFragment();
+	        case 1:
 	        	 return   new OrderFragment();
 		}
 		return null;
@@ -43,7 +43,7 @@ public class ContainerFragmentPager extends FragmentPagerAdapter {
 	@Override
 	public int getCount() {
 		
-		return 3;
+		return 2;
 	}
 
 }

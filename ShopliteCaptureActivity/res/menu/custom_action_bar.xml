@@ -5,14 +5,16 @@
     
     <!-- Cart -->
     <item android:id="@+id/shopping_cart"
+          app:showAsAction="always"
+
           android:icon="@drawable/cart"
           android:orderInCategory="10"
           android:menuCategory="system"
-          app:showAsAction="always"
+          
           android:title="@string/shopping_cart" />
-    <item android:id="@+id/settings"
+    <!--  <item android:id="@+id/settings"
           app:showAsAction="never"
           android:menuCategory="system"
-          android:title="@string/settings"/>
+          android:title="@string/settings"/>-->
     
 </menu>

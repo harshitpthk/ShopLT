@@ -232,6 +232,7 @@ public class PreviousOrderCard implements ConnectionInterface{
 		Toast.makeText(context, "onclick saved list", Toast.LENGTH_SHORT).show();
 		Intent i = new Intent(context,ItemsDisplayActivity.class);
 		i.putExtra("ListName", Integer.toString(productList.get(0).getOrderId()));
+		i.putExtra("instantiator","ordersHistory");
 		Gson gson = new Gson();
 		String jsonString = gson.toJson(orderedProductList);
 		i.putExtra("ItemList", jsonString);

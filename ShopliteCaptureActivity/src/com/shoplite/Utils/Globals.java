@@ -11,6 +11,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.shoplite.database.DbHelper;
 import com.shoplite.fragments.CartFragment;
 import com.shoplite.models.Address;
+import com.shoplite.models.Location;
 import com.shoplite.models.Product;
 import com.shoplite.models.Shop;
 
@@ -37,6 +38,7 @@ public class Globals {
 	public static String PREFS_NAME = "Dictionary";
 	public static String PREFS_KEY = "LastAddress";
 	public static boolean isInsideShop;
+	public static boolean usedPreviousAddress = false;
 	
 	//Method to Return Shop object which is at minimum distance from current location inside the 200 meters radius
 	public static Shop min_sd_matrix() {
@@ -48,9 +50,9 @@ public class Globals {
 		
 	}
 	//Method to add shop Object and its location to shop-distance Matrix 
-	public static void add_to_sd_matrix(Shop shpObject ,double lat, double lng) {
+	public static void add_to_sd_matrix(Shop shpObject ,double lat, double lng, Location location) {
 		
-		double distance = Math.sqrt(Math.pow((Globals.current_location.getLatitude()-lat), 2) + Math.pow((Globals.current_location.getLongitude()-lng),2));
+		double distance = Math.sqrt(Math.pow((location.getLatitude()-lat), 2) + Math.pow((location.getLongitude()-lng),2));
 		Globals.near_shop_distance_matrix.put(distance,shpObject);
 		
 	}

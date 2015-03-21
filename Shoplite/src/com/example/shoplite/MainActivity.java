@@ -2,8 +2,6 @@ package com.example.shoplite;
 
 import io.fabric.sdk.android.Fabric;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.regex.Pattern;
 
 import retrofit.Callback;
@@ -11,14 +9,12 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,7 +22,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.example.sholite.R;
@@ -37,13 +32,7 @@ import com.shoplite.connection.ServerConnectionMaker;
 import com.shoplite.connection.ServiceProvider;
 import com.shoplite.database.DbHelper;
 import com.shoplite.interfaces.LoginInterface;
-import com.shoplite.models.Location;
-import com.shoplite.models.Shop;
 import com.shoplite.models.User;
-import com.squareup.okhttp.OkHttpClient;
-
-import retrofit.client.OkClient;
-
 
 import eu.livotov.zxscan.ZXScanHelper;
 
@@ -149,7 +138,7 @@ public class MainActivity extends ActionBarActivity implements ConnectionInterfa
 		   
 		if (requestCode == PICK_DELIVERY_REQUEST) {
 		      if (resultCode == RESULT_OK) {
-		    	 
+		    	  finish();
 		    	  ZXScanHelper.setCustomScanSound(R.raw.atone);
 				  ZXScanHelper.scan(this,0);
 		         

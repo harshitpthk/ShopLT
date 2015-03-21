@@ -42,6 +42,8 @@ public class ItemsDisplayActivity extends ActionBarActivity implements ControlsI
 	private AlertDialog alertDialog;
 	private boolean isImportAll;
 	private int updateCount = 0;
+	private int updateRequiredCount = 0;
+	private String instantiator;
 	
 	
 	@Override
@@ -53,8 +55,13 @@ public class ItemsDisplayActivity extends ActionBarActivity implements ControlsI
 		
 		listName = getIntent().getStringExtra("ListName"); 
 		String ItemListJson = getIntent().getStringExtra("ItemList");
-		
-		getSupportActionBar().setTitle(listName);
+		instantiator = getIntent().getStringExtra("instantiator");
+		if(instantiator.equalsIgnoreCase("savedLists")){
+			getSupportActionBar().setTitle(listName);
+		}
+		else{
+			getSupportActionBar().setTitle("Order Number "+listName);
+		}
 		
 		Gson gson = new Gson();
 		itemList = gson.fromJson(ItemListJson, listType);
@@ -110,14 +117,14 @@ public class ItemsDisplayActivity extends ActionBarActivity implements ControlsI
 	}
 	public void importAll()
 	{
-		Controls.show_alert_dialog(this, this, R.layout.confirm_import_all_dialog, 250);
+		Controls.show_alert_dialog(this, this, R.layout.confirm_import_all_dialog, 220);
 		
 		
 	}
 	public void importSelected()
 	{
 		if(getSelectedCount() >0)
-			Controls.show_alert_dialog(this, this, R.layout.confirm_import_all_dialog, 250);
+			Controls.show_alert_dialog(this, this, R.layout.confirm_import_all_dialog, 220);
 		else{
 			Toast.makeText(this, "Select some items", Toast.LENGTH_SHORT).show();
 		}
@@ -136,10 +143,7 @@ public class ItemsDisplayActivity extends ActionBarActivity implements ControlsI
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		else if (id == android.R.id.home){
+		 if (id == android.R.id.home){
 			finish();
 			return true;
 		}
@@ -159,19 +163,20 @@ public class ItemsDisplayActivity extends ActionBarActivity implements ControlsI
 				if(!Globals.item_added_list.contains(itemList.get(i).getCurrentItemId())){
 					Globals.item_added_list.add(itemList.get(i).getCurrentItemId());
 					updateItem(itemList.get(i));
-					
+					updateRequiredCount++;
 				}
 				else{
 					itemsAlreadyPresent = true;
 				}
 			}
-			if(itemsAlreadyPresent){
-				//Toast.makeText(this, "List"+ listName +" Imported Successfully with certain Items already present", Toast.LENGTH_LONG).show();
+			if(updateRequiredCount == 0){
+				Toast.makeText(this, "Items Already present in the Cart", Toast.LENGTH_LONG).show();
+
 			}
 			else{
-				//Toast.makeText(this, "List"+ listName +" Imported Successfully", Toast.LENGTH_LONG).show();
-				
+				Toast.makeText(this, "List"+ listName +" Imported Successfully", Toast.LENGTH_LONG).show();
 			}
+			
 			
 		}
 		else{
@@ -182,27 +187,32 @@ public class ItemsDisplayActivity extends ActionBarActivity implements ControlsI
 					if(!Globals.item_added_list.contains(itemList.get(i).getCurrentItemId())){
 						Globals.item_added_list.add(itemList.get(i).getCurrentItemId());
 						updateItem(itemList.get(i));
-						
+						updateRequiredCount++;
 						
 					}
 					else{
 						itemsAlreadyPresent = true;
 					}
 				}
-				if(itemsAlreadyPresent){
-					//Toast.makeText(this, "Selected Items Imported Successfully with certain Items already present", Toast.LENGTH_LONG).show();
+					if(updateRequiredCount == 0){
+						Toast.makeText(this, "Items Already present in the Cart", Toast.LENGTH_LONG).show();
+
+					}
+					else{
+						Toast.makeText(this, "Selected Items Imported Successfully", Toast.LENGTH_LONG).show();
+					}
 				
-				}
-				else{
-					//Toast.makeText(this, "Selected Items Imported Successfully", Toast.LENGTH_LONG).show();
-				}
 				
 			}
 			
 			
 			
 		}
-		//Controls.dismiss_progress_dialog();
+		if(updateRequiredCount==0){
+			Controls.dismiss_progress_dialog();
+			setResult(Activity.RESULT_OK, null);
+			finish();
+		}
 
 		
 	}
@@ -270,7 +280,7 @@ public class ItemsDisplayActivity extends ActionBarActivity implements ControlsI
 		Globals.cartTotalPrice += product.getTotalPrice();
 		CartFragment.updateCart();
 		updateCount++;
-		if(updateCount == getSelectedCount()){
+		if(updateCount == updateRequiredCount){
 			updateCount = 0;
 			Controls.dismiss_progress_dialog();
 			//Toast.makeText(this, "Import Success", Toast.LENGTH_SHORT).show();

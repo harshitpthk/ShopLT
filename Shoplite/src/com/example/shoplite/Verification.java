@@ -12,13 +12,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.telephony.SmsMessage;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,11 +40,16 @@ public class Verification extends Activity implements ConnectionInterface,LoginI
 	private String phoneNo = null;
 	private EditText phoneView = null;
 	private EditText authTokenView = null; 
+	private Button resendButton;
 	private boolean verify = false;
 	private boolean resend = false;
 	final Verification vf = this;
 	private Integer authToken = 0;
 	static final int PICK_DELIVERY_REQUEST = 1;
+	private CountDownTimer cntTimer;
+	private final long startTime = 30 * 1000;
+	
+	 private final long interval = 1 * 1000;
 	
 	private IntentFilter inf = new IntentFilter();
 	
@@ -52,6 +58,7 @@ public class Verification extends Activity implements ConnectionInterface,LoginI
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			// TODO Auto-generated method stub
+			
 			if(intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")){
 	            Bundle bundle = intent.getExtras();           //---get the SMS message passed in---
 	            SmsMessage[] msgs = null;
@@ -73,9 +80,10 @@ public class Verification extends Activity implements ConnectionInterface,LoginI
 	                    while (m.find()) {
 	                        sBuffer.append(m.group());
 	                    }
+	                    
 	                    Integer code = Integer.parseInt(sBuffer.toString());
 	                    displayCodeVerify(code);
-	                    Toast.makeText(getApplicationContext(), msgBody, Toast.LENGTH_LONG).show();
+	                   // Toast.makeText(getApplicationContext(), msgBody, Toast.LENGTH_LONG).show();
 	                }catch(Exception e){
                             Log.e("Exception caught",e.getMessage());
 	                }
@@ -101,13 +109,41 @@ public class Verification extends Activity implements ConnectionInterface,LoginI
 		 phoneView = (EditText) findViewById(R.id.phone_no_verification);
 		 phoneView.setText(phoneNo,TextView.BufferType.EDITABLE);
 		 authTokenView = (EditText)findViewById(R.id.verification_input);
-		 inf.addAction("android.provider.Telephony.SMS_RECEIVED");
-		 registerReceiver(VerificationSMSReciever, inf);
-		 String auth_token = Globals.dbhelper.getItem("auth-token");
-		 authToken = Integer.parseInt(auth_token);
-			
-		 		
+		 resendButton = (Button)findViewById(R.id.resend);
+//		 String auth_token = Globals.dbhelper.getItem("auth-token");
+//		 authToken = Integer.parseInt(auth_token);
+		 cntTimer = new CountDownTimer(startTime, interval) {
+				
+				@Override
+				public void onTick(long millisUntilFinished) {
+					
+					 resendButton.setText(getString(R.string.resend )+" " + String.valueOf(millisUntilFinished / 1000));
+				}
+				
+				@Override
+				public void onFinish() {
+					
+					resendButton.setEnabled(true);
+					resendButton.setBackgroundResource(R.drawable.button);
+					resendButton.setTextColor(getResources().getColor(R.color.dark_app_color));
+					 resendButton.setText(getString(R.string.resend ));
+				}
+			}.start();
+			 resendButton.setEnabled(false);
+			 resendButton.setTextColor(getResources().getColor(android.R.color.darker_gray));
+			 resendButton.setBackgroundResource(R.drawable.button_disabled);
 	}
+	@Override
+    protected void onResume()
+    {
+        super.onResume();
+        inf.addAction("android.provider.Telephony.SMS_RECEIVED");
+		 registerReceiver(VerificationSMSReciever, inf);
+		 
+		
+			
+			 
+    }
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -140,6 +176,7 @@ public class Verification extends Activity implements ConnectionInterface,LoginI
 		    	 
 		    	  ZXScanHelper.setCustomScanSound(R.raw.atone);
 				  ZXScanHelper.scan(this,0);
+				  finish();
 		         
 		      } else if (resultCode == RESULT_CANCELED) {
 		         
@@ -169,6 +206,9 @@ public class Verification extends Activity implements ConnectionInterface,LoginI
 	
 	public void verify(View view)
 	{
+		if(authTokenView.getText().toString() != null){
+			
+		authToken = Integer.parseInt(authTokenView.getText().toString());
 		Controls.show_loading_dialog(this, "Verifying");
 		verify = true;
 		if( ServerConnectionMaker.star_sessionID == null  ){
@@ -177,6 +217,8 @@ public class Verification extends Activity implements ConnectionInterface,LoginI
     	
 		}
 		ServerConnectionMaker.sendRequest(this);
+		
+		}
 	}
 
 	@Override
@@ -194,7 +236,7 @@ public class Verification extends Activity implements ConnectionInterface,LoginI
 					if (arg0.isNetworkError()) {
 						Log.e("Retrofit error", "503"); // Use another code if you'd prefer
 				    }
-					Toast.makeText(getBaseContext(), arg0.toString(), Toast.LENGTH_LONG).show();
+					Toast.makeText(getBaseContext(), R.string.verification_failure, Toast.LENGTH_LONG).show();
 					Log.e("Retrofit error", arg0.getUrl());
 					Log.e("Retrofit error", arg0.getMessage());
 					ServerConnectionMaker.recieveResponse(null);
@@ -206,7 +248,7 @@ public class Verification extends Activity implements ConnectionInterface,LoginI
 					Globals.dbhelper.setItem("cliendID", clientID.get(0).toString());
 					String email = Globals.dbhelper.getItem("email");
 					ServerConnectionMaker.recieveResponse(response);
-					Toast.makeText(getBaseContext(), clientID.get(0).toString(), Toast.LENGTH_LONG).show();
+					//Toast.makeText(getBaseContext(), clientID.get(0).toString(), Toast.LENGTH_LONG).show();
 					Login ln = new Login();
 					ln.login(clientID.get(0).toString(), email ,vf);
 					
@@ -231,7 +273,7 @@ public class Verification extends Activity implements ConnectionInterface,LoginI
 					if (arg0.isNetworkError()) {
 						Log.e("Retrofit error", "503"); // Use another code if you'd prefer
 				    }
-					Toast.makeText(getBaseContext(), arg0.toString(), Toast.LENGTH_LONG).show();
+					//Toast.makeText(getBaseContext(), arg0.toString(), Toast.LENGTH_LONG).show();
 					Log.e("Retrofit error", arg0.getUrl());
 					Log.e("Retrofit error", arg0.getMessage());
 					ServerConnectionMaker.recieveResponse(null);
@@ -241,10 +283,29 @@ public class Verification extends Activity implements ConnectionInterface,LoginI
 				@Override
 				public void success(Integer arg0, Response response) {
 					Integer auth_token = arg0;
-					Toast.makeText(getBaseContext(), arg0.toString(), Toast.LENGTH_LONG).show();
+					//Toast.makeText(getBaseContext(), arg0.toString(), Toast.LENGTH_LONG).show();
 					ServerConnectionMaker.recieveResponse(response);
 					Globals.dbhelper.setItem("auth-token", auth_token.toString() );
-					authToken = auth_token;
+					cntTimer = new CountDownTimer(startTime, interval) {
+						
+						@Override
+						public void onTick(long millisUntilFinished) {
+							
+							 resendButton.setText(getString(R.string.resend )+" " + String.valueOf(millisUntilFinished / 1000));
+						}
+						
+						@Override
+						public void onFinish() {
+							
+							resendButton.setEnabled(true);
+							resendButton.setBackgroundResource(R.drawable.button);
+							resendButton.setTextColor(getResources().getColor(R.color.dark_app_color));
+							 resendButton.setText(getString(R.string.resend ));
+						}
+					}.start();
+					 resendButton.setEnabled(false);
+					 resendButton.setTextColor(getResources().getColor(android.R.color.darker_gray));
+					 resendButton.setBackgroundResource(R.drawable.button_disabled);
 				}
 			});
 		}

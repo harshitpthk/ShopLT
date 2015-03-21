@@ -22,5 +22,8 @@
     <string name="get_started"> Get Started</string>
     <string name="title_activity_cart">Shopping Cart</string>
      <string name="title_activity_checkout">Checkout</string>
+     <string name="verification_wait">Kindly wait you will be recieving a message shortly.</string>
+     <string name="verification_failure">The Verification Code you entered is invalid. Please Try Again.</string>
+    
     
 </resources>

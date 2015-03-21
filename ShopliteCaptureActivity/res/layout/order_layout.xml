@@ -35,12 +35,10 @@
      	
      	<android.support.v4.view.PagerTabStrip
 	        android:id="@+id/pager_title_strip"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
+	        style="@style/pager_title_strip_style"
 	        android:layout_gravity="top"
-	        android:background="#fff"
-	        android:paddingTop="4dp"
-	        android:paddingBottom="4dp" />
+	        android:gravity="center_vertical"
+	        />
          
     </android.support.v4.view.ViewPager>
      

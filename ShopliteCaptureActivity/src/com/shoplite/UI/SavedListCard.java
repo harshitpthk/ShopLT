@@ -66,6 +66,7 @@ public class SavedListCard {
 				Intent i = new Intent(context,ItemsDisplayActivity.class);
 				i.putExtra("ListName", savedlist.getSaveListName());
 				i.putExtra("ItemList", savedlist.getListEntries());
+				i.putExtra("instantiator","savedLists");
 				((Activity)context).startActivityForResult(i,CaptureActivity.SAVE_LIST_REQUEST );
 			}
 

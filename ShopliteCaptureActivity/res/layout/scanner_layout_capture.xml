@@ -27,29 +27,36 @@
 				   	 android:id="@+id/fragment_container"
 				   	 android:layout_width="fill_parent"
 			         android:layout_height="fill_parent" >
+			         <ProgressBar
+			             android:id="@+id/loading_bar"
+			             android:indeterminate="true"
+			             android:layout_gravity="center"
+			             android:layout_width="40dp"
+			             android:layout_height="40dp"/>
 			   </FrameLayout>
 		    
-		       <View
+		       <RelativeLayout
 		        android:id = "@+id/main_tabs_view"
 		        android:layout_width="match_parent"
 		        android:layout_height="50dp"
 		        android:background="@drawable/actions_view"
 		        android:layout_gravity="bottom"
-		        
-		        />
+		         >
 		      
 		       <ImageButton 
 		           android:id="@+id/shop_outside_store"
-		           android:layout_width="30dp"
-		           android:layout_height="30dp"
-		           android:layout_margin="10dp"
-		         
+		           android:layout_height="36dp"
+		           android:layout_width="36dp"
 		           android:background="@drawable/selector_shop_by_list"
 		           android:contentDescription="@string/shop_offline"
-		           android:layout_gravity="bottom|start"
+		           android:layout_centerVertical="true"
+		           android:layout_alignParentLeft="true"
+        		   android:layout_alignParentStart="true"
+        		   android:layout_marginStart="20dp"
+        		   android:layout_marginLeft="20dp"
 		           android:onClick="shopOutsideStore"/>
 		       
-		        <ImageButton android:id="@+id/shop_at_store"
+		        <!--  <ImageButton android:id="@+id/shop_at_store"
 		            android:layout_width="30dp"
 		           android:layout_height="30dp"
 		           android:layout_margin="10dp"
@@ -57,18 +64,21 @@
 		          
 		           android:layout_gravity="bottom|center"
 		           android:contentDescription="@string/shop_at_store"
-		           android:onClick="shopAtStore"/>
+		           android:onClick="shopAtStore"/>-->
 		       
 		       <ImageButton android:id="@+id/orders_list"
-		           android:layout_width="30dp"
-		           android:layout_height="30dp"
-		           android:layout_margin="10dp"
-		           android:layout_gravity="bottom|end"
-		           
+		           android:layout_height="36dp"
+		           android:layout_width="36dp"
+		           android:gravity="center"
 		           android:background="@drawable/selector_orders"
 		           android:contentDescription="@string/order_history"
+		            android:layout_centerVertical="true"
+		           android:layout_alignParentEnd="true"
+        		   android:layout_alignParentRight="true"
+        		   android:layout_marginEnd="20dp"
+        		   android:layout_marginRight="20dp"
 		           android:onClick="showOrderHistory"/>
-		      
+		      </RelativeLayout>
 		     
 		
 			</FrameLayout>
@@ -80,50 +90,59 @@
         android:layout_height="fill_parent"
         android:layout_gravity="start"
         android:background="#ffffff">
-			
-		<LinearLayout 
+			<LinearLayout 
 			    android:id="@+id/drawer_layout"
 			    android:layout_width="fill_parent"
         		android:layout_height="wrap_content"
         		android:orientation="vertical"
         		>
 		       <include layout="@layout/navigation_header"/>
-		       <LinearLayout 
+		       <RelativeLayout 
+		           
+				    android:id="@+id/navigation_search_box"
 				    android:layout_width="match_parent"
 				    android:paddingTop="8dp"
 				    android:paddingBottom="8dp"
-				    android:id="@+id/navigation_search_box"
 				    android:layout_height="wrap_content"
-				    android:background="@drawable/border_round_shape"
-				    android:orientation="horizontal">
-				 
-				 
-				    
-				 
+				    android:background="@drawable/drawer_search_border"
+				    >
+				 				 
 				    <TextView
+				        android:id="@+id/searchText"
 				        android:layout_width="wrap_content"
 				        android:layout_height="wrap_content"
-				        android:paddingLeft="16dp"
-				        android:paddingTop="4dp"
+				        android:paddingLeft="23dp"
+				        android:paddingStart="23dp"
+				        android:paddingRight="9dp"
+				        android:paddingEnd="9dp"
+				       	android:layout_alignParentStart="true"
+			          	android:layout_alignParentLeft="true"
+				        android:layout_centerVertical="true"
 				        android:textAppearance="?android:attr/textAppearanceMedium"
-				        android:text="Search Products, Brands"
-				        android:id="@+id/searchText" />
+				        android:text="@string/search"
+				        />
 				    <ImageView
 				        android:layout_width="wrap_content"
 				        android:layout_height="wrap_content"
+				       	android:layout_alignParentRight="true"
+			            android:layout_alignParentEnd="true"
 				        android:id="@+id/rowIcon"
 				        android:paddingLeft="16dp"
+				        android:paddingStart="16dp"
+				        android:paddingRight="16dp"
+				        android:paddingEnd="16dp"
 				        android:src="@android:drawable/ic_menu_search"/>
 				 
-				</LinearLayout>
+				</RelativeLayout>
 			   <ListView
 			        android:id="@+id/left_drawer_capture"
 			        android:layout_width="fill_parent"
 			        android:layout_height="wrap_content"
 			        android:choiceMode="singleChoice"
 			        android:divider="#5A475E"
+			        android:background="#fff" 
 			        android:dividerHeight="0dp"
-			        android:background="#ffffff">
+			        >
 			         
 			    </ListView>
      	</LinearLayout>

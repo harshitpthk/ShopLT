@@ -20,6 +20,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.zxing.client.android.CaptureActivity;
 import com.shoplite.UI.Controls;
 import com.shoplite.Utils.Constants;
 import com.shoplite.Utils.Globals;
@@ -116,10 +117,10 @@ public class CheckoutActivity extends ActionBarActivity {
 			totalPriceView = (TextView) rootView.findViewById(R.id.order_total_price);
 			totalPriceView.setText(Globals.cartTotalPrice.toString() + getResources().getString(R.string.currency));
 			totalItemsOrderedView = (TextView) rootView.findViewById(R.id.order_total_items);
-			totalItemsOrderedView.setText(Integer.toString(Globals.item_order_list.size()));
+			totalItemsOrderedView.setText(Integer.toString(Globals.item_order_list.size()) + " Items");
 			
 			homeDeliveryRadio = (RadioButton) rootView.findViewById(R.id.radio_home_delivery);
-			shopPickupRadio = (RadioButton) rootView.findViewById(R.id.radio_shop_pickup);
+			//shopPickupRadio = (RadioButton) rootView.findViewById(R.id.radio_shop_pickup);
 			
 			addressContainer = (LinearLayout) rootView.findViewById(R.id.address_details_view);
 			shopAddress = (TextView) rootView.findViewById(R.id.shop_address_details);
@@ -127,10 +128,11 @@ public class CheckoutActivity extends ActionBarActivity {
 			primaryHomeAddress = (EditText) rootView.findViewById(R.id.home_address_primary);
 			primaryHomeAddress.setText(Globals.deliveryAddress.getAddressString());
 			
-			payOnlineRadio = (RadioButton) rootView.findViewById(R.id.pay_by_card);
+			//second Version
+			//payOnlineRadio = (RadioButton) rootView.findViewById(R.id.pay_by_card);
 			payCashRadio = (RadioButton) rootView.findViewById(R.id.pay_by_cash);
 			
-			
+			shopAddress.setText(Globals.connectedShop.getName());
 			confirmOrderButton = (Button) rootView.findViewById(R.id.confirm_order_button);
 			
 			homeDeliveryRadio.setOnClickListener(new OnClickListener() {
@@ -144,27 +146,30 @@ public class CheckoutActivity extends ActionBarActivity {
 					isOrderTakeAway = false;
 				}
 			});
-			shopPickupRadio.setOnClickListener(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-					
-					addressContainer.setVisibility(View.VISIBLE);
-					homeAddress.setVisibility(View.GONE);
-					shopAddress.setVisibility(View.VISIBLE);
-					isOrderTakeAway = true;
-				}
-			});
+			//second version
+//			shopPickupRadio.setOnClickListener(new OnClickListener() {
+//				
+//				@Override
+//				public void onClick(View v) {
+//					
+//					addressContainer.setVisibility(View.VISIBLE);
+//					homeAddress.setVisibility(View.GONE);
+//					shopAddress.setVisibility(View.VISIBLE);
+//					isOrderTakeAway = true;
+//				}
+//			});
 			
-			payOnlineRadio.setOnClickListener(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-					isPayOnline = true;
-					confirmOrderButton.setVisibility(View.VISIBLE);
-					
-				}
-			});
+			
+			
+//			payOnlineRadio.setOnClickListener(new OnClickListener() {
+//				
+//				@Override
+//				public void onClick(View v) {
+//					isPayOnline = true;
+//					confirmOrderButton.setVisibility(View.VISIBLE);
+//					
+//				}
+//			});
 			
 			payCashRadio.setOnClickListener(new OnClickListener() {
 				
@@ -289,8 +294,10 @@ public class CheckoutActivity extends ActionBarActivity {
 			OrderHistoryFragment.getPreviousOrderLists().addAll(Globals.dbhelper.getAllOrders());
 			OrderHistoryFragment.getOrderListAdapter().updateOrderLists(Globals.dbhelper.getAllOrders());
 			Globals.resetCartData();
-			boolean deliveryAddressStored = Globals.dbhelper.storeAddress(Globals.deliveryAddress);
-			Toast.makeText(getActivity(), Boolean.toString(deliveryAddressStored), Toast.LENGTH_LONG).show();
+			if(Globals.usedPreviousAddress != true){
+				boolean deliveryAddressStored = Globals.dbhelper.storeAddress(Globals.deliveryAddress);
+			}
+			//Toast.makeText(getActivity(), Boolean.toString(deliveryAddressStored), Toast.LENGTH_LONG).show();
 			getActivity().finish();
 		}
 

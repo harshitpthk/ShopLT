@@ -9,9 +9,8 @@ import java.util.Map;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -19,14 +18,15 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.DrawerLayout.DrawerListener;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
@@ -51,9 +51,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -68,16 +68,13 @@ import com.shoplite.UI.BaseCardView;
 import com.shoplite.UI.BaseItemCard.OnClickActionButtonListener;
 import com.shoplite.UI.ButteryProgressBar;
 import com.shoplite.UI.Controls;
-import com.shoplite.UI.DrawerItemAdapter;
 import com.shoplite.Utils.CartGlobals;
 import com.shoplite.Utils.Constants;
 import com.shoplite.Utils.Constants.DBState;
 import com.shoplite.Utils.Globals;
 import com.shoplite.activities.MapActivity;
-import com.shoplite.activities.SettingsActivity;
 import com.shoplite.fragments.CartFragment;
 import com.shoplite.fragments.ContainerFragment;
-import com.shoplite.fragments.MapFragment;
 import com.shoplite.fragments.OfflineShopFrag;
 import com.shoplite.interfaces.CategoryInterface;
 import com.shoplite.interfaces.ControlsInterface;
@@ -115,7 +112,7 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
     private BeepManager beepManager;
     SurfaceHolder.Callback cameraSurfaceCallback = this;
     
-    private LinearLayout drawerSearch ;
+    private RelativeLayout drawerSearch ;
     public static ButteryProgressBar progressBar;
     public static FrameLayout decorView;
      
@@ -126,25 +123,23 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
     private ActionBarDrawerToggle mDrawerToggle;
         
     private Window window;
-	private Menu MenuReference;
 	public static  SearchView shopSearchView = null;
     public ProgressBar  prgBar;
     public static boolean isProgressBarAdded;
     private ImageButton shopByListButton;
-    private ImageButton shopAtStoreButton;
+   // private ImageButton shopAtStoreButton;
     private ImageButton orderListButton;
     private static AlertDialog AddDialog;
     public static AddItemCard addToItem;
     public static android.support.v7.app.ActionBar actionBar;
-    private MenuItem importToCart;
+  
 	protected static DialogFragment saveListDialog;
 	public static int SAVE_LIST_REQUEST = 200;
-	private FrameLayout mainFragmentContainer;
-	private View mainTabsView;
-	CartFragment cartFrag = new CartFragment();
-    ContainerFragment conFrag = new ContainerFragment();
-    MapFragment mapFrag = new MapFragment();
-    MenuItem CartMenuItem = null;
+	
+	CartFragment cartFrag ;
+    ContainerFragment conFrag ;
+    
+//    MenuItem CartMenuItem = null;
     ArrayList<String>  mainCategories = new ArrayList<String>();
 	private ArrayList<Category> categoryMap;
     public static Toolbar toolbar ;
@@ -154,7 +149,8 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
     private TextView drawerHeaderAddress;
     private TextView drawerHeaderShop;
     private ImageButton drawerChangeDelivery;
-    
+    private CaptureActivity currentActivityInstance;
+	public static TextView productsNumberView;
     //activity methods
    	@SuppressLint("NewApi")
 	@Override
@@ -183,88 +179,12 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 		actionBar = getSupportActionBar();
 		
 		actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+		currentActivityInstance = this;
+		 new LoadUI().execute();
 		
 		
-		
-		progressBar = new ButteryProgressBar(this);
-        progressBar.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 24)); // create new ProgressBar and style it
-        decorView = (FrameLayout) getWindow().getDecorView();			// retrieve the top view of our application
-        
-        // Here we try to position the ProgressBar to the correct position by looking
-        // at the position where content area starts. But during creating time, sizes 
-        // of the components are not set yet, so we have to wait until the components
-        // has been laid out
-        // Also note that doing progressBar.setY(136) will not work, because of different
-        // screen densities and different sizes of actionBar
-        
-        ViewTreeObserver observer = progressBar.getViewTreeObserver();
-        observer.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                View contentView = decorView.findViewById(android.R.id.content);
-                progressBar.setY(contentView.getY() - 10);
-
-                ViewTreeObserver observer = progressBar.getViewTreeObserver();
-                observer.removeGlobalOnLayoutListener(this);
-            }
-        });
-        
-        
-        
-        mainFragmentContainer = (FrameLayout)findViewById(R.id.fragment_container);
-        
-        mainTabsView = (View) findViewById(R.id.main_tabs_view);
-        
-        shopByListButton  = (ImageButton) findViewById(R.id.shop_outside_store);
-    	shopAtStoreButton = (ImageButton) findViewById(R.id.shop_at_store);
-    	orderListButton   = (ImageButton) findViewById(R.id.orders_list);
-    	mDrawerLayout = (DrawerLayout)this.findViewById(R.id.drawer_layout_capture);
-        mainDrawerContainer = (FrameLayout)this.findViewById(R.id.left_drawer_container);
-        mDrawerToggle = new ActionBarDrawerToggle(this,mDrawerLayout,R.string.drawer_open,R.string.drawer_close)
-        					{
-					        	public void onDrawerClosed(View view) {
-					                super.onDrawerClosed(view);
-					                //getSupportActionBar().setTitle(mTitle);
-					            }
-					
-					            /** Called when a drawer has settled in a completely open state. */
-					            public void onDrawerOpened(View drawerView) {
-					                super.onDrawerOpened(drawerView);
-					                //getSupportActionBar().setTitle(mDrawerTitle);
-					            }
-        	
-        				   };
-        drawerSearch= (LinearLayout)findViewById(R.id.navigation_search_box);
-        drawerSearch.setOnClickListener(new OnClickListener() {
-        						
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				mDrawerLayout.closeDrawer(mainDrawerContainer);
-				showSearchItems();
-			}
-		});
-	    mDrawerLayout.setDrawerListener(mDrawerToggle);
-        ldrawer = (ListView)this.findViewById(R.id.left_drawer_capture);
-        
-        drawerChangeDelivery = (ImageButton)findViewById(R.id.drawer_change_delivery);
-        drawerHeaderName = (TextView)findViewById(R.id.drawer_user_name);
-        drawerHeaderAddress = (TextView)findViewById(R.id.drawer_delivery_address);
-        drawerHeaderShop = (TextView)findViewById(R.id.drawer_shop);
-        
-        
-        
-    	hasSurface = false;
-        // inactivityTimer = new InactivityTimer(this);
-        beepManager = new BeepManager(this);
-
-        if (ZXScanHelper.getUserCallback() != null)
-        {
-            ZXScanHelper.getUserCallback().onScannerActivityCreated(this);
-        }
-        
-        Shop shopObj = new Shop();
-		shopObj.get_shop_list(this,Globals.deliveryAddress.getDeliveryLocation());
+//        Shop shopObj = new Shop();
+//		shopObj.get_shop_list(this,Globals.deliveryAddress.getDeliveryLocation());
                
     }
      
@@ -276,15 +196,10 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
     {
         super.onResume();
         // inactivityTimer.onResume();
-       		
-		if(!conFrag.isAdded()){
-        	getSupportFragmentManager().beginTransaction().add(R.id.fragment_container,conFrag ).commit();
-        	
-        }	
+       		if(productsNumberView != null){
+       			productsNumberView.setText(String.valueOf(Globals.item_order_list.size()));
+       		}
 		
-		if(!cartFrag.isAdded()){
-    		getSupportFragmentManager().beginTransaction().add(R.id.container,cartFrag ).detach(cartFrag).commit();
-    	}
 		
 		
     }
@@ -294,7 +209,7 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
     {
     	super.onPause();
     	//inactivityTimer.onPause();
-    	if(conFrag.isAdded()){
+    	/*if(conFrag.isAdded()){
 	        if (handler != null)
 	        {
 	            handler.quitSynchronously();
@@ -308,20 +223,20 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 	            SurfaceHolder surfaceHolder = surfaceView.getHolder();
 	            surfaceHolder.removeCallback(this);
 	        }
-    	}
+    	}*/
         
     }
 
     @Override
     protected void onDestroy()
     {
-    	if(conFrag.isAdded()){
+    	/*if(conFrag.isAdded()){
 	       // inactivityTimer.shutdown();
 	        if (ZXScanHelper.getUserCallback() != null)
 	        {
 	            ZXScanHelper.getUserCallback().onScannerActivityDestroyed(this);
 	        }
-    	}
+    	}*/
         super.onDestroy();
     }
 
@@ -329,7 +244,7 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
-        mDrawerToggle.syncState();
+        
     }
    
     @Override
@@ -351,11 +266,11 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
                 return true;
 
             case KeyEvent.KEYCODE_VOLUME_DOWN:
-                cameraManager.setTorch(false);
+                //cameraManager.setTorch(false);
                 return true;
 
             case KeyEvent.KEYCODE_VOLUME_UP:
-                cameraManager.setTorch(true);
+                //cameraManager.setTorch(true);
                 return true;
         }
 
@@ -373,20 +288,34 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
            	 showCart(null);
              return true;
     	 }
-    	 else if(item.getItemId() == R.id.settings){
-    		 Intent i = new Intent(this, SettingsActivity.class);
-    		 startActivity(i);
-    		 return true;
-    	 }
+//    	 else if(item.getItemId() == R.id.settings){
+//    		 Intent i = new Intent(this, SettingsActivity.class);
+//    		 startActivity(i);
+//    		 return true;
+//    	 }
     	else
              return super.onOptionsItemSelected(item);
      }
           
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
-        MenuReference = menu;
+        
     	MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.custom_action_bar, menu);
+        MenuItem cart =  menu.findItem(R.id.shopping_cart);
+        MenuItemCompat.setActionView(cart, R.layout.custom_cart_icon);
+        RelativeLayout cartIconContainer = (RelativeLayout)MenuItemCompat.getActionView(cart);
+        productsNumberView = (TextView) cartIconContainer.findViewById(R.id.actionbar_notifcation_textview);
+        ImageButton cartButton = (ImageButton)cartIconContainer.findViewById(R.id.cart_icon);
+        cartButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+				showCart(v);
+			}
+		});
+        productsNumberView.setText(String.valueOf(Globals.item_order_list.size()));
         return super.onCreateOptionsMenu(menu);
     }
        
@@ -394,17 +323,7 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
     @Override
     public boolean onPrepareOptionsMenu(Menu menu)
     {
-    	MenuItem CartMenuItem = (MenuItem) menu.findItem(R.id.shopping_cart);
-    	/*if(mapFrag.isAdded()){
-    		
-            CartMenuItem.setVisible(false);
-    	
-    	}
-    	else{
-    		CartMenuItem.setVisible(true);
-    	}*/
-    	
-    	
+    	    	
     	return super.onPrepareOptionsMenu(menu);
     	   
     }
@@ -746,7 +665,7 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 		 */
 		
     }
-       
+    
     public void startQRScanner(SurfaceView surfaceView)
     {
     	// CameraManager must be initialized here, not in onCreate(). This is necessary because we don't
@@ -755,72 +674,7 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
         // off screen.
     	if(conFrag.isAdded()){
     		  										// 1 is kept for shopping at store
-    		conFrag.mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener(){
-
-				@Override
-				public void onPageScrollStateChanged(int position) {
-					
-				}
-
-				@Override
-				public void onPageScrolled(int position, float arg1, int arg2) {
-					
-				}
-
-				@Override
-				public void onPageSelected(int position) {
-					
-//					 MenuItem ShopMap = (MenuItem) MenuReference.findItem(R.id.search);
-					if(position == 0){
-						shopAtStoreButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.scan_grey));
-				    	shopByListButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.cart_blue));
-				    	orderListButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.purchase_order_grey));
-						
-//			            ShopMap.setVisible(false);
-				    	toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha));
-						getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-	        			getSupportActionBar().setHomeButtonEnabled(true);
-	        			 mDrawerToggle.setDrawerIndicatorEnabled(true);
-						mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, mainDrawerContainer);
-						window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-						 
-						
-					}
-					else if(position == 1){
-						shopAtStoreButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.scan_blue));
-				    	shopByListButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.cart_grey));
-				    	orderListButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.purchase_order_grey));
-						
-//				        ShopMap.setVisible(false);
-						getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-						getSupportActionBar().setHomeButtonEnabled(false);
-						mDrawerToggle.setDrawerIndicatorEnabled(false);
-						toolbar.setNavigationIcon(null);
-					    window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-					    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mainDrawerContainer);
-					    handler.resumeDecodeThread();
-					   
-					}
-					else{
-						shopAtStoreButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.scan_grey));
-				    	shopByListButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.cart_grey));
-				    	orderListButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.purchase_order_blue));
-						
-//				        ShopMap.setVisible(false);
-						window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-						getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-						getSupportActionBar().setHomeButtonEnabled(false);
-						 mDrawerToggle.setDrawerIndicatorEnabled(false);
-						toolbar.setNavigationIcon(null);
-			    		mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mainDrawerContainer);
-			    		
-			    		
-					}
-					
-				}
-    			
-    			}
-    		);
+    		
 	        cameraManager = new CameraManager(getApplication());
 	
 	        handler = null;
@@ -877,7 +731,7 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
         		}
         		actionBar.setTitle(getResources().getText(R.string.app_name));
 
-//        		importToCart.setVisible(false);
+
         	}
 			//showing cart
     		else{
@@ -893,10 +747,10 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 
     			actionBar.setTitle(getResources().getText(R.string.shopping_cart)+
         				"    " + Double.toString(Math.round(Globals.cartTotalPrice*100.0/100.0)) + " " +getResources().getText(R.string.currency));
-//    			importToCart.setVisible(true);
+
     		}
     		
-    		
+				
     	
 		
     }
@@ -929,7 +783,7 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
     public void shopAtStore(View v)
     {
     	
-    	setCurrentShopping(1); 
+    	//setCurrentShopping(1); 
     }
     public void shopOutsideStore(View v)
     {
@@ -939,7 +793,7 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 	public void showOrderHistory(View v)
 	{
 		
-		setCurrentShopping(2);
+		setCurrentShopping(1);
 		
 	}
 	
@@ -953,8 +807,39 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 			
 			@Override
 			public void onClick(View v) {
-				startActivityForResult(new Intent(getApplicationContext(),MapActivity.class), PICK_DELIVERY_REQUEST);
-				
+				if(Globals.item_added_list.size() >0){
+					AlertDialog.Builder alert = new AlertDialog.Builder( currentActivityInstance);
+					AlertDialog alertDialog = alert.create();
+					
+					
+					alertDialog.setTitle("Are You Sure?");
+					alertDialog.setMessage("Changing Delivery Location will Remove Products from the Cart.");
+					alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE,"CANCEL", new DialogInterface.OnClickListener() {
+						
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							
+							dialog.dismiss();
+						}
+					});
+					alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "PROCEED", new DialogInterface.OnClickListener() {
+						
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							
+							Globals.resetCartData();
+							productsNumberView.setText(String.valueOf(Globals.item_order_list.size()));
+							startActivityForResult(new Intent(getApplicationContext(),MapActivity.class), PICK_DELIVERY_REQUEST);
+						}
+					});
+					alertDialog.show();
+
+							
+					
+				}
+				else{
+					startActivityForResult(new Intent(getApplicationContext(),MapActivity.class), PICK_DELIVERY_REQUEST);
+				}
 				
 			}
 		});
@@ -973,7 +858,7 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 		
 	}
 	private void showSubCategories(int position) {
-		// TODO Auto-generated method stub
+		
 		OfflineShopFrag offlineFrag = (OfflineShopFrag) conFrag.mContainerFragPager.getCurrentFragment();
 		if(offlineFrag != null){
 			Log.e("ItemClicked",categoryMap.get(position).getName());
@@ -982,7 +867,7 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 		
 	}
 	protected void showSearchItems() {
-		// TODO Auto-generated method stub
+		
 		OfflineShopFrag offlineFrag = (OfflineShopFrag) conFrag.mContainerFragPager.getCurrentFragment();
 		if(offlineFrag != null){
 			offlineFrag.showSearchItems();
@@ -995,14 +880,14 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 	public  void show_item_siblings(View view,Product item)
 	{
 	    	
-	    	DrawerLayout itemDrawerLayout = (DrawerLayout)AddDialog.findViewById(R.id.drawer_add_item);
-	    	FrameLayout itemDrawer = (FrameLayout)AddDialog.findViewById(R.id.simmilar_item_container);
-	    	prgBar = new ProgressBar(this);
-	    	FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
-	    	lp.gravity = Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL;
-	    	itemDrawer.addView(prgBar,lp);
-	    	itemDrawerLayout.openDrawer(itemDrawer);
-	    	getItemList(item);
+//	    	DrawerLayout itemDrawerLayout = (DrawerLayout)AddDialog.findViewById(R.id.drawer_add_item);
+//	    	FrameLayout itemDrawer = (FrameLayout)AddDialog.findViewById(R.id.simmilar_item_container);
+//	    	prgBar = new ProgressBar(this);
+//	    	FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
+//	    	lp.gravity = Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL;
+//	    	itemDrawer.addView(prgBar,lp);
+//	    	itemDrawerLayout.openDrawer(itemDrawer);
+//	    	getItemList(item);
 	}
 	
 	@Override
@@ -1043,14 +928,14 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 	@Override
 	public void ItemListGetSuccess(ArrayList<Product> itemSimmilarFamily) {
 		
-		FrameLayout drawerFrameLayout = (FrameLayout)AddDialog.findViewById(R.id.simmilar_item_container);
-		drawerFrameLayout.removeView(prgBar);
-		ListView itemDrawer = (ListView)AddDialog.findViewById(R.id.left_drawer_add_item);
-		DrawerItemAdapter drawerItemAdapter = new DrawerItemAdapter(this,itemSimmilarFamily);
-		drawerItemAdapter.setAddCardView(AddDialog);
-		if(itemDrawer != null){
-    		itemDrawer.setAdapter(drawerItemAdapter);
-    	}
+//		FrameLayout drawerFrameLayout = (FrameLayout)AddDialog.findViewById(R.id.simmilar_item_container);
+//		drawerFrameLayout.removeView(prgBar);
+//		ListView itemDrawer = (ListView)AddDialog.findViewById(R.id.left_drawer_add_item);
+//		DrawerItemAdapter drawerItemAdapter = new DrawerItemAdapter(this,itemSimmilarFamily);
+//		drawerItemAdapter.setAddCardView(AddDialog);
+//		if(itemDrawer != null){
+//    		itemDrawer.setAdapter(drawerItemAdapter);
+//    	}
 
 		
 	}
@@ -1074,6 +959,7 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 			Globals.item_added_list.add(addToItem.getItem().getCurrentItemId());
 			Globals.item_order_list.add(addToItem.getItem()); 
 			Globals.cartTotalPrice += addToItem.getItem().getTotalPrice();
+			productsNumberView.setText(String.valueOf(Globals.item_order_list.size()));
 		}
 		else{
 			Toast.makeText(this, "Product already present in your Cart", Toast.LENGTH_SHORT).show();
@@ -1234,9 +1120,22 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 		for(int i = 0 ; i < shoplist.size(); i++){
 			Log.e("ShopNames",shoplist.get(i).getName());
 		}
-		Shop mostNearByShop = shoplist.get(0);
-		mostNearByShop.connect_to_shop(this);
 		
+		if( shoplist != null && shoplist.size()>0){
+			
+			
+			for(int i = 0; i < shoplist.size() ; i++ ){
+				double shopLat =  shoplist.get(i).getLocation().getLatitude();
+				double shopLng =  shoplist.get(i).getLocation().getLongitude();
+				Globals.add_to_sd_matrix(shoplist.get(i),shopLat,shopLng,areaLocation);
+			}
+			 
+			Shop mostNearByShop = Globals.min_sd_matrix();
+			mostNearByShop.connect_to_shop(this);
+		}
+		else{
+			Toast.makeText(this, "No Shops found at your delivery Location", Toast.LENGTH_LONG).show();
+		}
 	}
 
 	
@@ -1287,7 +1186,6 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 	 */
 	@Override
 	public void searchProductFailure() {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -1299,8 +1197,198 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 	 */
 	@Override
 	public void productSearchSuccess(ArrayList<Product> productList) {
-		// TODO Auto-generated method stub
 		
 	}
+	
+	private class LoadUI extends AsyncTask<String, Integer, String> {
+		   @Override
+		   protected void onPreExecute() {
+		      super.onPreExecute();
+		      Controls.show_loading_dialog(currentActivityInstance,getString(R.string.taking_to_shop_message));
+		   }
+
+		   @Override
+		   protected String doInBackground(String... params) {
+		     
+			   progressBar = new ButteryProgressBar(currentActivityInstance);
+		        progressBar.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 24)); // create new ProgressBar and style it
+		        decorView = (FrameLayout) getWindow().getDecorView();			// retrieve the top view of our application
+		        
+		        // Here we try to position the ProgressBar to the correct position by looking
+		        // at the position where content area starts. But during creating time, sizes 
+		        // of the components are not set yet, so we have to wait until the components
+		        // has been laid out
+		        // Also note that doing progressBar.setY(136) will not work, because of different
+		        // screen densities and different sizes of actionBar
+		        
+		        ViewTreeObserver observer = progressBar.getViewTreeObserver();
+		        observer.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+		            @Override
+		            public void onGlobalLayout() {
+		                View contentView = decorView.findViewById(android.R.id.content);
+		                progressBar.setY(contentView.getY() - 10);
+
+		                ViewTreeObserver observer = progressBar.getViewTreeObserver();
+		                if (Build.VERSION.SDK_INT < 16) {
+		                	observer.removeGlobalOnLayoutListener(this);
+		                } else {
+		                	observer.removeOnGlobalLayoutListener(this);
+		                }
+		            }
+		        });
+		        
+		        
+		        
+//		        mainFragmentContainer = (FrameLayout)findViewById(R.id.fragment_container);
+//		        
+//		        mainTabsView = (View) findViewById(R.id.main_tabs_view);
+		        
+		        shopByListButton  = (ImageButton) findViewById(R.id.shop_outside_store);
+		    	//shopAtStoreButton = (ImageButton) findViewById(R.id.shop_at_store);
+		    	orderListButton   = (ImageButton) findViewById(R.id.orders_list);
+		    	mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout_capture);
+		        mainDrawerContainer = (FrameLayout)findViewById(R.id.left_drawer_container);
+		        mDrawerToggle = new ActionBarDrawerToggle(currentActivityInstance, mDrawerLayout,R.string.drawer_open,R.string.drawer_close)
+		        					{
+							        	public void onDrawerClosed(View view) {
+							                super.onDrawerClosed(view);
+							                //getSupportActionBar().setTitle(mTitle);
+							            }
+							
+							            /** Called when a drawer has settled in a completely open state. */
+							            public void onDrawerOpened(View drawerView) {
+							                super.onDrawerOpened(drawerView);
+							                //getSupportActionBar().setTitle(mDrawerTitle);
+							            }
+		        	
+		        				   };
+		        drawerSearch= (RelativeLayout)findViewById(R.id.navigation_search_box);
+		        drawerSearch.setOnClickListener(new OnClickListener() {
+		        						
+					@Override
+					public void onClick(View v) {
+						
+						mDrawerLayout.closeDrawer(mainDrawerContainer);
+						showSearchItems();
+					}
+				});
+			    mDrawerLayout.setDrawerListener(mDrawerToggle);
+		        ldrawer = (ListView)findViewById(R.id.left_drawer_capture);
+		        
+		        drawerChangeDelivery = (ImageButton)findViewById(R.id.drawer_change_delivery);
+		        drawerHeaderName = (TextView)findViewById(R.id.drawer_user_name);
+		        drawerHeaderAddress = (TextView)findViewById(R.id.drawer_delivery_address);
+		        drawerHeaderShop = (TextView)findViewById(R.id.drawer_shop);
+		        
+		        
+		        
+		    	hasSurface = false;
+		        // inactivityTimer = new InactivityTimer(this);
+		        beepManager = new BeepManager(currentActivityInstance);
+
+		        if (ZXScanHelper.getUserCallback() != null)
+		        {
+		            ZXScanHelper.getUserCallback().onScannerActivityCreated(currentActivityInstance);
+		        }
+		        if(Globals.connectedShop != null){
+		        	initDrawer();
+		        }
+		        else{
+		        	 Shop shopObj = new Shop();
+		     		shopObj.get_shop_list(currentActivityInstance,Globals.deliveryAddress.getDeliveryLocation());
+		        }
+		        cartFrag = new CartFragment();
+		        conFrag = new ContainerFragment();
+		        if(!conFrag.isAdded()){
+		        	getSupportFragmentManager().beginTransaction().add(R.id.fragment_container,conFrag ).commit();
+		        	
+		        }	
+				
+				if(!cartFrag.isAdded()){
+		    		getSupportFragmentManager().beginTransaction().add(R.id.container,cartFrag ).detach(cartFrag).commit();
+		    	}
+				
+				
+				
+				mDrawerToggle.syncState();
+		     return "ok";
+		   }
+
+		   @Override
+		   protected void onProgressUpdate(Integer... values) {
+		      super.onProgressUpdate(values);
+		      
+		   }
+
+		   @Override
+		   protected void onPostExecute(String result) {
+		      super.onPostExecute(result);
+		      Controls.dismiss_progress_dialog();
+		      conFrag.mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener(){
+
+					@Override
+					public void onPageScrollStateChanged(int position) {
+						
+					}
+
+					@Override
+					public void onPageScrolled(int position, float arg1, int arg2) {
+						
+					}
+
+					@Override
+					public void onPageSelected(int position) {
+						
+						if(position == 0){
+							//shopAtStoreButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.scan_grey));
+					    	shopByListButton.setBackgroundResource(R.drawable.shop_active);
+					    	orderListButton.setBackgroundResource(R.drawable.list_grey);
+							
+
+					    	toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha));
+							getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		        			getSupportActionBar().setHomeButtonEnabled(true);
+		        			mDrawerToggle.setDrawerIndicatorEnabled(true);
+							mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, mainDrawerContainer);
+							window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+							 
+							
+						}
+//						else if(position == 1){
+//							//shopAtStoreButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.scan_blue));
+//					    	shopByListButton.setBackgroundResource(R.drawable.cart_grey);
+//					    	orderListButton.setBackgroundResource(R.drawable.purchase_order_grey);
+//							
+////					        ShopMap.setVisible(false);
+//							getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+//							getSupportActionBar().setHomeButtonEnabled(false);
+//							mDrawerToggle.setDrawerIndicatorEnabled(false);
+//							toolbar.setNavigationIcon(null);
+//						    window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+//						    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mainDrawerContainer);
+//						    handler.resumeDecodeThread();
+//						   
+//						}
+						else{
+							//shopAtStoreButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.scan_grey));
+					    	shopByListButton.setBackgroundResource(R.drawable.shop_grey);
+					    	orderListButton.setBackgroundResource(R.drawable.list_active);
+							window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+							getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+							getSupportActionBar().setHomeButtonEnabled(false);
+							 mDrawerToggle.setDrawerIndicatorEnabled(false);
+							toolbar.setNavigationIcon(null);
+				    		mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mainDrawerContainer);
+				    		
+				    		
+						}
+						
+					}
+	    			
+	    			}
+	    		);
+		      shopByListButton.setBackgroundResource(R.drawable.shop_active);
+		   }
+		   }
 	
 }

@@ -51,4 +51,5 @@
         <color name="text_color">#707070</color>
         <color name="transparent_white">#88FFFFFF</color>
         <color name="aspirinwhite">#F5F5F5</color>
+        <color name="app_yellow">#F2BF5E</color>
 </resources>

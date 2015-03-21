@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 public class OrderFragmentPager extends FragmentPagerAdapter {
 
-	private static final String[] titles = { "Orders","Saved Lists" };
+	private static final String[] titles = { "ORDERS","SAVED LISTS" };
 	
 	public OrderFragmentPager(FragmentManager fm) {
 		super(fm);

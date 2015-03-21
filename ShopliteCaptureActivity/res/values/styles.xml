@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+   
+	  <style  name="pager_title_strip_style">
+	    <item name="android:layout_width">fill_parent</item>
+	    <item name="android:layout_height">?attr/actionBarSize</item>
+	    <item name="android:textStyle">bold</item>
+	    <item name="android:background">@color/dark_app_color</item>
+	    <item name="android:textColor">@color/app_yellow</item>
+	    <item name="android:textSize">22sp</item> 
+	</style>
+  
+
+
+</resources>

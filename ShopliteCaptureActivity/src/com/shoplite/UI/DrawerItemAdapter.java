@@ -58,19 +58,19 @@ public class DrawerItemAdapter extends ArrayAdapter<Product>{
 					
 					@Override
 					public void onClick(Product item, View view) {
-						CaptureActivity.addToItem = new AddItemCard(mContext,item);
-						BaseCardView itemContainer =(BaseCardView)AddDialog.findViewById(R.id.itemView);
-						CaptureActivity.addToItem.setParentView(mContext, itemContainer);
-						final DrawerLayout itemDrawerLayout = (DrawerLayout)AddDialog.findViewById(R.id.drawer_add_item);
-				    	final FrameLayout itemDrawer = (FrameLayout)AddDialog.findViewById(R.id.simmilar_item_container);
-				    	itemDrawerLayout.closeDrawer(itemDrawer);
-				    	CaptureActivity.addToItem.setActionButtonOnClick(new OnClickActionButtonListener() {
-							
-							@Override
-							public void onClick(Product itemCategory, View view) {
-								itemDrawerLayout.openDrawer(itemDrawer);
-							}
-						});
+//						CaptureActivity.addToItem = new AddItemCard(mContext,item);
+//						BaseCardView itemContainer =(BaseCardView)AddDialog.findViewById(R.id.itemView);
+//						CaptureActivity.addToItem.setParentView(mContext, itemContainer);
+//						final DrawerLayout itemDrawerLayout = (DrawerLayout)AddDialog.findViewById(R.id.drawer_add_item);
+//				    	final FrameLayout itemDrawer = (FrameLayout)AddDialog.findViewById(R.id.simmilar_item_container);
+//				    	itemDrawerLayout.closeDrawer(itemDrawer);
+//				    	CaptureActivity.addToItem.setActionButtonOnClick(new OnClickActionButtonListener() {
+//							
+//							@Override
+//							public void onClick(Product itemCategory, View view) {
+//								itemDrawerLayout.openDrawer(itemDrawer);
+//							}
+//						});
 					}
 				});
 		 }

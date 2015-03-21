@@ -5,10 +5,8 @@
     <item android:id="@+id/search"
           android:title="@string/map_search_text"
           android:icon="@android:drawable/ic_menu_search"
-           shoplite:showAsAction="collapseActionView|ifRoom"
+          shoplite:showAsAction="collapseActionView|ifRoom"
           android:capitalize="words"
-          android:actionViewClass="android.widget.SearchView"
-         
-          
-           />
+          shoplite:actionViewClass="android.support.v7.widget.SearchView"
+          />
 </menu>

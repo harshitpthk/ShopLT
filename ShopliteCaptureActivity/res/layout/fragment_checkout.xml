@@ -62,11 +62,12 @@
         <RadioGroup 
 	         android:padding="5dp"
 	        android:layout_marginTop="@dimen/activity_vertical_margin"
-	        android:layout_width="match_parent"
+	        android:layout_width="wrap_content"
+	         android:layout_gravity="center_horizontal"
 		    android:layout_height="wrap_content"
 		    android:orientation="horizontal">
 		    
-		    <RadioButton android:id="@+id/radio_shop_pickup"
+		   <!--  <RadioButton android:id="@+id/radio_shop_pickup"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:layout_weight="1"
@@ -76,11 +77,11 @@
 		        android:text="@string/shop_pickup"
 		        android:onClick="selectOrderRecieveing"
 		        android:fontFamily="sans-serif-light"
-		        />
+		        /> -->
 		    <RadioButton android:id="@+id/radio_home_delivery"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:layout_weight="1"
+		        
 		        android:textColor="@color/app_color"
 		        android:text="@string/home_delivery"
 		        android:onClick="selectOrderRecieveing"
@@ -124,7 +125,7 @@
     	    android:padding="10dp"
     	    android:textSize="16sp"
     	    android:textColor="@color/text_color"
-    	    android:text="City food center, 2nd cross rustam main road, rustambagh, old airport road , bangalore"/>
+    	    />
         
     	<LinearLayout 
     	    android:id="@+id/home_address_details" 
@@ -154,13 +155,14 @@
 	    </LinearLayout>
 	    <RadioGroup 
 		        android:id="@+id/payment_options_container"
-			    android:layout_width="fill_parent"
+			    android:layout_width="wrap_content"
 			    android:layout_height="wrap_content"
 			    android:orientation = "horizontal"
+			    android:layout_gravity="center_horizontal"
 			    android:padding="5dp"
 			    android:layout_marginTop="@dimen/activity_vertical_margin">
 	    
-				<RadioButton android:layout_weight="1"
+				<!-- <RadioButton android:layout_weight="1"
 			        android:id="@+id/pay_by_card"
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
@@ -169,8 +171,9 @@
 			        android:layout_marginRight="10dp"
 			        android:layout_marginEnd="10dp"
 			        android:fontFamily="sans-serif-light"
-			       />
-			    <RadioButton android:layout_weight="1"
+			       /> -->
+			    <RadioButton 
+			       
 			        android:id="@+id/pay_by_cash"
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
