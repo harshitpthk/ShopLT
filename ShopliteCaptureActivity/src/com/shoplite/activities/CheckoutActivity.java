@@ -68,9 +68,9 @@ public class CheckoutActivity extends ActionBarActivity {
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
+//		if (id == R.id.action_settings) {
+//			return true;
+//		}
 		if (id == android.R.id.home){
 			finish();
 			return true;
@@ -127,6 +127,7 @@ public class CheckoutActivity extends ActionBarActivity {
 			homeAddress = (LinearLayout) rootView.findViewById(R.id.home_address_details);
 			primaryHomeAddress = (EditText) rootView.findViewById(R.id.home_address_primary);
 			primaryHomeAddress.setText(Globals.deliveryAddress.getAddressString());
+			primaryHomeAddress.setEnabled(false);
 			
 			//second Version
 			//payOnlineRadio = (RadioButton) rootView.findViewById(R.id.pay_by_card);
@@ -195,6 +196,10 @@ public class CheckoutActivity extends ActionBarActivity {
 				}
 			});
 			
+			homeDeliveryRadio.setChecked(true);
+			homeDeliveryRadio.callOnClick();
+			payCashRadio.setChecked(true);
+			payCashRadio.callOnClick();
 			return rootView;
 		}
 		

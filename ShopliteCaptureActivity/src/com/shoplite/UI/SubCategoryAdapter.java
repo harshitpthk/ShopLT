@@ -90,10 +90,10 @@ public class SubCategoryAdapter extends RecyclerView.Adapter<SubCategoryAdapter.
 	public void onBindViewHolder(ViewHolder holder, int index) {
 		Category subCat = subCategories.get(index);
     	holder.mNameView.setText(subCat.getName());
-    	// Picasso.with(Globals.ApplicationContext) 
-//    	 .load("")
-//    	 .placeholder(R.drawable.placeholder)
-    	//.into(holder.mImageView);
+    	 Picasso.with(Globals.ApplicationContext) 
+    	 .load("http://s3-ap-southeast-1.amazonaws.com/static.shoplite/category_image/"+subCat.getId()+".jpg")
+    	 .placeholder(R.drawable.categoryplaceholder)
+    	.into(holder.mImageView);
     	
     	SubCategoryClick subCategoryClick = new SubCategoryClick() {
 			@Override

@@ -98,7 +98,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     	
 		Picasso.with(Globals.ApplicationContext) 
     	 .load("http://s3-ap-southeast-1.amazonaws.com/static.shoplite/product_image/"+product.getId()+".jpg")
-    	 .placeholder(R.drawable.placeholder)
+    	 .placeholder(R.drawable.productplaceholder)
     	.into(holder.mImageView);
     	
     	ProductClick prodClick = new ProductClick() {

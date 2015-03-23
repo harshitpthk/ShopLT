@@ -232,7 +232,7 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 		initQtyPicker();
 		updateView();
 		
-		String url = "http://s3-ap-southeast-1.amazonaws.com/static.shoplite/product_image/"+item.getId()+".jpg";
+		String url = "http://s3-ap-southeast-1.amazonaws.com/static.shoplite/product_image/"+getItem().getId()+".jpg";
 		fetchItemImage(url);
 				
 		

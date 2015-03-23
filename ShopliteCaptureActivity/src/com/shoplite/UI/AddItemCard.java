@@ -176,7 +176,10 @@ public class AddItemCard extends BaseItemCard {
 	
 	@Override
 	public void fetchItemImage(String url) {
-		 Picasso.with(getmContext()).load(url).into(itemImageView);
+		 Picasso.with(getmContext())
+		 .load(url)
+		 .placeholder(R.drawable.productplaceholder)
+		 .into(itemImageView);
 	}
 		
 	@Override

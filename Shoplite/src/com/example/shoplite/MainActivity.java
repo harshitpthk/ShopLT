@@ -68,11 +68,14 @@ public class MainActivity extends ActionBarActivity implements ConnectionInterfa
         String ClientID = Globals.dbhelper.getItem("cliendID");
         
        if(ClientID != null){
+    	   setContentView(R.layout.splash_screen);
     	   String email = Globals.dbhelper.getItem("email");
     	   Login ln = new Login();
     	   ln.login(ClientID.toString(), email ,this);
        }
        else if(auth_token != null){
+
+    	    setContentView(R.layout.splash_screen);
         	String phoneNo = Globals.dbhelper.getItem("phoneNo");
         	String email = Globals.dbhelper.getItem("email");
         	Bundle user_details = new Bundle();
