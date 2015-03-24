@@ -56,6 +56,10 @@
                   android:src="@drawable/delivered_stamp"
                  android:layout_height="50dp"/>
          </LinearLayout>
+         <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/order_swipe_refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
              
 	     <ListView 
 	        android:id="@+id/orderHistory_ListView"
@@ -67,6 +71,7 @@
 	        android:paddingBottom="@dimen/activity_horizontal_margin">
 	        
 	    </ListView>
+	     </android.support.v4.widget.SwipeRefreshLayout>
     </LinearLayout>
     
 

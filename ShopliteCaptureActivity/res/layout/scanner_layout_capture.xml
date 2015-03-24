@@ -142,6 +142,7 @@
 			        android:divider="#5A475E"
 			        android:background="#fff" 
 			        android:dividerHeight="0dp"
+			        android:paddingBottom="20dp"
 			        >
 			         
 			    </ListView>

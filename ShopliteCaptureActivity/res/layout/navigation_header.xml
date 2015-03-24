@@ -79,5 +79,17 @@
         android:layout_alignParentEnd="true"
         android:id="@+id/drawer_change_delivery"
        />
+    <ProgressBar 
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/mimap"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp"
+        
+        android:layout_centerVertical="true"
+        android:visibility="gone"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/change_delivery_progress"/>
     
 </RelativeLayout>

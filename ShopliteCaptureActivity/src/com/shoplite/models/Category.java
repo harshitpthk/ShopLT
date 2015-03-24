@@ -1,6 +1,7 @@
 package com.shoplite.models;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -18,7 +19,14 @@ public class Category implements ConnectionInterface{
 	private boolean isPriceUpdateAvailable;
 	private ArrayList<Category> childList;
 	private CategoryInterface calling_class_object;
+	private int rank;
 	
+	public int getRank() {
+		return rank;
+	}
+	public void setRank(int rank) {
+		this.rank = rank;
+	}
 	public ArrayList<Category> getChildList() {
 		return childList;
 	}
@@ -97,5 +105,10 @@ public class Category implements ConnectionInterface{
 			}});
 	}
 	
-
+	public static class CategoryComparator implements Comparator<Category> {
+	    @Override
+	    public int compare(Category cat1, Category cat2) {
+	        return  cat2.getRank()-cat1.getRank();
+	    }
+	}
 }

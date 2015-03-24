@@ -34,6 +34,7 @@ import com.shoplite.UI.Controls;
 import com.shoplite.UI.DividerItemDecoration;
 import com.shoplite.UI.ProductAdapter;
 import com.shoplite.UI.SubCategoryAdapter;
+import com.shoplite.UI.UIUtil;
 import com.shoplite.interfaces.CategoryAdapterCallback;
 import com.shoplite.interfaces.ControlsInterface;
 import com.shoplite.interfaces.ItemInterface;
@@ -68,7 +69,7 @@ public class OfflineShopFrag extends Fragment implements ItemInterface, Category
 		private ProgressBar prgBar;
 		private ArrayList<Product> searchedProductList = new ArrayList<Product>();
 		private ArrayList<Product> currentProductlist = new ArrayList<Product>();
-
+		private DividerItemDecoration itemDecor;
 		private TextView subCatView;
 
 
@@ -88,7 +89,7 @@ public class OfflineShopFrag extends Fragment implements ItemInterface, Category
 			mSearchLayoutManager = new LinearLayoutManager(getActivity());
 			mSearchRecyclerView.setLayoutManager(mSearchLayoutManager);
 		   
-			
+			itemDecor =  new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
 			catLevelView = (LinearLayout)rootView.findViewById(R.id.cat_level_container);
 			searchToolbar = (Toolbar) rootView.findViewById(R.id.search_toolbar);
 			searchToolbar.inflateMenu(R.menu.dashboard);
@@ -139,6 +140,8 @@ public class OfflineShopFrag extends Fragment implements ItemInterface, Category
 					return false;
 				}
 			});
+			 mSearchRecyclerView.setAdapter(mSearchAdapter);
+			
 			
 			  subCatView = new TextView(getActivity());
 
@@ -155,7 +158,7 @@ public class OfflineShopFrag extends Fragment implements ItemInterface, Category
 			Product pd = new Product(0,null);
 			pd.searchProducts(this, query);
 		}
-
+		
 		@Override
 		public void onActivityCreated (Bundle savedInstanceState) {
 		    super.onActivityCreated(savedInstanceState);
@@ -215,6 +218,7 @@ public class OfflineShopFrag extends Fragment implements ItemInterface, Category
 					loadChildCategories(currentChildLists,parentCat);
 					parentCatView.setTextColor(getResources().getColor(R.color.app_yellow));
 					parentCatView.setPaintFlags(parentCatView.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
+			        mRecyclerView.removeItemDecoration(itemDecor);
 
 					
 					//parentCatView.setBackgroundColor(Globals.ApplicationContext.getResources().getColor(R.color.dark_app_color));
@@ -318,7 +322,7 @@ public class OfflineShopFrag extends Fragment implements ItemInterface, Category
 			// TODO Auto-generated method stub
 			mLayoutManager = new LinearLayoutManager(getActivity());
 	        mRecyclerView.setLayoutManager(mLayoutManager);
-	        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+	        mRecyclerView.addItemDecoration(itemDecor);
 
 	        mAdapter = new ProductAdapter(productList,this);
 	        

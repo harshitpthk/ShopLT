@@ -1,12 +1,11 @@
 package com.shoplite.activities;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Window;
 
 import com.shoplite.fragments.MapFragment;
 import com.shoplite.interfaces.MapInterface;
@@ -14,15 +13,14 @@ import com.shoplite.interfaces.MapInterface;
 import eu.livotov.zxscan.R;
 
 public class MapActivity extends ActionBarActivity implements MapInterface {
-	MapFragment mapFrag = new MapFragment();
-	SwipeRefreshLayout swipeLayout ;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		//supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState	);
 		setContentView(R.layout.activity_map);
-		getSupportFragmentManager().beginTransaction().add(R.id.map_container,mapFrag).commit();
-			
+		new LoadUI().execute();
+		 
 	}
 
 	@Override
@@ -52,6 +50,35 @@ public class MapActivity extends ActionBarActivity implements MapInterface {
 		setResult(RESULT_OK, resultIntent);
 		finish();
 	}
+	private class LoadUI extends AsyncTask<String, Integer, String> {
+		   @Override
+		   protected void onPreExecute() {
+		      super.onPreExecute();
+		   }
 
+		   @Override
+		   protected String doInBackground(String... params) {
+		     
+			MapFragment mapFrag = new MapFragment();
+				
+			getSupportFragmentManager().beginTransaction().add(R.id.map_container,mapFrag).commit();
+				
+		     return "ok";
+		   }
+
+		   @Override
+		   protected void onProgressUpdate(Integer... values) {
+		      super.onProgressUpdate(values);
+		      
+		   }
+
+		   @Override
+		   protected void onPostExecute(String result) {
+		      super.onPostExecute(result);
+		   }
+	    			
+	    			
+		      
+		   }
 	
 }

@@ -22,6 +22,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.example.sholite.R;
@@ -302,7 +304,15 @@ public class MainActivity extends ActionBarActivity implements ConnectionInterfa
     	Intent i = new Intent(this, Verification.class);
     	startActivity(i);
 	}
-
+	public void retry(View v){
+		Controls.show_loading_dialog(this, "Retrying...");
+		 String ClientID = Globals.dbhelper.getItem("cliendID");
+	       if(ClientID != null){
+			String email = Globals.dbhelper.getItem("email");
+			 Login ln = new Login();
+		 	   ln.login(ClientID.toString(), email ,this);
+	       }
+	}
 
 	@Override
 	public void loginSuccess() {
@@ -325,6 +335,8 @@ public class MainActivity extends ActionBarActivity implements ConnectionInterfa
 	@Override
 	public void loginFailure() {
 		
+		RelativeLayout networkErrorCon = (RelativeLayout)findViewById(R.id.network_error_container);
+		networkErrorCon.setVisibility(View.VISIBLE);
 		
 	}
 

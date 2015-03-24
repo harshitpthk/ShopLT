@@ -5,6 +5,7 @@ package com.google.zxing.client.android;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 import android.annotation.SuppressLint;
@@ -68,6 +69,7 @@ import com.shoplite.UI.BaseCardView;
 import com.shoplite.UI.BaseItemCard.OnClickActionButtonListener;
 import com.shoplite.UI.ButteryProgressBar;
 import com.shoplite.UI.Controls;
+import com.shoplite.UI.UIUtil;
 import com.shoplite.Utils.CartGlobals;
 import com.shoplite.Utils.Constants;
 import com.shoplite.Utils.Constants.DBState;
@@ -150,6 +152,7 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
     private TextView drawerHeaderShop;
     private ImageButton drawerChangeDelivery;
     private CaptureActivity currentActivityInstance;
+    private ProgressBar pbChangeDelivery;
 	public static TextView productsNumberView;
     //activity methods
    	@SuppressLint("NewApi")
@@ -327,6 +330,7 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
     	return super.onPrepareOptionsMenu(menu);
     	   
     }
+ 
    
     
     @Override
@@ -350,6 +354,9 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 		      } else if (resultCode == RESULT_CANCELED) {
 		         
 		      }
+
+				pbChangeDelivery.setVisibility(View.GONE);
+				drawerChangeDelivery.setVisibility(View.VISIBLE);
 		}
     }
     
@@ -807,6 +814,7 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 			
 			@Override
 			public void onClick(View v) {
+				
 				if(Globals.item_added_list.size() >0){
 					AlertDialog.Builder alert = new AlertDialog.Builder( currentActivityInstance);
 					AlertDialog alertDialog = alert.create();
@@ -827,6 +835,7 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							
+							
 							Globals.resetCartData();
 							productsNumberView.setText(String.valueOf(Globals.item_order_list.size()));
 							startActivityForResult(new Intent(getApplicationContext(),MapActivity.class), PICK_DELIVERY_REQUEST);
@@ -838,6 +847,9 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 					
 				}
 				else{
+
+					drawerChangeDelivery.setVisibility(View.GONE);
+					pbChangeDelivery.setVisibility(View.VISIBLE);
 					startActivityForResult(new Intent(getApplicationContext(),MapActivity.class), PICK_DELIVERY_REQUEST);
 				}
 				
@@ -862,7 +874,16 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 		OfflineShopFrag offlineFrag = (OfflineShopFrag) conFrag.mContainerFragPager.getCurrentFragment();
 		if(offlineFrag != null){
 			Log.e("ItemClicked",categoryMap.get(position).getName());
-			offlineFrag.loadChildCategories(categoryMap.get(position).getChildList(),categoryMap.get(position).getName());
+			ArrayList<Category> shopSubCategoryList = new ArrayList<Category>();
+			ArrayList<Category> subCategoryList = categoryMap.get(position).getChildList();
+			Collections.sort(subCategoryList, new Category.CategoryComparator()); 
+			Category cat;
+			for(int i = 0 ; i < subCategoryList.size();i++){
+				 cat = subCategoryList.get(i);
+				 if(cat.getRank()>0)
+					 shopSubCategoryList.add(cat);
+			}
+			offlineFrag.loadChildCategories(shopSubCategoryList,categoryMap.get(position).getName());
 		}
 		
 	}
@@ -1151,8 +1172,13 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 		 
 		//{"Groceries","Fruits & Veg","Beverages/Health-Drinks","Dairy/Eggs","Ready to Eat/Packed Foods","Personnel Care","Household","Stationery"};
 		categoryMap = categories;
+		
+		//Collections.sort(categoryMap, new Category.CategoryComparator()); 
+		Category cat;
 		for(int i = 0 ; i < categories.size();i++){
-			mainCategories.add(categories.get(i).getName());
+			 cat = categories.get(i);
+			 if(cat.getRank()>0)
+				mainCategories.add(cat.getName());
 		}
 		
 		mainDrawerContainer.removeView(prgBar);
@@ -1160,7 +1186,7 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
         ldrawer.setOnItemClickListener(new DrawerItemClickListener());// Set the list's click listener
 	}
 
-	
+		
 	@Override
 	public void productsGetFailure() {
 		
@@ -1201,7 +1227,9 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 	}
 	
 	private class LoadUI extends AsyncTask<String, Integer, String> {
-		   @Override
+		  
+
+		@Override
 		   protected void onPreExecute() {
 		      super.onPreExecute();
 		      Controls.show_loading_dialog(currentActivityInstance,getString(R.string.taking_to_shop_message));
@@ -1385,10 +1413,10 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 						
 					}
 	    			
-	    			}
-	    		);
+	    			});
 		      shopByListButton.setBackgroundResource(R.drawable.shop_active);
+		      UIUtil.setupUI(mDrawerLayout,currentActivityInstance);
+		       pbChangeDelivery = (ProgressBar) findViewById(R.id.change_delivery_progress);
 		   }
-		   }
-	
+	}
 }

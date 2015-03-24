@@ -209,7 +209,8 @@ public class BasicCartItemCard extends BaseItemCard{
 		
 		setCheckBoxText(context.getResources().getString(R.string.pick));
 		updateView();
-		
+		String url = "http://s3-ap-southeast-1.amazonaws.com/static.shoplite/product_image/"+getItem().getId()+".jpg";
+		fetchItemImage(url);
 		
 	}
 

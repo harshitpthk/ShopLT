@@ -105,6 +105,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
 			@Override
 			public void productClick(Product product) {
 				Log.e("category clicked", product.getName());
+				
 				callback.onProductClicked(product);
 			}
 		};

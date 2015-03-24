@@ -37,8 +37,10 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
@@ -70,6 +72,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.shoplite.UI.PlacesSearchAdapter;
+import com.shoplite.UI.UIUtil;
 import com.shoplite.Utils.Globals;
 import com.shoplite.Utils.location;
 import com.shoplite.connection.ServiceProvider;
@@ -226,7 +229,7 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 	            builderSingle.setTitle("Select Delivery Address");
 	            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
 	                    getActivity(),
-	                    android.R.layout.select_dialog_singlechoice);
+	                    android.R.layout.simple_list_item_1);
 	            for(int i = 0 ; i < userAddress.size();i++){
 	            	arrayAdapter.add(userAddress.get(i).getAddressString());
 	            }
@@ -527,13 +530,15 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
     	setDeliveryLocation = (Button)rootView.findViewById(R.id.setDeliveryLocation);
     	setDeliveryLocation.setOnClickListener(setDeliveryAnchor);
     	//CaptureActivity.actionBar.setTitle(getResources().getText(R.string.pick_delivery_location));
-        
+    	
     	startShop = (Button)rootView.findViewById(R.id.startShop);
     	startShop.setOnClickListener(mapShopContinue);
     	mMap.setOnCameraChangeListener(onCameraChange);
     	mMap.setOnMarkerClickListener(this);
     	mMap.setMyLocationEnabled(true);
     	View mapView = mMapFragment.getView();
+    	UIUtil.setupUI(map_container,getActivity());
+      
     	if(mapView!= null){
     	Resources r = getResources();
     	float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25, r.getDisplayMetrics());
