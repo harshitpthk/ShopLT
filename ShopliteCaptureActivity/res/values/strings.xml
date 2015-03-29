@@ -14,10 +14,10 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-<resources>
-    <string name="zx_msg_default_status">Place a barcode inside the viewfinder rectangle to scan it.</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="zx_msg_default_status" tools:ignore="MissingTranslation">Place a barcode inside the viewfinder rectangle to scan it.</string>
     <string name="zx_error">Internal Library Error</string>
-    <string name="zx_close">Close</string>
+    <string name="zx_close" tools:ignore="MissingTranslation">Close</string>
     <string name="zx_unexpected_camera_error">Unexpected camera or subsystem error: %s</string>
     <string name="title_activity_add_item">AddItem</string>
     <string name="hello_world">Hello world!</string>
@@ -89,4 +89,7 @@
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="title_activity_map">MapActivity</string>
      <string name="taking_to_shop_message">Taking You to your nearest Store.</string>
+     <string name="products_fetch_failure">Could not fetch Products.</string>
+     <string name="order_detail_fetch_failure">Could not fetch Order Details.</string>
+     <string name="product_import_failure">Could Not Import Products to cart, Check Your Network</string>
 </resources>

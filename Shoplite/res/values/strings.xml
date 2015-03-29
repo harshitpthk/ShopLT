@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <string name="app_name">HomelyBuys</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings" tools:ignore="MissingTranslation">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_settings_">Settings_Activity</string>
     <string name="title_activity_verification">Verification</string>
@@ -23,9 +23,78 @@
     <string name="title_activity_cart">Shopping Cart</string>
      <string name="title_activity_checkout">Checkout</string>
      <string name="verification_wait">Kindly wait you will be receiving a message shortly.</string>
-     <string name="verification_failure">The Verification Code you entered is invalid. Please Try Again.</string>
-     <string name="network_err_msg">Can\'t connect, Check Your Internet Connection and Retry</string>
+     <string name="verification_failure">The Verification Code entered is invalid. Please Try Again.</string>
+     <string name="network_err_msg">Check Your Internet Connection.</string>
      <string name="retry">Retry</string>
+    <string name="title_activity_add_item">AddItem</string>
     
+    <string name="qrcodeview_message">Kindly place the QR code in the above square.</string>
+    <string name="empty_cart_message">Your Shopping Cart is empty, Go Back and add some items to your cart. :)</string>
+    <string name="save_cart_list">Save List</string>
+    <string name="order_string">Order Now</string>
+    <string name="shop_at_store">Shop at store</string>
+    <string name="shop_offline">Shop outside store</string>
+    <string name="shops_near_you">Shops near your location</string>
+    <string name="shopping_cart">Cart</string>
+    <string name="order_history">Orders history</string>
+    <string name="delete_last_scanned">Delete Last Scanned Item</string>
+    <string name="drawer_open">OpenDrawer</string>
+    <string name="drawer_close">CloseDrawer</string>
+    <string name="map_search_text">Find Shops </string>
+    <string name="search">Search </string>
+    <string name="more">More</string>
+    <string name="measures">Measures</string>
+    <string name="quantity">Quantity</string>
+    <string name="cancel">Cancel</string>
+    <string name="add_item">Add Item</string>
+    <string name="desc_image">Item Image</string>
+    <string name="desc_image_button">Item Image</string>
+    <string name="select">Select</string>
+    <string name="edit">Edit</string>
+    <string name="list_save_input_hint">Enter List Name to be Saved</string>
+    <string name="shop">Shop</string>
+    <string name="current_order_heading">Current Orders</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="title_activity_items_display">ItemsDisplayActivity</string>
+    <string name="currency">\u20B9</string>
+    <string name="home_delivery">Home Delivery</string>
+    <string name="shop_pickup">Take Away</string>
+    <string name="address_input_hint">Enter House number, Apartment/Society</string>
+    <string name="address_detail_heading">Address Details</string>
+    <string name="pay_cash">Pay Cash </string>
+    <string name="pay_online">Pay Online</string>
+    <string name="confirm_order">Confirm</string>
+    <string name="finalize_order_message">Continue to place order, cancel to make changes.</string>
+    <string name="finalize_order_title">Confirm Order?</string>
+    <string name="confirming_order">Confirming Order</string>
+    <string name="delivery_anchor_title">Your Delivery Location</string>
+    <string name="delivery_dialog_text">Set Delivery Point</string>
+    <string name="set_address">Set</string>
+    <string name="pick_delivery_location">Pick Delivery Location</string>
+    <string name="pick">Pick</string>
+    <string name="import_all">Import All</string>
+    <string name="import_selected">Import Selected </string>
+    <string name="order_summary_heading">Order Summary</string>
+    <string name="import_all_title">Import List</string>
+    <string name="settings">Settings</string>
+    <string name="item">Item</string>
+    <string name="account">Account</string>
+    <string name="items">Items</string>
+    <string name="import_all_message">Import  items from the List ?</string>
+    <string name="address">Address</string>
+    <string name="phone">Phone no.</string>
+    <string name="legal">Legal</string>
+    <string name="open_source_license">Open Source Licenses</string>
+    <string name="import_items">Import Items</string>
+    <string name="your_saved_lists">Your Saved Lists</string>
+    <string name="terms_of_use">Terms of Use</string>
+    <string name="privacy_statement">Privacy Statement</string>
+    <string name="name">Name</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="title_activity_map">MapActivity</string>
+     <string name="taking_to_shop_message">Taking You to your nearest Store.</string>
+     <string name="products_fetch_failure">Could not fetch Products.</string>
+     <string name="order_detail_fetch_failure">Could not fetch Order Details.</string>
+     <string name="product_import_failure">Could Not Import Products to cart, Check Your Network</string>
     
 </resources>

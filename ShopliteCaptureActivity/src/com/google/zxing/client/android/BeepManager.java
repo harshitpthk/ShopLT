@@ -16,13 +16,14 @@
 
 package com.google.zxing.client.android;
 
+import com.homelybuysapp.zxscan.ZXScanHelper;
+
 import android.app.Activity;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Vibrator;
 import eu.livotov.zxscan.R;
-import eu.livotov.zxscan.ZXScanHelper;
 
 /**
  * Manages beeps and vibrations for {@link CaptureActivity}.

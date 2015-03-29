@@ -5,4 +5,17 @@
      <color name="friendfoeyellow">#FFFFA6</color>
      <color name="text_color">#707070</color>
      <color name="friendfoegreen">#BDF271</color>
+    
+     <color name="dark_app_color">#563C5C</color>
+     <color name="status_bar_app_color">#2E2031</color>
+     <!-- <color name="dark_app_color">#413344</color>-->
+     <color name="orange_peel">#FF9F00</color>
+      <color name="orange_tea_rose">#FF9F00</color>
+       <color name="orange_atomic_tangerine">#FF9966</color>
+        <color name="orange_carrot">#ED9121</color>
+       
+        <color name="transparent_white">#88FFFFFF</color>
+        <color name="aspirinwhite">#F5F5F5</color>
+        <color name="app_yellow">#F2BF5E</color>
+     
 </resources>

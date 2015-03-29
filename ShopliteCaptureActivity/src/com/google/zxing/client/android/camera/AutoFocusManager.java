@@ -20,9 +20,10 @@ import android.content.Context;
 import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.util.Log;
+
 import com.google.zxing.client.android.common.executor.AsyncTaskExecInterface;
 import com.google.zxing.client.android.common.executor.AsyncTaskExecManager;
-import eu.livotov.zxscan.ZXScanHelper;
+import com.homelybuysapp.zxscan.ZXScanHelper;
 
 import java.util.ArrayList;
 import java.util.Collection;

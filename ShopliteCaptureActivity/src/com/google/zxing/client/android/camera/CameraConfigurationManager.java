@@ -22,6 +22,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import com.homelybuysapp.zxscan.AutofocusMode;
+import com.homelybuysapp.zxscan.ZXScanHelper;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Point;
@@ -30,8 +33,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
-import eu.livotov.zxscan.AutofocusMode;
-import eu.livotov.zxscan.ZXScanHelper;
 
 /**
  * A class which deals with reading, parsing, and setting the camera parameters which are used to

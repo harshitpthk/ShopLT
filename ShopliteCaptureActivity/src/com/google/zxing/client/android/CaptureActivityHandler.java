@@ -32,9 +32,9 @@ import com.google.gson.Gson;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 import com.google.zxing.client.android.camera.CameraManager;
-import com.shoplite.UI.Controls;
-import com.shoplite.models.Input;
-import com.shoplite.models.Product;
+import com.homelybuysapp.UI.Controls;
+import com.homelybuysapp.models.Input;
+import com.homelybuysapp.models.Product;
 
 import eu.livotov.zxscan.R;
 

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white" >
+    <EditText 
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/list_save_input_hint"
+        android:id="@+id/list_save_name_input"/>
+   
+  		<LinearLayout
+		android:id="@+id/dialog_action_view"
+		android:orientation="horizontal"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="bottom"
+		>
+           
+ 
+		    <ImageButton 
+		        android:layout_weight="1"
+		        android:id="@+id/negative_button"
+		        android:layout_width="60dp"
+		        android:layout_height="60dp"
+		        android:text="@string/cancel"
+		       	android:textColor="@color/app_color"
+		        android:background="@color/white"
+		        android:layout_margin="10dp"
+		        android:src="@drawable/reject"
+		        android:contentDescription="@string/desc_image_button"
+		       
+	        />
+		    <View
+		         android:layout_marginTop="20dp"
+      			 android:layout_width="1dp"
+      			 android:layout_height="40dp" 
+       			 android:background="#c1c1c1"/>
+	    
+	    	<ImageButton 
+		        android:contentDescription="@string/desc_image_button"
+		        android:layout_weight="1"
+		        android:id="@+id/positive_button"
+		        android:layout_width="60dp"
+		        android:layout_height="60dp"
+		        android:text="@string/add_item"
+		      	android:textColor="@color/app_color"
+		        android:background="@color/white"
+		        android:layout_margin="10dp"
+		        android:src="@drawable/accept"
+	       />
+   </LinearLayout>
+</LinearLayout>

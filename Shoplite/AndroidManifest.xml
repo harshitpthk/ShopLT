@@ -4,7 +4,18 @@
     package="com.example.sholite"
     android:versionCode="1"
     android:versionName="1.0" >
-
+	<compatible-screens>
+        <!-- all small size screens -->
+        <screen android:screenSize="small" android:screenDensity="mdpi" />
+        <screen android:screenSize="small" android:screenDensity="hdpi" />
+        <screen android:screenSize="small" android:screenDensity="xhdpi" />
+       
+        <!-- all normal size screens -->
+        <screen android:screenSize="normal" android:screenDensity="mdpi" />
+        <screen android:screenSize="normal" android:screenDensity="hdpi" />
+        <screen android:screenSize="normal" android:screenDensity="xhdpi" />
+      
+    </compatible-screens>
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="21" />
@@ -39,7 +50,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.example.shoplite.MainActivity"
+            android:name="com.homelybuysapp.activities.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppFullScreenTheme" >
@@ -50,7 +61,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.google.zxing.client.android.CaptureActivity"
+            android:name="com.homelybuysapp.activities.HomeActivity"
             tools:merge="override"
             android:clearTaskOnLaunch="true"
             android:configChanges="orientation|keyboardHidden"
@@ -62,13 +73,13 @@
         
                
         <activity
-            android:name="com.example.shoplite.Verification"
+            android:name="com.homelybuysapp.activities.Verification"
             android:label="@string/title_activity_verification"
             android:theme="@style/AppFullScreenTheme" >
         </activity>
         
         <activity
-            android:name="com.shoplite.activities.SettingsActivity"
+            android:name="com.homelybuysapp.activities.SettingsActivity"
             android:theme="@style/AppActionBarTheme" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -76,7 +87,7 @@
         </activity>
         
          <activity
-            android:name="com.shoplite.activities.CheckoutActivity"
+            android:name="com.homelybuysapp.activities.CheckoutActivity"
             android:label="@string/title_activity_checkout"
             android:theme="@style/AppActionBarTheme"
             android:windowSoftInputMode="adjustPan">
@@ -85,7 +96,7 @@
                 android:value="com.google.zxing.client.android.CaptureActivity" />
         </activity>
         <activity
-            android:name="com.shoplite.activities.ItemsDisplayActivity"
+            android:name="com.homelybuysapp.activities.ItemsDisplayActivity"
             android:theme="@style/AppActionBarTheme"
             android:label="@string/title_activity_items_display">
             <meta-data
@@ -93,7 +104,7 @@
                 android:value="com.google.zxing.client.android.CaptureActivity" />
         </activity>
          <activity
-            android:name="com.shoplite.activities.MapActivity"
+            android:name="com.homelybuysapp.activities.MapActivity"
             android:label="@string/pick_delivery_location" 
             android:theme="@style/AppActionBarTheme">
         </activity>

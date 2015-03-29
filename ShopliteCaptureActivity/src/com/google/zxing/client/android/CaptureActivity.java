@@ -42,8 +42,6 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
-import android.view.ViewTreeObserver;
-import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -64,37 +62,35 @@ import com.google.zxing.Result;
 import com.google.zxing.ResultMetadataType;
 import com.google.zxing.ResultPoint;
 import com.google.zxing.client.android.camera.CameraManager;
-import com.shoplite.UI.AddItemCard;
-import com.shoplite.UI.BaseCardView;
-import com.shoplite.UI.BaseItemCard.OnClickActionButtonListener;
-import com.shoplite.UI.ButteryProgressBar;
-import com.shoplite.UI.Controls;
-import com.shoplite.UI.UIUtil;
-import com.shoplite.Utils.CartGlobals;
-import com.shoplite.Utils.Constants;
-import com.shoplite.Utils.Constants.DBState;
-import com.shoplite.Utils.Globals;
-import com.shoplite.activities.MapActivity;
-import com.shoplite.fragments.CartFragment;
-import com.shoplite.fragments.ContainerFragment;
-import com.shoplite.fragments.OfflineShopFrag;
-import com.shoplite.interfaces.CategoryInterface;
-import com.shoplite.interfaces.ControlsInterface;
-import com.shoplite.interfaces.ItemInterface;
-import com.shoplite.interfaces.MapInterface;
-import com.shoplite.interfaces.PackListInterface;
-import com.shoplite.interfaces.ShopInterface;
-import com.shoplite.models.Category;
-import com.shoplite.models.Input;
-import com.shoplite.models.Location;
-import com.shoplite.models.OrderItemDetail;
-import com.shoplite.models.PackList;
-import com.shoplite.models.Product;
-import com.shoplite.models.ProductVariance;
-import com.shoplite.models.Shop;
+import com.homelybuysapp.UI.AddItemCard;
+import com.homelybuysapp.UI.BaseCardView;
+import com.homelybuysapp.UI.ButteryProgressBar;
+import com.homelybuysapp.UI.Controls;
+import com.homelybuysapp.UI.BaseItemCard.OnClickActionButtonListener;
+import com.homelybuysapp.Utils.CartGlobals;
+import com.homelybuysapp.Utils.Constants;
+import com.homelybuysapp.Utils.Globals;
+import com.homelybuysapp.Utils.Constants.DBState;
+import com.homelybuysapp.fragments.CartFragment;
+import com.homelybuysapp.fragments.ContainerFragment;
+import com.homelybuysapp.fragments.OfflineShopFrag;
+import com.homelybuysapp.interfaces.CategoryInterface;
+import com.homelybuysapp.interfaces.ControlsInterface;
+import com.homelybuysapp.interfaces.ItemInterface;
+import com.homelybuysapp.interfaces.MapInterface;
+import com.homelybuysapp.interfaces.PackListInterface;
+import com.homelybuysapp.interfaces.ShopInterface;
+import com.homelybuysapp.models.Category;
+import com.homelybuysapp.models.Input;
+import com.homelybuysapp.models.Location;
+import com.homelybuysapp.models.OrderItemDetail;
+import com.homelybuysapp.models.PackList;
+import com.homelybuysapp.models.Product;
+import com.homelybuysapp.models.ProductVariance;
+import com.homelybuysapp.models.Shop;
+import com.homelybuysapp.zxscan.ZXScanHelper;
 
 import eu.livotov.zxscan.R;
-import eu.livotov.zxscan.ZXScanHelper;
 
 
 
@@ -115,7 +111,7 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
     SurfaceHolder.Callback cameraSurfaceCallback = this;
     
     private RelativeLayout drawerSearch ;
-    public static ButteryProgressBar progressBar;
+    public static ButteryProgressBar butteryProgressBar;
     public static FrameLayout decorView;
      
     private ListView ldrawer;
@@ -162,11 +158,11 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 		  
 		super.onCreate(icicle);
 
-	    if (android.os.Build.VERSION.SDK_INT < 8 || ZXScanHelper.isBlockCameraRotation())
-	    {
-	    	setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-	    }
+	    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+	    supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);//Above setContentView, very important
+
 	    int scanner_layout = R.layout.scanner_layout_capture;                 	// setting the custom layout on top of capture activity
+	    
 		setContentView(scanner_layout);
       
         window = getWindow();
@@ -183,6 +179,8 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 		
 		actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 		currentActivityInstance = this;
+	    setSupportProgressBarIndeterminateVisibility(true);
+
 		 new LoadUI().execute();
 		
 		
@@ -838,8 +836,11 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 							
 							Globals.resetCartData();
 							productsNumberView.setText(String.valueOf(Globals.item_order_list.size()));
-							startActivityForResult(new Intent(getApplicationContext(),MapActivity.class), PICK_DELIVERY_REQUEST);
-						}
+							Intent in = 	new Intent(currentActivityInstance,com.homelybuysapp.activities.MapActivity.class);
+							in.putExtra("instantiator","captureactivity");
+
+						 
+							startActivityForResult(in, PICK_DELIVERY_REQUEST);						}
 					});
 					alertDialog.show();
 
@@ -850,8 +851,11 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 
 					drawerChangeDelivery.setVisibility(View.GONE);
 					pbChangeDelivery.setVisibility(View.VISIBLE);
-					startActivityForResult(new Intent(getApplicationContext(),MapActivity.class), PICK_DELIVERY_REQUEST);
-				}
+					Intent in = 	new Intent(currentActivityInstance,com.homelybuysapp.activities.MapActivity.class);
+					in.putExtra("instantiator","captureactivity");
+
+				 
+					startActivityForResult(in, PICK_DELIVERY_REQUEST);					}
 				
 			}
 		});
@@ -981,22 +985,24 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 			Globals.item_order_list.add(addToItem.getItem()); 
 			Globals.cartTotalPrice += addToItem.getItem().getTotalPrice();
 			productsNumberView.setText(String.valueOf(Globals.item_order_list.size()));
+			Toast.makeText(this, "Product added to your Cart", Toast.LENGTH_SHORT).show();
+
 		}
 		else{
 			Toast.makeText(this, "Product already present in your Cart", Toast.LENGTH_SHORT).show();
 		}
 		//}
 		
-		sendPackList();
-		if(handler != null && conFrag.mViewPager.getCurrentItem() == 1)
-			handler.restartPreviewAndDecode();
+//		sendPackList();
+//		if(handler != null && conFrag.mViewPager.getCurrentItem() == 1)
+//			handler.restartPreviewAndDecode();
 		
 	}
 	@Override
 	public void negative_button_alert_method() {
 		AddDialog.dismiss();
-		if(handler != null && conFrag.mViewPager.getCurrentItem() == 1)
-			handler.restartPreviewAndDecode();
+//		if(handler != null && conFrag.mViewPager.getCurrentItem() == 1)
+//			handler.restartPreviewAndDecode();
 	}
 	@Override
 	public void save_alert_dialog(AlertDialog alertDialog) {
@@ -1004,8 +1010,8 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 	}
 	@Override
 	public void neutral_button_alert_method() {
-		if(handler != null && conFrag.mViewPager.getCurrentItem() == 1)
-			handler.restartPreviewAndDecode();
+//		if(handler != null && conFrag.mViewPager.getCurrentItem() == 1)
+//			handler.restartPreviewAndDecode();
 	}
 
 	
@@ -1112,7 +1118,7 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 	}
 
 	/* (non-Javadoc)
-	 * @see com.shoplite.interfaces.MapInterface#mapShopStart()
+	 * @see com.homelybuysapp.interfaces.MapInterface#mapShopStart()
 	 */
 	@Override
 	public void mapShopStart() {
@@ -1208,7 +1214,7 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 
 
 	/* (non-Javadoc)
-	 * @see com.shoplite.interfaces.ItemInterface#searchProductFailure()
+	 * @see com.homelybuysapp.interfaces.ItemInterface#searchProductFailure()
 	 */
 	@Override
 	public void searchProductFailure() {
@@ -1219,7 +1225,7 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 
 
 	/* (non-Javadoc)
-	 * @see com.shoplite.interfaces.ItemInterface#productSearchSuccess(java.util.ArrayList)
+	 * @see com.homelybuysapp.interfaces.ItemInterface#productSearchSuccess(java.util.ArrayList)
 	 */
 	@Override
 	public void productSearchSuccess(ArrayList<Product> productList) {
@@ -1232,45 +1238,24 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 		@Override
 		   protected void onPreExecute() {
 		      super.onPreExecute();
-		      Controls.show_loading_dialog(currentActivityInstance,getString(R.string.taking_to_shop_message));
+		      
+		   	Controls.show_loading_dialog(currentActivityInstance,getString(R.string.taking_to_shop_message));
+
+		    	    
+		     
 		   }
 
 		   @Override
 		   protected String doInBackground(String... params) {
 		     
-			   progressBar = new ButteryProgressBar(currentActivityInstance);
-		        progressBar.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 24)); // create new ProgressBar and style it
-		        decorView = (FrameLayout) getWindow().getDecorView();			// retrieve the top view of our application
-		        
-		        // Here we try to position the ProgressBar to the correct position by looking
-		        // at the position where content area starts. But during creating time, sizes 
-		        // of the components are not set yet, so we have to wait until the components
-		        // has been laid out
-		        // Also note that doing progressBar.setY(136) will not work, because of different
-		        // screen densities and different sizes of actionBar
-		        
-		        ViewTreeObserver observer = progressBar.getViewTreeObserver();
-		        observer.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
-		            @Override
-		            public void onGlobalLayout() {
-		                View contentView = decorView.findViewById(android.R.id.content);
-		                progressBar.setY(contentView.getY() - 10);
-
-		                ViewTreeObserver observer = progressBar.getViewTreeObserver();
-		                if (Build.VERSION.SDK_INT < 16) {
-		                	observer.removeGlobalOnLayoutListener(this);
-		                } else {
-		                	observer.removeOnGlobalLayoutListener(this);
-		                }
-		            }
-		        });
+			  
 		        
 		        
 		        
 //		        mainFragmentContainer = (FrameLayout)findViewById(R.id.fragment_container);
 //		        
 //		        mainTabsView = (View) findViewById(R.id.main_tabs_view);
-		        
+		        butteryProgressBar = (ButteryProgressBar)findViewById(R.id.search_progress_bar);
 		        shopByListButton  = (ImageButton) findViewById(R.id.shop_outside_store);
 		    	//shopAtStoreButton = (ImageButton) findViewById(R.id.shop_at_store);
 		    	orderListButton   = (ImageButton) findViewById(R.id.orders_list);
@@ -1318,27 +1303,19 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 		        {
 		            ZXScanHelper.getUserCallback().onScannerActivityCreated(currentActivityInstance);
 		        }
-		        if(Globals.connectedShop != null){
-		        	initDrawer();
-		        }
-		        else{
-		        	 Shop shopObj = new Shop();
-		     		shopObj.get_shop_list(currentActivityInstance,Globals.deliveryAddress.getDeliveryLocation());
-		        }
+		        
 		        cartFrag = new CartFragment();
 		        conFrag = new ContainerFragment();
-		        if(!conFrag.isAdded()){
-		        	getSupportFragmentManager().beginTransaction().add(R.id.fragment_container,conFrag ).commit();
-		        	
-		        }	
-				
-				if(!cartFrag.isAdded()){
-		    		getSupportFragmentManager().beginTransaction().add(R.id.container,cartFrag ).detach(cartFrag).commit();
-		    	}
-				
-				
-				
-				mDrawerToggle.syncState();
+		        
+					        if(!conFrag.isAdded()){
+					        	getSupportFragmentManager().beginTransaction().add(R.id.fragment_container,conFrag ).commit();
+					        	
+					        }	
+							
+							if(!cartFrag.isAdded()){
+					    		getSupportFragmentManager().beginTransaction().add(R.id.container,cartFrag ).detach(cartFrag).commit();
+					    	}
+		        
 		     return "ok";
 		   }
 
@@ -1351,7 +1328,18 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 		   @Override
 		   protected void onPostExecute(String result) {
 		      super.onPostExecute(result);
-		      Controls.dismiss_progress_dialog();
+		      if(Globals.connectedShop != null){
+		        	initDrawer();
+		        }
+		        else{
+		        	 Shop shopObj = new Shop();
+		     		shopObj.get_shop_list(currentActivityInstance,Globals.deliveryAddress.getDeliveryLocation());
+		        }
+		     
+				
+				
+				
+				mDrawerToggle.syncState();
 		      conFrag.mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener(){
 
 					@Override
@@ -1415,8 +1403,10 @@ public class CaptureActivity extends ActionBarActivity  implements SurfaceHolder
 	    			
 	    			});
 		      shopByListButton.setBackgroundResource(R.drawable.shop_active);
-		      UIUtil.setupUI(mDrawerLayout,currentActivityInstance);
 		       pbChangeDelivery = (ProgressBar) findViewById(R.id.change_delivery_progress);
+		       
+			   	  Controls.dismiss_progress_dialog();
+
 		   }
 	}
 }
