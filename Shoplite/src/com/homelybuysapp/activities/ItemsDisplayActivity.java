@@ -18,7 +18,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.sholite.R;
+import com.homelybuys.homelybuysApp.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.homelybuysapp.UI.Controls;

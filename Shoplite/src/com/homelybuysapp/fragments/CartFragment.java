@@ -24,7 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.sholite.R;
+import com.homelybuys.homelybuysApp.R;
 import com.homelybuysapp.UI.Controls;
 import com.homelybuysapp.UI.ItemListAdapter;
 import com.homelybuysapp.Utils.CartGlobals;

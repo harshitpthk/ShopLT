@@ -7,7 +7,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.sholite.R;
+import com.homelybuys.homelybuysApp.R;
 import com.homelybuysapp.activities.HomeActivity;
 
 public class CameraFragment extends Fragment {

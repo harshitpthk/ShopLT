@@ -13,7 +13,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageButton;
 
-import com.example.sholite.R;
+import com.homelybuys.homelybuysApp.R;
 import com.homelybuysapp.interfaces.ControlsInterface;
 import com.homelybuysapp.models.Product;
 public class Controls {

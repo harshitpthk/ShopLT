@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
-import com.example.sholite.R;
+import com.homelybuys.homelybuysApp.R;
 import com.homelybuysapp.UI.BaseItemCard.OnClickActionButtonListener;
 import com.homelybuysapp.models.Product;
 

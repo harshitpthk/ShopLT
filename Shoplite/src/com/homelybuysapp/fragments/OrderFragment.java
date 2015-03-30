@@ -9,7 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.sholite.R;
+import com.homelybuys.homelybuysApp.R;
 
 public class OrderFragment extends Fragment {
 

@@ -22,7 +22,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.sholite.R;
+import com.homelybuys.homelybuysApp.R;
 import com.homelybuysapp.UI.Controls;
 import com.homelybuysapp.Utils.Constants;
 import com.homelybuysapp.Utils.Globals;

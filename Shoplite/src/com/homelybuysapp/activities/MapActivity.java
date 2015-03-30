@@ -10,7 +10,7 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.example.sholite.R;
+import com.homelybuys.homelybuysApp.R;
 import com.homelybuysapp.fragments.MapFragment;
 import com.homelybuysapp.interfaces.MapInterface;
 

@@ -84,7 +84,7 @@
 		        
 		        android:textColor="@color/app_color"
 		        android:text="@string/home_delivery"
-		        android:onClick="selectOrderRecieveing"
+		       
 		        android:fontFamily="sans-serif-light"
 		        />
 		</RadioGroup>

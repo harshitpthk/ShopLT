@@ -21,7 +21,7 @@ import android.widget.ImageButton;
 import android.widget.NumberPicker;
 import android.widget.NumberPicker.OnValueChangeListener;
 
-import com.example.sholite.R;
+import com.homelybuys.homelybuysApp.R;
 import com.homelybuysapp.Utils.CartGlobals;
 import com.homelybuysapp.Utils.Constants;
 import com.homelybuysapp.Utils.Constants.DBState;
@@ -341,18 +341,23 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 	 	Anim.setDuration(10);
 	 	Anim.setFillAfter(true);
 	 	innerView.startAnimation(Anim);
+	 	
 	 	animationMode = false;
 	 	getItemButton().setEnabled(true);
+	 	
 	 	cartItemList.remove(getItem());
+	 	
 	 	Globals.item_added_list.remove(Globals.item_added_list.indexOf(getItem().getCurrentItemId()));
 	 	Globals.cartTotalPrice -= item.getTotalPrice();
+	 	
 	 	HomeActivity.actionBar.setTitle(r.getText(R.string.shopping_cart)+
 				 "    "+  Double.toString(Math.round(Globals.cartTotalPrice*100.0/100.0))+" " + r.getText(R.string.currency));
-	 	HomeActivity.productsNumberView.setText(String.valueOf(Globals.item_added_list.size()));
-		if(getItem().isSent()){
-			OrderItemDetail itemToDelete = new OrderItemDetail(item.getCurrentItemId(), item.getCurrentQty());
-			deletePackList(itemToDelete);
-		}
+	 	HomeActivity.productsNumberView.setText(String.valueOf(cartItemList.size()));
+	 	
+//		if(getItem().isSent()){
+//			OrderItemDetail itemToDelete = new OrderItemDetail(item.getCurrentItemId(), item.getCurrentQty());
+//			deletePackList(itemToDelete);
+//		}
 		if(cartItemList.isEmpty()){
 			CartFragment.emptyCartState();
 		}

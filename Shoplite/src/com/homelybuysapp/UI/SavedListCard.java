@@ -14,7 +14,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.sholite.R;
+import com.homelybuys.homelybuysApp.R;
 import com.homelybuysapp.activities.HomeActivity;
 import com.homelybuysapp.activities.ItemsDisplayActivity;
 import com.homelybuysapp.models.SaveList;

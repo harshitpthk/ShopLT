@@ -7,7 +7,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.sholite.R;
+import com.homelybuys.homelybuysApp.R;
 
 public class ContainerFragment extends Fragment {
 	public ViewPager mViewPager;

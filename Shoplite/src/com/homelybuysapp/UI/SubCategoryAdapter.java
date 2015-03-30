@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.sholite.R;
+import com.homelybuys.homelybuysApp.R;
 import com.homelybuysapp.Utils.Globals;
 import com.homelybuysapp.interfaces.CategoryAdapterCallback;
 import com.homelybuysapp.models.Category;

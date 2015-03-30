@@ -31,7 +31,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.example.sholite.R;
+import com.homelybuys.homelybuysApp.R;
 import com.homelybuysapp.UI.AddItemCard;
 import com.homelybuysapp.UI.Controls;
 import com.homelybuysapp.UI.DividerItemDecoration;
@@ -339,6 +339,8 @@ public class OfflineShopFrag extends Fragment implements ItemInterface, Category
 		@Override
 		public void productsGetSuccess(ArrayList<Product> productList) {
 			// TODO Auto-generated method stub
+			Controls.show_loading_dialog(getActivity(), "Building Product List");
+
 			mLayoutManager = new LinearLayoutManager(getActivity());
 	        mRecyclerView.setLayoutManager(mLayoutManager);
 	        mRecyclerView.addItemDecoration(itemDecor);
@@ -346,7 +348,8 @@ public class OfflineShopFrag extends Fragment implements ItemInterface, Category
 	        mAdapter = new ProductAdapter(productList,this);
 	        
 	        mRecyclerView.setAdapter(mAdapter);
-	        
+			Controls.dismiss_progress_dialog();
+
 		}
 
 		/* (non-Javadoc)
@@ -464,6 +467,7 @@ public class OfflineShopFrag extends Fragment implements ItemInterface, Category
 	        mSearchRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
 
 	        mSearchRecyclerView.setAdapter(mSearchAdapter);	
+	        filter(itemSearchView.getQuery().toString());
 		}
 		
 		public void filter(String charText) {

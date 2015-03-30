@@ -8,7 +8,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import com.example.sholite.R;
+import com.homelybuys.homelybuysApp.R;
 
 /**
  * @author I300291

@@ -46,6 +46,10 @@ public class UIUtil {
 	}
 	public static void hideSoftKeyboard(Activity activity) {
 	    InputMethodManager imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-	    imm.hideSoftInputFromWindow(((Activity) activity).getCurrentFocus().getWindowToken(), 0);
+	    View focusedView = activity.getCurrentFocus();
+	    
+	    if (focusedView != null) {
+	    	imm.hideSoftInputFromWindow(focusedView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+	    }
 	}
 }

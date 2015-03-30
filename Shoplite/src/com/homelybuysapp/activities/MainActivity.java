@@ -26,7 +26,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.crashlytics.android.Crashlytics;
-import com.example.sholite.R;
+import com.homelybuys.homelybuysApp.R;
 import com.homelybuysapp.UI.Controls;
 import com.homelybuysapp.Utils.Globals;
 import com.homelybuysapp.connection.ConnectionInterface;

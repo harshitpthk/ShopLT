@@ -5,7 +5,7 @@ package com.homelybuysapp.Utils;
 
 import android.os.Looper;
 
-import com.example.sholite.BuildConfig;
+import com.homelybuys.homelybuysApp.BuildConfig;
 
 /**
  * @author I300291

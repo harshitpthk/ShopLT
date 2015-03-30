@@ -18,6 +18,5 @@
     <string name="error_invalid_name">It seems it is not a valid Name</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_field_required">This field is required</string>
 	
 </resources>

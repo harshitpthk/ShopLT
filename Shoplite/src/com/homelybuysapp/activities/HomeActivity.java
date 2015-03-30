@@ -45,7 +45,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.sholite.R;
+import com.homelybuys.homelybuysApp.R;
 import com.homelybuysapp.UI.AddItemCard;
 import com.homelybuysapp.UI.BaseCardView;
 import com.homelybuysapp.UI.BaseItemCard.OnClickActionButtonListener;
@@ -1036,6 +1036,11 @@ public class HomeActivity extends ActionBarActivity  implements CategoryInterfac
 		      shopByListButton.setBackgroundResource(R.drawable.shop_active);
 		       pbChangeDelivery = (ProgressBar) findViewById(R.id.change_delivery_progress);
 		       
+		       toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha));
+				getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+   			getSupportActionBar().setHomeButtonEnabled(true);
+   			mDrawerToggle.setDrawerIndicatorEnabled(true);
+				mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, mainDrawerContainer);
 			   	  Controls.dismiss_progress_dialog();
 
 		   }

@@ -13,7 +13,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.Interpolator;
 
-import com.example.sholite.R;
+import com.homelybuys.homelybuysApp.R;
 /**
  * Procedurally-drawn version of a horizontal indeterminate progress bar. Draws faster and more
  * frequently (by making use of the animation timer), requires minimal memory overhead, and allows

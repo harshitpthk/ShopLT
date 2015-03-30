@@ -17,7 +17,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
-import com.example.sholite.R;
+import com.homelybuys.homelybuysApp.R;
 
 /**
  * @author I300291

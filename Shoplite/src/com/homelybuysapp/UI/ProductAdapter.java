@@ -16,7 +16,7 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.sholite.R;
+import com.homelybuys.homelybuysApp.R;
 import com.homelybuysapp.Utils.Globals;
 import com.homelybuysapp.interfaces.ProductAdapterCallback;
 import com.homelybuysapp.models.Product;

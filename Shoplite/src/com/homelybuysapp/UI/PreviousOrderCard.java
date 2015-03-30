@@ -19,7 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.sholite.R;
+import com.homelybuys.homelybuysApp.R;
 import com.google.gson.Gson;
 import com.homelybuysapp.Utils.Constants;
 import com.homelybuysapp.activities.ItemsDisplayActivity;

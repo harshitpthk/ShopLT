@@ -51,7 +51,7 @@ import android.widget.RelativeLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
-import com.example.sholite.R;
+import com.homelybuys.homelybuysApp.R;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -69,6 +69,7 @@ import com.google.android.gms.maps.model.VisibleRegion;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.homelybuysapp.UI.Controls;
 import com.homelybuysapp.UI.PlacesSearchAdapter;
 import com.homelybuysapp.UI.UIUtil;
 import com.homelybuysapp.Utils.Globals;
@@ -154,8 +155,7 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 //			}
 			mMap.clear();
 			addressText = null;
-			Geocoder geocoder =
-	                new Geocoder(getActivity(), Locale.getDefault());
+			Geocoder geocoder =  new Geocoder(getActivity(), Locale.US);
 			List<Address> addresses = null;
 			try {
 	            /*
@@ -286,7 +286,7 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 		@Override
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
-				
+			Controls.show_loading_dialog(getActivity(), "Setting Delivery Location");
 			if(deliveryAddressInput.getText().toString().length() <=0 ){
 				deliveryAddressInput.setError(getResources().getString(R.string.error_field_required));
 			}
@@ -542,27 +542,27 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 		}
        });
     	if(mapView!= null){
-    	Resources r = getResources();
-    	float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25, r.getDisplayMetrics());
-    	View locationButton = ((View) mapView.findViewById(1).getParent()).findViewById(2);
-    	RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
-        // position on right bottom
-        rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
-        rlp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
-        rlp.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
-        rlp.addRule(RelativeLayout.ALIGN_PARENT_START, RelativeLayout.TRUE);
-        rlp.setMargins(30, 30, 30, (int) px);
-        
-        
-    	
-    	View zoomControls = ((View) mapView.findViewById(1).getParent()).findViewById(1);
-    	RelativeLayout.LayoutParams rlp1 = (RelativeLayout.LayoutParams) zoomControls.getLayoutParams();
-        // position on right bottom
-        rlp1.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
-        rlp1.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
-        rlp1.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
-        rlp1.addRule(RelativeLayout.ALIGN_PARENT_START, RelativeLayout.TRUE);
-        rlp1.setMargins(30, 30, 30, 250);
+	    	Resources r = getResources();
+	    	float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25, r.getDisplayMetrics());
+	    	View locationButton = ((View) mapView.findViewById(1).getParent()).findViewById(2);
+	    	RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
+	        // position on right bottom
+	        rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
+	        rlp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+	        rlp.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+	        rlp.addRule(RelativeLayout.ALIGN_PARENT_START, RelativeLayout.TRUE);
+	        rlp.setMargins(30, 30, 30, (int) px);
+	        
+	        
+	    	
+	    	View zoomControls = ((View) mapView.findViewById(1).getParent()).findViewById(1);
+	    	RelativeLayout.LayoutParams rlp1 = (RelativeLayout.LayoutParams) zoomControls.getLayoutParams();
+	        // position on right bottom
+	        rlp1.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
+	        rlp1.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+	        rlp1.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+	        rlp1.addRule(RelativeLayout.ALIGN_PARENT_START, RelativeLayout.TRUE);
+	        rlp1.setMargins(30, 30, 30, 250);
     	}
     	
     	mMap.getUiSettings().setZoomControlsEnabled(true);
@@ -908,7 +908,7 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 		}
 		else{
 			// no shop found
-			shopDetailHeading.setText("No Shops currently in this area, soon we are reaching");
+			shopDetailHeading.setText("No Shops currently in this area,We are trying our best to expand our services.");
 			deliveryAddressView.setVisibility(View.GONE);
 			shopDetailsView.setVisibility(View.VISIBLE);
 			shopDetailDescription.setText("Drag map to change delivery Location");
