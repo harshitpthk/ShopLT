@@ -1,6 +1,7 @@
 package com.homelybuysapp.activities;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -9,18 +10,23 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ProgressBar;
 
 import com.homelybuys.homelybuysApp.R;
+import com.homelybuysapp.UI.ButteryProgressBar;
 import com.homelybuysapp.fragments.MapFragment;
 import com.homelybuysapp.interfaces.MapInterface;
 
 public class MapActivity extends ActionBarActivity implements MapInterface {
 	
 	private String instantiator;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		//supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState	);
+	    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+	    
 		Window window = getWindow();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
            
@@ -31,7 +37,7 @@ public class MapActivity extends ActionBarActivity implements MapInterface {
 		
 		new LoadUI().execute();
 		instantiator = getIntent().getStringExtra("instantiator");
-
+		
 	}
 
 	@Override

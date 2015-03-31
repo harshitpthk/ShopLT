@@ -98,6 +98,7 @@ public class AddItemCard extends BaseItemCard {
 					return item.getItemList().get(value).getName();
 				}
 			});
+			
 			measurePicker.setOnValueChangedListener(new OnValueChangeListener() {
 				
 				@Override

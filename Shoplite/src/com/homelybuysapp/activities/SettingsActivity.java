@@ -1,5 +1,6 @@
 package com.homelybuysapp.activities;
 
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
@@ -19,6 +20,8 @@ public class SettingsActivity extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+	    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
 		setContentView(R.layout.activity_settings);
 		preferenceContainer =(FrameLayout) findViewById(R.id.preference_container);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);

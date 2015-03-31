@@ -12,6 +12,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.telephony.SmsMessage;
@@ -102,6 +103,8 @@ public class Verification extends Activity implements ConnectionInterface,LoginI
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+	    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
 		setContentView(R.layout.activity_verification);
 		 Globals.ApplicationContext = this.getApplicationContext();
 		 Globals.dbhelper = new DbHelper(Globals.ApplicationContext);

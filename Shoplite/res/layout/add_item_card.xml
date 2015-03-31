@@ -76,7 +76,7 @@
             <NumberPicker 
                  android:layout_gravity="center_horizontal"
                 android:id="@+id/item_measure_picker"
-                android:layout_width="100dp"
+                android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:layout_margin="2dp"
                  

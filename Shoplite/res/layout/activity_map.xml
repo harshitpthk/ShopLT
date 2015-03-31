@@ -6,6 +6,7 @@
 		    android:layout_height="match_parent"
 		    
 		    tools:context="com.homelybuysapp.zxscan.MapActivity" >
+		    
 		    <FrameLayout
 					    	 android:id="@+id/map_container"
 				             android:layout_width="fill_parent"

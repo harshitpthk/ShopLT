@@ -12,6 +12,7 @@ import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
@@ -63,6 +64,8 @@ public class MainActivity extends ActionBarActivity implements ConnectionInterfa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+	    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
 		Fabric.with(this, new Crashlytics());
         setGlobals();
         String auth_token = Globals.dbhelper.getItem("auth-token");

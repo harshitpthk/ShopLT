@@ -69,6 +69,7 @@ import com.google.android.gms.maps.model.VisibleRegion;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.homelybuysapp.UI.ButteryProgressBar;
 import com.homelybuysapp.UI.Controls;
 import com.homelybuysapp.UI.PlacesSearchAdapter;
 import com.homelybuysapp.UI.UIUtil;
@@ -112,6 +113,7 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 	ArrayList<com.homelybuysapp.models.Address> userAddress = Globals.dbhelper.getStoreAddress();
 	public static ArrayList<Marker> markerList = new ArrayList<Marker>();
 	private static PlacesSearchAdapter searchAdapter;	
+	private static ButteryProgressBar mapSearchProgressbar ;
 	
 	public static SimpleCursorAdapter  suggestionAdapter;
     private OnCameraChangeListener onCameraChange = new OnCameraChangeListener() {
@@ -524,7 +526,7 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
     	setDeliveryLocation = (Button)rootView.findViewById(R.id.setDeliveryLocation);
     	setDeliveryLocation.setOnClickListener(setDeliveryAnchor);
     	//HomeActivity.actionBar.setTitle(getResources().getText(R.string.pick_delivery_location));
-    	
+    	mapSearchProgressbar = (ButteryProgressBar)rootView.findViewById(R.id.map_progress_bar);
     	startShop = (Button)rootView.findViewById(R.id.startShop);
     	startShop.setOnClickListener(mapShopContinue);
     	mMap.setOnCameraChangeListener(onCameraChange);
@@ -547,6 +549,7 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 	    	View locationButton = ((View) mapView.findViewById(1).getParent()).findViewById(2);
 	    	RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
 	        // position on right bottom
+	    
 	        rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
 	        rlp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
 	        rlp.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
@@ -629,13 +632,14 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 	         placesNameList = new ArrayList<String>();
 	         searchAdapter = new PlacesSearchAdapter(Globals.ApplicationContext, suggestionCursor, placesNameList);
 				shopSearchView.setSuggestionsAdapter(searchAdapter);
+	        	final PlacesAutoComplete pl = new PlacesAutoComplete();
+
 	        shopSearchView.setOnQueryTextListener(new OnQueryTextListener(){
-	        	PlacesAutoComplete pl = new PlacesAutoComplete();
 				@Override
 				public boolean onQueryTextChange(String newText) {
+					mapSearchProgressbar.start();
 					if(newText.length()<= 3){
 
-				    	
 				        
 						pl.autocomplete(newText);
 						
@@ -681,7 +685,7 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 					            inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
 					            InputMethodManager.HIDE_NOT_ALWAYS);
 					            shopSearchView.setIconifiedByDefault(true); //this line
-					            
+					            mapSearchProgressbar.stop();
 					        } else {
 					            // No results for your location
 					        }
@@ -970,7 +974,7 @@ public static class PlacesAutoComplete {
 		return placesList;
 	}
 	
-	public void autocomplete(String input) {
+	public  void autocomplete(String input) {
 		
 		placesList = new ArrayList<PlacePrediction>();
 		placesNameList = new ArrayList<String>();
@@ -1022,7 +1026,7 @@ public static class PlacesAutoComplete {
 					searchAdapter = new PlacesSearchAdapter( Globals.ApplicationContext,suggestionCursor, placesNameList);
 					shopSearchView.setSuggestionsAdapter(searchAdapter);
 				}
-
+				mapSearchProgressbar.stop();
 			}
 			
 		});
