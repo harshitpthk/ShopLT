@@ -26,7 +26,7 @@ public class PackList implements ConnectionInterface {
 		this.calling_class_object = calling_class_object;
 		try {
 			ServerConnectionMaker.sendRequest(this);
-			Log.e("sendPackList"," called");
+			
 			}
 		catch (RetrofitError e) {
 			  System.out.println(e.getResponse().getStatus());
@@ -42,7 +42,6 @@ public class PackList implements ConnectionInterface {
 		
 			final PackList packlist = this;
 			final  PackListInterface calling_class_object_internal = packlist.calling_class_object;
-			packlist.calling_class_object = null;
 			
 			serviceProvider.packList(packlist,new Callback<JsonObject>(){
 				
@@ -52,9 +51,7 @@ public class PackList implements ConnectionInterface {
 					if (response.isNetworkError()) {
 						Log.e("Packlist error", "503"); 
 				    }
-					Log.e("PackList error", response.getUrl());
-					Log.e("PackList error", response.getMessage());
-					Log.e("PackList error", response.getStackTrace().toString());
+					
 					ServerConnectionMaker.recieveResponse(null);
 					
 					ServerConnectionMaker.sendRequest(CartGlobals.CartServerRequestQueue.peekFirst());
@@ -65,7 +62,7 @@ public class PackList implements ConnectionInterface {
 				public void success(JsonObject message, Response response) {
 					
 					ServerConnectionMaker.recieveResponse(response);
-					Log.e("PackList", response.toString());
+					
 					calling_class_object_internal.PackListSuccess(packlist);
 					CartGlobals.CartServerRequestQueue.removeFirst();
 					if(!CartGlobals.CartServerRequestQueue.isEmpty()){

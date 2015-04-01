@@ -383,32 +383,33 @@ public class HomeActivity extends ActionBarActivity  implements CategoryInterfac
     	
 		
     }
-    public void delete_last_scanned(View v)
-    {
-    	final Animation animScale = AnimationUtils.loadAnimation(this, R.anim.buttonscale);
-    	v.startAnimation(animScale);
-    	if(Globals.item_order_list != null && Globals.item_order_list.size() > 0){
-    		Globals.cartTotalPrice -= Globals.item_order_list.get(Globals.item_order_list.size()-1).getTotalPrice();
-	    	OrderItemDetail itemToDelete = new OrderItemDetail(Globals.item_order_list.get(
-	    			Globals.item_order_list.size()-1).getCurrentItemId(),Globals.item_order_list.get(Globals.item_order_list.size()-1).getCurrentQty());
-	    	
-	    	CartGlobals.recentDeletedItems.add(Globals.item_order_list.get(Globals.item_order_list.size()-1));
-	    	
-	    	Globals.item_added_list.remove(Globals.item_added_list.indexOf(
-	    			Globals.item_order_list.get(Globals.item_order_list.size()-1).getCurrentItemId()));
-		 	
-	    	Globals.item_order_list.remove(Globals.item_order_list.get(Globals.item_order_list.size()-1));
-	    	
-	    	deletePackList(itemToDelete);
-			Toast.makeText(this, "Last Scanned Product Removed", Toast.LENGTH_SHORT).show();
-			
-    	}
-    	else{
-    		Toast.makeText(this, "Your Cart is Empty", Toast.LENGTH_SHORT).show();
-    		
-    	}
-    		
-    }
+//    
+//    public void delete_last_scanned(View v)
+//    {
+//    	final Animation animScale = AnimationUtils.loadAnimation(this, R.anim.buttonscale);
+//    	v.startAnimation(animScale);
+//    	if(Globals.item_order_list != null && Globals.item_order_list.size() > 0){
+//    		Globals.cartTotalPrice -= Globals.item_order_list.get(Globals.item_order_list.size()-1).getTotalPrice();
+//	    	OrderItemDetail itemToDelete = new OrderItemDetail(Globals.item_order_list.get(
+//	    			Globals.item_order_list.size()-1).getCurrentItemId(),Globals.item_order_list.get(Globals.item_order_list.size()-1).getCurrentQty());
+//	    	
+//	    	CartGlobals.recentDeletedItems.add(Globals.item_order_list.get(Globals.item_order_list.size()-1));
+//	    	
+//	    	Globals.item_added_list.remove(Globals.item_added_list.indexOf(
+//	    			Globals.item_order_list.get(Globals.item_order_list.size()-1).getCurrentItemId()));
+//		 	
+//	    	Globals.item_order_list.remove(Globals.item_order_list.get(Globals.item_order_list.size()-1));
+//	    	
+//	    	deletePackList(itemToDelete);
+//			Toast.makeText(this, "Last Scanned Product Removed", Toast.LENGTH_SHORT).show();
+//			
+//    	}
+//    	else{
+//    		Toast.makeText(this, "Your Cart is Empty", Toast.LENGTH_SHORT).show();
+//    		
+//    	}
+//    		
+//    }
     public void shopAtStore(View v)
     {
     	
@@ -602,7 +603,7 @@ public class HomeActivity extends ActionBarActivity  implements CategoryInterfac
 		*cart fragment
 		*/
 		AddDialog.dismiss();
-		//for(int i = 0 ; i < 10 ; i++){
+		
 		if(!Globals.item_added_list.contains(addToItem.getItem().getCurrentItemId())){
 			Globals.item_added_list.add(addToItem.getItem().getCurrentItemId());
 			Globals.item_order_list.add(addToItem.getItem()); 
@@ -614,7 +615,7 @@ public class HomeActivity extends ActionBarActivity  implements CategoryInterfac
 		else{
 			Toast.makeText(this, "Product already present in your Cart", Toast.LENGTH_SHORT).show();
 		}
-		//}
+		
 		
 //		sendPackList();
 //		if(handler != null && conFrag.mViewPager.getCurrentItem() == 1)

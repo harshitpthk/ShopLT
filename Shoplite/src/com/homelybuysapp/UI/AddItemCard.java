@@ -87,18 +87,23 @@ public class AddItemCard extends BaseItemCard {
 	}
 	
 	public void initMeasurePicker(){
+		String[]  measureStringArray = new String[item.getItemList().size()] ;
+		for(int i = 0 ; i < item.getItemList().size();i++ ){
+			measureStringArray[i] = item.getItemList().get(i).getName();
+		}
 		try{
 			measurePicker.setMinValue(0);
 			measurePicker.setMaxValue(item.getItemList().size()-1);
-			measurePicker.setFormatter(new NumberPicker.Formatter() {
-				
-				@Override
-				public String format(int value) {
-					
-					return item.getItemList().get(value).getName();
-				}
-			});
-			
+//			measurePicker.setFormatter(new NumberPicker.Formatter() {
+//				
+//				@Override
+//				public String format(int value) {
+//					
+//					return item.getItemList().get(value).getName();
+//				}
+//			});
+			measurePicker.setDisplayedValues(measureStringArray);
+
 			measurePicker.setOnValueChangedListener(new OnValueChangeListener() {
 				
 				@Override
