@@ -6,6 +6,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.homelybuysapp.Utils.Globals;
 import com.homelybuysapp.connection.ConnectionInterface;
@@ -230,11 +231,10 @@ public class Product implements ConnectionInterface{
 
 				@Override
 				public void failure(RetrofitError response) {
-					if (response.isNetworkError()) {
-						Log.e("Service Unavailable", "503"); // Use another code if you'd prefer
+					if (response.getKind().equals(RetrofitError.Kind.NETWORK)) {
+						Toast.makeText(Globals.ApplicationContext, "Network Problem", Toast.LENGTH_SHORT).show();
 				    }
 					else{
-						Log.e("Get Items Failure",response.getMessage());
 					}
 					
 					ServerConnectionMaker.recieveResponse(null);
@@ -257,11 +257,10 @@ public class Product implements ConnectionInterface{
 				@Override
 				public void failure(RetrofitError response) {
 					// TODO Auto-generated method stub
-					if (response.isNetworkError()) {
-						Log.e("Service Unavailable", "503"); 	
+					if (response.getKind().equals(RetrofitError.Kind.NETWORK)) {
+						Toast.makeText(Globals.ApplicationContext, "Network Problem", Toast.LENGTH_SHORT).show();
 				    }
 					else{
-						Log.e("Search Failure",response.getMessage());
 					}
 					
 					ServerConnectionMaker.recieveResponse(null);
@@ -281,11 +280,10 @@ public class Product implements ConnectionInterface{
 				@Override
 				public void failure(RetrofitError response) {
 					// TODO Auto-generated method stub
-					if (response.isNetworkError()) {
-						Log.e("Service Unavailable", "503"); 	
+					if (response.getKind().equals(RetrofitError.Kind.NETWORK)) {
+						Toast.makeText(Globals.ApplicationContext, "Network Problem", Toast.LENGTH_SHORT).show();
 				    }
 					else{
-						Log.e("Get ProductVariance Failure",response.getMessage());
 					}
 					
 					ServerConnectionMaker.recieveResponse(null);
@@ -306,11 +304,10 @@ public class Product implements ConnectionInterface{
 
 				@Override
 				public void failure(RetrofitError response) {
-					if (response.isNetworkError()) {
-						Log.e("Service Unavailable", "503"); 	
+					if (response.getKind().equals(RetrofitError.Kind.NETWORK)) {
+						Toast.makeText(Globals.ApplicationContext, "Network Problem", Toast.LENGTH_SHORT).show();
 				    }
 					else{
-						Log.e("Get ProductVariance Failure",response.getMessage());
 					}
 					
 					ServerConnectionMaker.recieveResponse(null);
@@ -335,11 +332,11 @@ public class Product implements ConnectionInterface{
 
 				@Override
 				public void failure(RetrofitError response) {
-					if (response.isNetworkError()) {
-						Log.e("Service Unavailable", "503"); 	
+					if (response.getKind().equals(RetrofitError.Kind.NETWORK)) {
+						//Log.e("Retrofit error", "503"); // Use another code if you'd prefer
+						Toast.makeText(Globals.ApplicationContext, "Network Problem", Toast.LENGTH_SHORT).show();
 				    }
 					else{
-						Log.e("Get ProductVariance Failure",response.getMessage());
 					}
 					
 					ServerConnectionMaker.recieveResponse(null);
@@ -371,7 +368,6 @@ public class Product implements ConnectionInterface{
 					}
 					updatedProduct.setTotalPrice(updatedProduct.getCurrentMsrPrice()*
 							updatedProduct.getCurrentQty());
-					Log.e("updation",updatedProduct.toString());
 					
 					
 					thisProductObject.calling_class_object.updateItemSuccess(updatedProduct);

@@ -6,6 +6,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 import com.homelybuysapp.Utils.Globals;
@@ -75,22 +76,19 @@ public class Shop implements ConnectionInterface {
 			serviceProvider.loginShop(thisShopObject.getId(), new Callback<JsonObject>(){
 
 				@Override
-				public void failure(RetrofitError arg0) {
+				public void failure(RetrofitError response) {
 					
-					if (arg0.isNetworkError()) {
-						Log.e("Retrofit error", "503"); // Use another code if you'd prefer
+					if (response.getKind().equals(RetrofitError.Kind.NETWORK)) {
+						Toast.makeText(Globals.ApplicationContext, "Network Problem", Toast.LENGTH_SHORT).show();
 				    }
-					//Toast.makeText(getBaseContext(), arg0.toString(), Toast.LENGTH_LONG).show();
-					Log.e("Retrofit error", arg0.getUrl());
-					Log.e("Retrofit error", arg0.getMessage());
+					
 					ServerConnectionMaker.recieveResponse(null);
 				}
 
 				@Override
 				public void success(JsonObject result, Response response) {
 					
-					Log.e("Retrofit Success", response.toString());
-					Log.e("Retrofit Success", result.toString());
+					
 					ServerConnectionMaker.recieveResponse(response);
 					Globals.connected_to_shop_success = true;
 					Globals.connectedShop = thisShopObject;
@@ -111,11 +109,10 @@ public class Shop implements ConnectionInterface {
 				@Override
 				public void failure(RetrofitError response) {
 					
-					if (response.isNetworkError()) {
-						Log.e("Retrofit error", "503"); 
+					if (response.getKind().equals(RetrofitError.Kind.NETWORK)) {
+						Toast.makeText(Globals.ApplicationContext, "Network Problem", Toast.LENGTH_SHORT).show();
 				    }
 					else{
-						Log.e("Get Shop List error", response.getMessage());
 					}
 					ServerConnectionMaker.recieveResponse(null);
 					
@@ -124,7 +121,6 @@ public class Shop implements ConnectionInterface {
 				@Override
 				public void success(ArrayList<Shop> shoplist, Response response) {
 					Globals.shop_list.addAll(shoplist);
-					Log.e("Retrofit Success", response.toString());
 					ServerConnectionMaker.recieveResponse(response);
 					thisShopObject.calling_class_object.shop_list_success(areaLocation,shoplist);
 						

@@ -27,10 +27,17 @@ import com.homelybuys.homelybuysApp.R;
 import com.homelybuysapp.UI.Controls;
 import com.homelybuysapp.Utils.Constants;
 import com.homelybuysapp.Utils.Globals;
+import com.homelybuysapp.Utils.Constants.DBState;
 import com.homelybuysapp.fragments.OrderHistoryFragment;
 import com.homelybuysapp.interfaces.ControlsInterface;
+import com.homelybuysapp.interfaces.PackListInterface;
 import com.homelybuysapp.interfaces.SubmitOrderInterface;
 import com.homelybuysapp.models.Address;
+import com.homelybuysapp.models.OrderDetail;
+import com.homelybuysapp.models.OrderItemDetail;
+import com.homelybuysapp.models.PackList;
+import com.homelybuysapp.models.PackProducts;
+import com.homelybuysapp.models.Product;
 import com.homelybuysapp.models.SubmitOrderDetails;
 
 public class CheckoutActivity extends ActionBarActivity {
@@ -90,7 +97,7 @@ public class CheckoutActivity extends ActionBarActivity {
 	/**
 	 * A placeholder fragment containing a simple view.
 	 */
-	public static class PlaceholderFragment extends Fragment implements ControlsInterface,SubmitOrderInterface  {
+	public static class PlaceholderFragment extends Fragment implements ControlsInterface,SubmitOrderInterface,PackListInterface  {
 
 		
 		
@@ -214,7 +221,7 @@ public class CheckoutActivity extends ActionBarActivity {
 		
 		public void finalizeOrder(){
 			
-			Controls.show_alert_dialog(this, getActivity(), R.layout.confirm_order_dialog, 200);
+			Controls.show_alert_dialog(this, getActivity(), R.layout.confirm_order_dialog, 220);
 			
 		}
 		
@@ -225,9 +232,94 @@ public class CheckoutActivity extends ActionBarActivity {
 		@Override
 		public void positive_button_alert_method() {
 			// TODO Auto-generated method stub
+			alertDialog.dismiss();
+			sendPackList();
+			Controls.show_loading_dialog(getActivity(), "Sending Products Info..");
+
 			
+		}
+
+		/**
+		 * @param submit_order
+		 */
+		private void submitOrder(SubmitOrderDetails submit_order) {
+			// TODO Auto-generated method stub
+			submit_order.submitOrder(this);
+		}
+		
+		
+		@Override
+		public void submitOrderSuccess(Integer orderID) {
+			Toast.makeText(getActivity(), "Order Submitted Successfully,Check Order Status for more info.", Toast.LENGTH_LONG).show();
+			Globals.dbhelper.storeOrder(orderID, Globals.cartTotalPrice - ((Globals.cartTotalPrice*15)/100)*100.0/100.0, Globals.item_order_list.size(),Constants.ORDERState.PACKING.ordinal());
+			OrderHistoryFragment.getPreviousOrderLists().clear();
+			OrderHistoryFragment.getPreviousOrderLists().addAll(Globals.dbhelper.getAllOrders());
+			OrderHistoryFragment.getOrderListAdapter().updateOrderLists(Globals.dbhelper.getAllOrders());
+			Globals.resetCartData();
+			
+			if(Globals.usedPreviousAddress != true ){
+				Globals.usedPreviousAddress = true;
+				boolean deliveryAddressStored = Globals.dbhelper.storeAddress(Globals.deliveryAddress);
+			}
+			
+			getActivity().finish();
+		}
+
+	
+		
+		@Override
+		public void negative_button_alert_method() {
+			alertDialog.dismiss();
+		}
+
+		@Override
+		public void save_alert_dialog(AlertDialog alertDialog) {
+			this.alertDialog = alertDialog;
+		}
+
+		
+		@Override
+		public void neutral_button_alert_method() {
+			
+		}
+
+		@Override
+		public void submitOrderFailure() {
+			// TODO Auto-generated method stub
+			Toast.makeText(getActivity(), "An error has occured, please try again", Toast.LENGTH_SHORT).show();
+		}
+		@Override
+		public void sendPackList() {
+			
+			
+			PackList pl = new PackList();
+			pl.pckProd = new PackProducts( DBState.INSERT, Product.getToSendList(Globals.item_order_list));
+			
+		
+			//Product.setSentList(Globals.item_order_list);
+			
+			pl.sendPackList(this);
+			
+//			if(CartGlobals.CartServerRequestQueue.size() == 0){
+//				CartGlobals.CartServerRequestQueue.add(pl);
+//				
+//			}
+//			else{
+//				CartGlobals.CartServerRequestQueue.add(pl);
+//			}
+//				
+		
+		}
+
+		/* (non-Javadoc)
+		 * @see com.homelybuysapp.interfaces.PackListInterface#PackListSuccess(com.homelybuysapp.models.PackList)
+		 */
+		@Override
+		public void PackListSuccess(PackList obj) {
+			// TODO Auto-generated method stub
+
 			SubmitOrderDetails submitOrder = new SubmitOrderDetails();
-			
+			OrderDetail oDetail = new OrderDetail();
 			Address lastAddress = Globals.deliveryAddress;
 			
 			/* try {
@@ -258,81 +350,59 @@ public class CheckoutActivity extends ActionBarActivity {
 			editor.commit();
 			 
 			if(isOrderTakeAway){
-				submitOrder.setAmount(Globals.cartTotalPrice);
-				submitOrder.setAddress("takeAway");
-				submitOrder.setLatitude(Globals.connectedShop.getLocation().getLatitude());
-				submitOrder.setLongitude(Globals.connectedShop.getLocation().getLongitude());
+				oDetail.setAmount(Globals.cartTotalPrice);
+				oDetail.setAddress("takeAway");
+				oDetail.setLatitude(Globals.connectedShop.getLocation().getLatitude());
+				oDetail.setLongitude(Globals.connectedShop.getLocation().getLongitude());
 				if(isPayOnline){
-					submitOrder.setState(Constants.ORDERStatus.FORDELIVERY);
-					submitOrder.setRefNumber("xyz");
+					oDetail.setState(Constants.ORDERStatus.FORDELIVERY);
+					oDetail.setRefNumber("xyz");
 				}
 				else{
-					submitOrder.setState(Constants.ORDERStatus.FORPAYMENT);
+					oDetail.setState(Constants.ORDERStatus.FORPAYMENT);
 					}
 			}
 			else{
-				submitOrder.setAmount(Globals.cartTotalPrice);
-				submitOrder.setAddress(primaryHomeAddress.getText().toString());
-				submitOrder.setLatitude(Globals.deliveryAddress.getDeliveryLocation().getLatitude());
-				submitOrder.setLongitude(Globals.deliveryAddress.getDeliveryLocation().getLongitude());
+				oDetail.setAmount(Globals.cartTotalPrice);
+				oDetail.setAddress(primaryHomeAddress.getText().toString());
+				oDetail.setLatitude(Globals.deliveryAddress.getDeliveryLocation().getLatitude());
+				oDetail.setLongitude(Globals.deliveryAddress.getDeliveryLocation().getLongitude());
 				if(isPayOnline){
-					submitOrder.setState(Constants.ORDERStatus.FORHOMEDELIVERY);
-					submitOrder.setRefNumber("xyz");
+					oDetail.setState(Constants.ORDERStatus.FORHOMEDELIVERY);
+					oDetail.setRefNumber("xyz");
 				}
 				else{
-					submitOrder.setState(Constants.ORDERStatus.FORHOMEDELIVERYPAYMENT);
+					oDetail.setState(Constants.ORDERStatus.FORHOMEDELIVERYPAYMENT);
 				}
 			}
-			
+			submitOrder.setoDetail(oDetail);
 			submitOrder(submitOrder);
-			alertDialog.dismiss();
+			
 			Controls.show_loading_dialog(getActivity(), getResources().getString(R.string.confirming_order));
 		}
 
-		/**
-		 * @param submit_order
+		/* (non-Javadoc)
+		 * @see com.homelybuysapp.interfaces.PackListInterface#editPackList()
 		 */
-		private void submitOrder(SubmitOrderDetails submit_order) {
+		@Override
+		public void editPackList() {
 			// TODO Auto-generated method stub
-			submit_order.submitOrder(this);
-		}
-		
-		
-		@Override
-		public void submitOrderSuccess(Integer orderID) {
-			Toast.makeText(getActivity(), "Order Submitted Successfully,Check Order Status for more info.", Toast.LENGTH_LONG).show();
-			Globals.dbhelper.storeOrder(orderID, Globals.cartTotalPrice - ((Globals.cartTotalPrice*15)/100)*100.0/100.0, Globals.item_order_list.size(),Constants.ORDERState.PACKING.ordinal());
-			OrderHistoryFragment.getPreviousOrderLists().clear();
-			OrderHistoryFragment.getPreviousOrderLists().addAll(Globals.dbhelper.getAllOrders());
-			OrderHistoryFragment.getOrderListAdapter().updateOrderLists(Globals.dbhelper.getAllOrders());
-			Globals.resetCartData();
-			
-			if(Globals.usedPreviousAddress != true ){
-				Globals.usedPreviousAddress = true;
-				boolean deliveryAddressStored = Globals.dbhelper.storeAddress(Globals.deliveryAddress);
-			}
-			//Toast.makeText(getActivity(), Boolean.toString(deliveryAddressStored), Toast.LENGTH_LONG).show();
-			getActivity().finish();
-		}
-
-	
-		
-		@Override
-		public void negative_button_alert_method() {
-			alertDialog.dismiss();
-		}
-
-		@Override
-		public void save_alert_dialog(AlertDialog alertDialog) {
-			this.alertDialog = alertDialog;
-		}
-
-		
-		@Override
-		public void neutral_button_alert_method() {
 			
 		}
 
+		/* (non-Javadoc)
+		 * @see com.homelybuysapp.interfaces.PackListInterface#deletePackList(com.homelybuysapp.models.OrderItemDetail)
+		 */
+		@Override
+		public void deletePackList(OrderItemDetail itemToDelete) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void packListFailure() {
+			// TODO Auto-generated method stub
+			Toast.makeText(getActivity(), "An error has occured, please try again.", Toast.LENGTH_SHORT).show();
+		}
 		
 		
 	}

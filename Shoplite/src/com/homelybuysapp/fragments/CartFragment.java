@@ -27,22 +27,16 @@ import android.widget.Toast;
 import com.homelybuys.homelybuysApp.R;
 import com.homelybuysapp.UI.Controls;
 import com.homelybuysapp.UI.ItemListAdapter;
-import com.homelybuysapp.Utils.CartGlobals;
-import com.homelybuysapp.Utils.Constants.DBState;
 import com.homelybuysapp.Utils.Globals;
 import com.homelybuysapp.activities.CheckoutActivity;
 import com.homelybuysapp.activities.HomeActivity;
 import com.homelybuysapp.interfaces.ControlsInterface;
-import com.homelybuysapp.interfaces.PackListInterface;
-import com.homelybuysapp.models.OrderItemDetail;
-import com.homelybuysapp.models.PackList;
-import com.homelybuysapp.models.Product;
 import com.homelybuysapp.models.SaveList;
 
 
 
 
-public class CartFragment extends Fragment implements ControlsInterface,PackListInterface {
+public class CartFragment extends Fragment implements ControlsInterface {
 
 	private MenuItem importToCart;
 	protected ListView cartItemsListView;
@@ -179,9 +173,10 @@ public class CartFragment extends Fragment implements ControlsInterface,PackList
 		Controls.show_alert_dialog( this, getActivity(), R.layout.save_list_layout,200);
 	}
 	private void checkout() {
-		sendPackList();
+		
 		Intent i = new Intent(getActivity(),CheckoutActivity.class);
 		getActivity().startActivity(i);
+		
 	}
 	
 	
@@ -238,53 +233,7 @@ public class CartFragment extends Fragment implements ControlsInterface,PackList
 	public void neutral_button_alert_method() {
 		
 	}
-	@Override
-	public void sendPackList() {
-		
-		
-		PackList pl = new PackList();
-		pl.products = Product.getToSendList(Globals.item_order_list);
-		pl.state = DBState.INSERT;
 	
-		Product.setSentList(Globals.item_order_list);
-		
-		if(CartGlobals.CartServerRequestQueue.size() == 0){
-			CartGlobals.CartServerRequestQueue.add(pl);
-			pl.sendPackList(this);
-		}
-		else{
-			CartGlobals.CartServerRequestQueue.add(pl);
-		}
-			
-	
-	}
-
-	/* (non-Javadoc)
-	 * @see com.homelybuysapp.interfaces.PackListInterface#PackListSuccess(com.homelybuysapp.models.PackList)
-	 */
-	@Override
-	public void PackListSuccess(PackList obj) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/* (non-Javadoc)
-	 * @see com.homelybuysapp.interfaces.PackListInterface#editPackList()
-	 */
-	@Override
-	public void editPackList() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/* (non-Javadoc)
-	 * @see com.homelybuysapp.interfaces.PackListInterface#deletePackList(com.homelybuysapp.models.OrderItemDetail)
-	 */
-	@Override
-	public void deletePackList(OrderItemDetail itemToDelete) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 
 }

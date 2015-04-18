@@ -85,6 +85,7 @@ public class OfflineShopFrag extends Fragment implements ItemInterface, Category
 			mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
 			mRecyclerView.setHasFixedSize(true);
 			
+			
 			mSearchRecyclerView = (RecyclerView) rootView.findViewById(R.id.search_recycler_view);
 			mSearchRecyclerView.setHasFixedSize(true);
 			mSearchLayoutManager = new LinearLayoutManager(getActivity());
@@ -96,6 +97,7 @@ public class OfflineShopFrag extends Fragment implements ItemInterface, Category
 				public boolean onTouch(View v, MotionEvent event) {
 					// TODO Auto-generated method stub
 					//Toast.makeText(getActivity(), "touched", Toast.LENGTH_SHORT).show();
+					mItemSearchView.clearFocus();
 					UIUtil.hideSoftKeyboard(getActivity());
 
 					return false;

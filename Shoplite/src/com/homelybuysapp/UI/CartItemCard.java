@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.support.v4.view.ViewCompat;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,9 +24,6 @@ import android.widget.NumberPicker;
 import android.widget.NumberPicker.OnValueChangeListener;
 
 import com.homelybuys.homelybuysApp.R;
-import com.homelybuysapp.Utils.CartGlobals;
-import com.homelybuysapp.Utils.Constants;
-import com.homelybuysapp.Utils.Constants.DBState;
 import com.homelybuysapp.Utils.Globals;
 import com.homelybuysapp.activities.HomeActivity;
 import com.homelybuysapp.fragments.CartFragment;
@@ -48,8 +47,7 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 	protected Resources r = mContext.getResources();
 	protected float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60, r.getDisplayMetrics());
 	protected int SWIPE_MIN_DISTANCE = 50;
-	protected boolean animationMode = false;
-	   
+	protected boolean animationMode ;
 	
 	public CartItemCard(Context context,Product addedItem){
 		super(context,addedItem);
@@ -115,7 +113,7 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 			
 			@Override
 			public void onClick(View v) {
-				if(isAnimationMode()){
+				if(ViewCompat.hasTransientState(innerView)){
 					
 					final Animation animation = AnimationUtils.loadAnimation(mContext,R.anim.slideout);
 				    animation.setAnimationListener(new AnimationListener() {
@@ -144,7 +142,7 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 	
 		
 		itemButton.setOnClickListener(new OnClickListener() {
-			
+			Double itemCurrentPrize = null;
 			@Override
 			public void onClick(View v) {
 				Animation animFadeOut = AnimationUtils.loadAnimation(mContext, android.R.anim.fade_out);
@@ -152,22 +150,28 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 		    	 
 		    	 //initiate edit
 					if(getItemEditView().getVisibility() == View.GONE){
+						 ViewCompat.setHasTransientState(innerView,true);
 						getItemEditView().setAnimation(animFadeIn);
 					    getItemEditView().setVisibility(View.VISIBLE);
 						setActionButtonText("Done");
-						if(Globals.cartTotalPrice>0)
-							Globals.cartTotalPrice -= item.getTotalPrice();
-						// Packlist to be sent for item edited
+						itemCurrentPrize = item.getTotalPrice();
+					
 					}
 				//finalize edit
+					
+					
 					else{
-						Globals.cartTotalPrice += item.getTotalPrice();
+						if (itemCurrentPrize != null){
+							Globals.cartTotalPrice -= itemCurrentPrize;
+							Globals.cartTotalPrice += item.getTotalPrice();
+						}
 						HomeActivity.actionBar.setTitle(r.getText(R.string.shopping_cart)+
         				"    " + Double.toString(Math.round(Globals.cartTotalPrice*100.0/100.0)) +" "+ r.getText(R.string.currency));
 						getItemEditView().setAnimation(animFadeOut);
 				    	getItemEditView().setVisibility(View.GONE);
 						setActionButtonText("Edit");
-						editPackList();
+						 ViewCompat.setHasTransientState(innerView,false);
+						
 					}
 			}
 		});
@@ -177,7 +181,6 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 			
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				
 				switch(event.getAction())
                 {
 	                case MotionEvent.ACTION_DOWN:
@@ -190,22 +193,30 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 	                {       
 	                	
 	                	previouspoint=event.getX();
-		                   
+		                 
 	                	 if(previouspoint - startPoint > SWIPE_MIN_DISTANCE){
 	                		 //Right side swap
-	                		 if(animationMode){
+	         				
+
+	                		 Log.e("current animationmode",String.valueOf(ViewCompat.hasTransientState(innerView)));
+	                		 if(ViewCompat.hasTransientState(innerView)){
+	                			 ViewCompat.setHasTransientState(innerView,false);
 	                			TranslateAnimation Anim = new TranslateAnimation(-px, 0, 0, 0);
 		           			 	Anim.setInterpolator(new BounceInterpolator());
 		           			 	Anim.setDuration(300);
 		           			 	Anim.setFillAfter(true);
 		           			 	innerView.startAnimation(Anim);
+		           			   
 		           			 	animationMode = false;
 		           			 	getItemButton().setEnabled(true);
 		                    }
 	
 	                    }else if(startPoint - previouspoint > SWIPE_MIN_DISTANCE){
 	                    	// Left side swap
-	                    	if(!animationMode){
+
+	                    	 Log.e("current animationmode",String.valueOf(animationMode));
+	                    	if(!innerView.hasTransientState()){
+	                    		 ViewCompat.setHasTransientState(innerView,true);
 	                    		TranslateAnimation Anim = new TranslateAnimation(0, -px, 0, 0);
 	                    		Anim.setInterpolator(new BounceInterpolator());
 		           			 	Anim.setDuration(300);
@@ -213,6 +224,7 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 		           			 	innerView.startAnimation(Anim);
 		           			 	getItemButton().setEnabled(false);
 		           			 	animationMode = true;
+		           			   
 	                    	}
 	                    }
 	                }break;
@@ -248,16 +260,9 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 		}
 		try{
 			measurePicker.setMinValue(0);
-			measurePicker.setMaxValue(item.getItemList().size()-1);
-//			measurePicker.setFormatter(new NumberPicker.Formatter() {
-//				
-//				@Override
-//				public String format(int value) {
-//					return item.getItemList().get(value).getName();
-//					
-//				}
-//			});
+			measurePicker.setMaxValue(0);
 			measurePicker.setDisplayedValues(measureStringArray);
+			measurePicker.setMaxValue(item.getItemList().size()-1);
 			measurePicker.setOnValueChangedListener(new OnValueChangeListener() {
 				
 				@Override
@@ -280,22 +285,20 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 	
 	public void initQtyPicker(){
 		try{
-			qtyPicker.setMaxValue(5);
-			qtyPicker.setMinValue(1);
-			qtyPicker.setFormatter(new NumberPicker.Formatter() {
+			String[]  qtyStringArray = {"1 Qty", "2 Qty", "3 Qty", "4 Qty","5 Qty"};
+			
 				
-				@Override
-				public String format(int value) {
-					
-					return Integer.toString(value) + " Qty";
-				}
-			});
+			qtyPicker.setMaxValue(0);
+			qtyPicker.setMinValue(0);
+			qtyPicker.setDisplayedValues(qtyStringArray);
+			qtyPicker.setMaxValue(4);
+
 			qtyPicker.setOnValueChangedListener(new OnValueChangeListener() {
 				
 				@Override
 				public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
 					
-					item.setCurrentQty( newVal);
+					item.setCurrentQty( newVal + 1);
 					item.setTotalPrice( (double) Math.round((item.getCurrentQty()*item.getCurrentMsrPrice() * 100.0)/100.0));
 					updateView();
 				}
@@ -342,32 +345,32 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 	
 	protected void delete_from_list() {
 		
-		TranslateAnimation Anim = new TranslateAnimation(-px, 0, 0, 0);
-	 	Anim.setDuration(10);
-	 	Anim.setFillAfter(true);
-	 	innerView.startAnimation(Anim);
-	 	
-	 	animationMode = false;
-	 	getItemButton().setEnabled(true);
-	 	
-	 	cartItemList.remove(getItem());
-	 	
-	 	Globals.item_added_list.remove(Globals.item_added_list.indexOf(getItem().getCurrentItemId()));
-	 	Globals.cartTotalPrice -= item.getTotalPrice();
-	 	
-	 	HomeActivity.actionBar.setTitle(r.getText(R.string.shopping_cart)+
-				 "    "+  Double.toString(Math.round(Globals.cartTotalPrice*100.0/100.0))+" " + r.getText(R.string.currency));
-	 	HomeActivity.productsNumberView.setText(String.valueOf(cartItemList.size()));
-	 	
-//		if(getItem().isSent()){
-//			OrderItemDetail itemToDelete = new OrderItemDetail(item.getCurrentItemId(), item.getCurrentQty());
-//			deletePackList(itemToDelete);
-//		}
-		if(cartItemList.isEmpty()){
-			CartFragment.emptyCartState();
-		}
-		itemListAdapter.updateCart(cartItemList);
-		
+	 	int index = Globals.item_added_list.indexOf(getItem().getCurrentItemId());
+	 	if(index >=0){
+			TranslateAnimation Anim = new TranslateAnimation(-px, 0, 0, 0);
+		 	Anim.setDuration(10);
+		 	Anim.setFillAfter(true);
+		 	innerView.startAnimation(Anim);
+		 	
+		 	animationMode = false;
+		 	getItemButton().setEnabled(true);
+		 	
+		 	cartItemList.remove(getItem());
+		 	
+		 	Globals.item_added_list.remove(index);
+		 	Globals.cartTotalPrice -= item.getTotalPrice();
+		 	
+		 	HomeActivity.actionBar.setTitle(r.getText(R.string.shopping_cart)+
+					 "    "+  Double.toString(Math.round(Globals.cartTotalPrice*100.0/100.0))+" " + r.getText(R.string.currency));
+		 	HomeActivity.productsNumberView.setText(String.valueOf(cartItemList.size()));
+		 	
+	
+			if(cartItemList.isEmpty()){
+				CartFragment.emptyCartState();
+			}
+			itemListAdapter.updateCart(cartItemList);
+	 	}
+	 	innerView.setHasTransientState(false);
 	}
 	
 	@Override
@@ -377,42 +380,48 @@ public class CartItemCard extends BasicCartItemCard implements PackListInterface
 	
 	@Override
 	public void PackListSuccess(PackList obj) {
-		if(obj.state==DBState.DELETE){
-			for(int i = 0 ;i < obj.products.size() ; i++){
-				if(CartGlobals.cartList.contains(obj.products.get(i)))
-					CartGlobals.cartList.remove(obj.products.get(i));
-				if(CartGlobals.recentDeletedItems.contains(obj.products.get(i)))
-					CartGlobals.recentDeletedItems.remove(obj.products.get(i));
-			}
-			
-		}
-		else if (obj.state == DBState.INSERT){
-			for(int i = 0 ;i < obj.products.size() ; i++){
-				CartGlobals.cartList.add(obj.products.get(i));
-			}
-		}
-		else{
-			
-		}
+//		if(obj.pckProd.getState()==DBState.DELETE){
+//			for(int i = 0 ;i < obj.pckProd.getProducts().size() ; i++){
+//				if(CartGlobals.cartList.contains(obj.pckProd.getProducts().get(i)))
+//					CartGlobals.cartList.remove(obj.pckProd.getProducts().get(i));
+//				if(CartGlobals.recentDeletedItems.contains(obj.pckProd.getProducts().get(i)))
+//					CartGlobals.recentDeletedItems.remove(obj.pckProd.getProducts().get(i));
+//			}
+//			
+//		}
+//		else if (obj.pckProd.getState() == DBState.INSERT){
+//			for(int i = 0 ;i < obj.pckProd.getProducts().size() ; i++){
+//				CartGlobals.cartList.add(obj.pckProd.getProducts().get(i));
+//			}
+//		}
+//		else{
+//			
+//		}
 	}
 	
 	@Override
 	public void editPackList() {
-		if(item.isSent()){
-			OrderItemDetail itemToDelete = new OrderItemDetail(item.getCurrentItemId(), item.getCurrentQty());
-			PackList pl = new PackList();
-		}
+//		if(item.isSent()){
+//			OrderItemDetail itemToDelete = new OrderItemDetail(item.getCurrentItemId(), item.getCurrentQty());
+//			PackList pl = new PackList();
+//		}
 	}
 	
 	@Override
 	public void deletePackList(OrderItemDetail itemToDelete) {
-		ArrayList<OrderItemDetail> deleteList = new ArrayList<OrderItemDetail>();
-		deleteList.add(itemToDelete);
-		PackList pl = new PackList();
-		pl.state = Constants.DBState.DELETE;
-		pl.products = deleteList;
-		CartGlobals.CartServerRequestQueue.add(pl);
-		pl.sendPackList(this);
+//		ArrayList<OrderItemDetail> deleteList = new ArrayList<OrderItemDetail>();
+//		deleteList.add(itemToDelete);
+//		PackList pl = new PackList();
+//		pl.pckProd = new PackProducts( DBState.DELETE, Product.getToSendList(Globals.item_order_list));
+//		
+//	
+//		//CartGlobals.CartServerRequestQueue.add(pl);
+//		pl.sendPackList(this);
+	}
+	@Override
+	public void packListFailure() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 

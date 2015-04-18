@@ -11,7 +11,9 @@ import retrofit.http.POST;
 import com.google.gson.JsonObject;
 import com.homelybuysapp.models.Category;
 import com.homelybuysapp.models.Input;
+import com.homelybuysapp.models.OrderDetail;
 import com.homelybuysapp.models.OrderItemDetail;
+import com.homelybuysapp.models.PackProducts;
 import com.homelybuysapp.models.Product;
 import com.homelybuysapp.models.Shop;
 import com.homelybuysapp.models.User;
@@ -47,10 +49,10 @@ public interface ServiceProvider {
 
 	
 	@POST("/packproducts")
-	void packList(@Body com.homelybuysapp.models.PackList packlist, Callback<JsonObject> callback);
+	void packList(@Body PackProducts pckProd, Callback<JsonObject> callback);
 	
 	@POST("/submitorder")
-	void submitOrder(@Body com.homelybuysapp.models.SubmitOrderDetails submitOrderDetails, Callback<Integer> orderID);
+	void submitOrder(@Body OrderDetail orderDetail, Callback<Integer> orderID);
 	
 	@POST("/getorderstate")
 	void getOrderStatus(@Body int orderId, Callback<com.homelybuysapp.Utils.Constants.ORDERState> orderStatus);

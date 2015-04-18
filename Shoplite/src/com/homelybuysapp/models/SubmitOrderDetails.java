@@ -7,8 +7,9 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 import android.util.Log;
+import android.widget.Toast;
 
-import com.homelybuysapp.Utils.Constants;
+import com.homelybuysapp.Utils.Globals;
 import com.homelybuysapp.connection.ConnectionInterface;
 import com.homelybuysapp.connection.ServerConnectionMaker;
 import com.homelybuysapp.connection.ServiceProvider;
@@ -20,62 +21,25 @@ import com.homelybuysapp.interfaces.SubmitOrderInterface;
  */
 public class SubmitOrderDetails   implements ConnectionInterface {
 
-	Constants.ORDERStatus status;
-	String address;
-	double latitude;
-	double longitude;
-	double amount;
-	String refNumber;
+	
 	private SubmitOrderInterface calling_class_object;
-	
-
-	public Constants.ORDERStatus getState() {
-		return status;
-	}
-
-	public void setState(Constants.ORDERStatus state) {
-		this.status = state;
-	}
-
-	public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	public double getLatitude() {
-		return latitude;
-	}
-
-	public void setLatitude(double latitude) {
-		this.latitude = latitude;
-	}
-
-	public double getLongitude() {
-		return longitude;
-	}
-
-	public void setLongitude(double longitude) {
-		this.longitude = longitude;
-	}
+	private OrderDetail oDetail;
 
 	
-	public double getAmount() {
-		return amount;
+	public SubmitOrderInterface getCalling_class_object() {
+		return calling_class_object;
 	}
 
-	public void setAmount(double amount) {
-		this.amount = amount;
+	public void setCalling_class_object(SubmitOrderInterface calling_class_object) {
+		this.calling_class_object = calling_class_object;
 	}
 
-	public String getRefNumber() {
-		return refNumber;
+	public OrderDetail getoDetail() {
+		return oDetail;
 	}
 
-	public void setRefNumber(String refNumber) {
-		this.refNumber = refNumber;
+	public void setoDetail(OrderDetail oDetail) {
+		this.oDetail = oDetail;
 	}
 
 	public void submitOrder(SubmitOrderInterface callee)
@@ -84,7 +48,6 @@ public class SubmitOrderDetails   implements ConnectionInterface {
 		
 		try {
 			ServerConnectionMaker.sendRequest(this);
-			Log.e("sendPackList"," called");
 			}
 		catch (RetrofitError e) {
 			  System.out.println(e.getResponse().getStatus());
@@ -97,22 +60,21 @@ public class SubmitOrderDetails   implements ConnectionInterface {
 	@Override
 	public void sendRequest(ServiceProvider serviceProvider) {
 		
-		final SubmitOrderDetails submitOrder = this;
-		final SubmitOrderInterface callee =  submitOrder.calling_class_object;
-		submitOrder.calling_class_object = null;
-		serviceProvider.submitOrder(submitOrder, new Callback<Integer>(){
+		
+		
+		final SubmitOrderInterface callee =  this.calling_class_object;
+		
+		serviceProvider.submitOrder(this.getoDetail(), new Callback<Integer>(){
 			
 			@Override
 			public void failure(RetrofitError response) {
 				
-				if (response.isNetworkError()) {
-					Log.e("SubmitOrderPlanet error", "503"); 
+				if (response.getKind().equals(RetrofitError.Kind.NETWORK)) {
+					Toast.makeText(Globals.ApplicationContext, "Network Problem", Toast.LENGTH_SHORT).show();
 			    }
-				//Log.e("SubmitOrderPlanet error", response.getUrl());
-				//Log.e("SubmitOrderPlanet error", response.getMessage());
-				//Log.e("SubmitOrderPlanet error", response.getStackTrace().toString());
+				
 				ServerConnectionMaker.recieveResponse(null);
-				Log.e("Submit order error","error");
+				callee.submitOrderFailure();
 					
 			}
 
@@ -120,7 +82,6 @@ public class SubmitOrderDetails   implements ConnectionInterface {
 			public void success(Integer orderID, Response response) {
 				
 				ServerConnectionMaker.recieveResponse(response);
-				Log.e("SubmitOrderSuccess", response.toString());
 				callee.submitOrderSuccess(orderID);
 				
 				

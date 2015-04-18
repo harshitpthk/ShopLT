@@ -25,6 +25,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.homelybuys.homelybuysApp.R;
@@ -171,11 +172,12 @@ public class MainActivity extends ActionBarActivity implements ConnectionInterfa
 		
 		
 		//hide keyboard
-		InputMethodManager inputManager = (InputMethodManager)
-        getSystemService(Context.INPUT_METHOD_SERVICE); 
-		inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
-        InputMethodManager.HIDE_NOT_ALWAYS);
-		
+		InputMethodManager inputManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE); 
+		View focusedView = getCurrentFocus();
+	    
+	    if (focusedView != null) {
+	    	inputManager.hideSoftInputFromWindow(focusedView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+	    }
 		
 		// Reset errors.
 		mEmailView.setError(null);
@@ -278,11 +280,11 @@ public class MainActivity extends ActionBarActivity implements ConnectionInterfa
 
 			@Override
 			public void failure(RetrofitError response) {
+				if (response.getKind().equals(RetrofitError.Kind.NETWORK)) {
+					//Log.e("Retrofit error", "503"); // Use another code if you'd prefer
+					Toast.makeText(Globals.ApplicationContext, "Network Problem", Toast.LENGTH_SHORT).show();
+			    }
 				
-//				if (response.httpError(response.getUrl(), response, converter, successType)) {
-//					Toast.makeText(getBaseContext(), "Network Error", Toast.LENGTH_LONG).show();
-//			    }
-//				else if(response.networkError(response.getUrl(), ))
 				
 				ServerConnectionMaker.recieveResponse(null);
 			}

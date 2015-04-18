@@ -19,14 +19,14 @@ import com.homelybuysapp.models.Shop;
 public class Globals {
 	public static Context ApplicationContext = null;								//Application Context for use in the non-activity classes
 	public static DbHelper dbhelper = null ;										//DB Helper object to read write to DB.
-	public static com.homelybuysapp.models.Location current_location = null;				//users current location
-//	public static com.homelybuysapp.models.Location delivery_location= null;				//delivery Location
+	public static com.homelybuysapp.models.Location current_location = null;				//users current HomelyBuysLocation
+//	public static com.homelybuysapp.models.Location delivery_location= null;				//delivery HomelyBuysLocation
 //	public static String delivery_address;
 	public static Address deliveryAddress = new Address(); 
 	public static ArrayList<Shop> shop_list = new ArrayList<Shop>();				// array  to store shop list
 	public static HashMap<Double,Shop> near_shop_distance_matrix = new HashMap<Double,Shop>();
 		
-	public static boolean connected_to_shop_success = false;						// boolean to know whether the user is connected to shop or not used in re-listening of location in the location class
+	public static boolean connected_to_shop_success = false;						// boolean to know whether the user is connected to shop or not used in re-listening of HomelyBuysLocation in the HomelyBuysLocation class
 	public static Shop connectedShop;
 	
 	public static Product fetched_item_category;
@@ -40,7 +40,7 @@ public class Globals {
 	public static boolean isInsideShop;
 	public static boolean usedPreviousAddress = true;
 	
-	//Method to Return Shop object which is at minimum distance from current location inside the 200 meters radius
+	//Method to Return Shop object which is at minimum distance from current HomelyBuysLocation inside the 200 meters radius
 	public static Shop min_sd_matrix() {
 		 List distances = new ArrayList(near_shop_distance_matrix.keySet());
 		 Collections.sort(distances);
@@ -49,7 +49,7 @@ public class Globals {
 		
 		
 	}
-	//Method to add shop Object and its location to shop-distance Matrix 
+	//Method to add shop Object and its HomelyBuysLocation to shop-distance Matrix 
 	public static void add_to_sd_matrix(Shop shpObject ,double lat, double lng, Location location) {
 		
 		double distance = Math.sqrt(Math.pow((location.getLatitude()-lat), 2) + Math.pow((location.getLongitude()-lng),2));
@@ -57,7 +57,7 @@ public class Globals {
 		
 	}
 	
-	//Google map marker method to return Shop Object when inputed with Location
+	//Google map marker method to return Shop Object when inputed with HomelyBuysLocation
 	public static Shop get_shop_from_location(LatLng loc) {
 		if(Globals.shop_list != null){
 			for(int i = 0 ; i < Globals.shop_list.size(); i++){

@@ -1,25 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <FrameLayout 
-        	xmlns:android="http://schemas.android.com/apk/res/android"
-     	    android:id="@+id/map_container"
-     	    android:layout_width="fill_parent"
-     	    android:layout_height="fill_parent" 
-	        android:layout_margin="0dp"
-	        android:orientation="vertical">
-	        <fragment
-	        android:name="com.google.android.gms.maps.SupportMapFragment"
-	        android:id="@+id/mapFragment"
-	        android:layout_width="fill_parent"
-	        android:layout_height="fill_parent" 
-	              
-	        />
-			<LinearLayout
+<FrameLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+     android:id="@+id/parent_container" 
+     android:layout_height="fill_parent"
+     android:layout_width="fill_parent">
+   <RelativeLayout
+       android:layout_height="match_parent"
+       android:layout_width="match_parent"
+       >
+   		<FrameLayout
 			    android:id="@+id/map_dialog"
-			    android:background="@drawable/shadow"
-			    android:orientation="vertical"
+			    android:background="#fff"
 			    android:layout_width="match_parent"
-			    android:layout_height="wrap_content"
-			    android:layout_margin="20dp">
+			    android:layout_height="130dp"
+			    android:layout_alignParentTop="true"
+			     android:padding = "12dp"
+			    >
 			    <LinearLayout 
 			        android:id="@+id/delivery_address_container"
 			        android:orientation="vertical"
@@ -29,7 +25,7 @@
 				    <LinearLayout android:id="@+id/input_box_container"
 				        android:orientation="horizontal"
 				        android:layout_width="match_parent"
-				        android:layout_height="70dp"
+				        android:layout_height="60dp"
 				        android:background="#fff">
 						<EditText android:layout_weight="2"
 						    android:id="@+id/delivery_address_input"
@@ -58,12 +54,12 @@
 					<TextView
 					    android:id="@+id/delivery_address_secondary"
 					    android:layout_width="match_parent"
-					    android:layout_height="wrap_content"
+					    android:layout_height="50dp"
 					    android:textSize="14sp"
 					    android:layout_gravity="bottom"
 					    android:padding="5dp"
 					    android:background="#fff"
-					    android:textColor="@color/text_color"
+					    android:textColor="#222222"
 					    ></TextView>
 				</LinearLayout>
 				<LinearLayout 
@@ -78,9 +74,9 @@
 	            	
 		            <LinearLayout 
 		                android:id="@+id/shop_details_info"
-		                android:layout_height="120dp"
+		                android:layout_height="110dp"
 		                android:layout_width="0dp"
-		                android:padding="10dp"
+		                android:padding="5dp"
 		                android:layout_weight = "1"
 		                android:background="#fff"
 		                android:orientation="vertical">
@@ -89,7 +85,7 @@
 		                    android:id="@+id/shop_details_heading"
 		                    android:layout_width="fill_parent"
 		                    android:layout_height="wrap_content"
-		                    android:textSize="18sp"
+		                    android:textSize="19sp"
 		                    android:textColor="@color/app_color"
 		                    
 		                    >
@@ -98,7 +94,8 @@
 		                     android:id="@+id/shop_details_description"
 		                     android:layout_width="fill_parent"
 		                     android:layout_height="wrap_content"
-		                     android:textSize="14sp"
+		                     android:layout_marginTop="5dp"
+		                     android:textSize="15sp"
 		                     android:textColor="@color/app_color"
 		                    
 		                    ></TextView>
@@ -117,21 +114,30 @@
 		               android:visibility="invisible"
 		              ></Button>
 	        	</LinearLayout>
+	        	
 				
-	        </LinearLayout>
+	        </FrameLayout>
+			
+   
+    <FrameLayout 
+        	
+     	    android:id="@+id/map_container"
+     	    android:layout_width="fill_parent"
+     	    android:layout_height="wrap_content" 
+     	    android:layout_below="@+id/map_dialog"
+     	    android:layout_alignParentBottom="true"
+	        android:layout_margin="0dp"
+	       >
+	        <fragment
+	        android:name="com.google.android.gms.maps.SupportMapFragment"
+	        android:id="@+id/mapFragment"
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent" 
+	              
+	        />
 			
 	      
-	       <LinearLayout 
-	           android:id="@+id/delivery_dialog_container"
-	           android:layout_height="wrap_content"
-	           android:layout_width="wrap_content"
-	           android:layout_marginTop="-40dp"
-	           android:layout_gravity="center"
-	           android:alpha="0.7"
-	           android:orientation="vertical"
-	           android:background="@drawable/button">
-		      	       
-	        </LinearLayout>
+	      
 	        <ImageButton android:id="@+id/search_anchor_point"
 		           android:contentDescription="@string/desc_image_button"
 		           android:layout_gravity="center"
@@ -141,18 +147,32 @@
 		           
 		           >
 	        </ImageButton>
-	        
-	        <ImageButton
-	            android:id="@+id/address_selector"
+	         <ImageButton
+		            android:id="@+id/address_selector"
+		            android:contentDescription="@string/desc_image_button"
+		            android:layout_gravity="bottom|start"
+		            android:layout_marginBottom="78dp"
+		            android:layout_marginLeft="12dp"
+		            android:layout_marginStart="12dp"
+		            android:src="@drawable/home"
+		            android:alpha="0.85"
+		            android:visibility="gone"
+		            android:layout_height="55dp"
+			        android:layout_width="55dp"
+			        
+			        android:background="@drawable/button_round"
+				></ImageButton>
+	         
+	         <ImageButton
+	            android:id="@+id/location_selector"
 	            android:contentDescription="@string/desc_image_button"
-	            android:layout_gravity="bottom|end"
-	            android:layout_margin="25dp"
-	            android:src="@drawable/home"
+	            android:layout_gravity="bottom|start"
+	            android:layout_margin="12dp"
+	            android:src="@drawable/location"
 	            android:alpha="0.85"
-	            android:layout_height="60dp"
-		        android:layout_width="60dp"
-		        
-		        android:background="@drawable/button_round"
+	            android:layout_height="55dp"
+		        android:layout_width="55dp"
+		        android:background="@drawable/location_button"
 			></ImageButton>
 	         <com.homelybuysapp.UI.ButteryProgressBar
    					 xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -163,7 +183,23 @@
        				 />
         </FrameLayout>
 			
-
-	 
+</RelativeLayout>
+<!--  <ImageButton
+		            android:id="@+id/address_selector"
+		            android:contentDescription="@string/desc_image_button"
+		            android:layout_gravity="top|end"
+		            android:layout_marginTop="100dp"
+		            android:layout_marginRight="12dp"
+		            android:layout_marginEnd="12dp"
+		            android:src="@drawable/home"
+		            android:alpha="0.85"
+		            android:visibility="gone"
+		            android:layout_height="60dp"
+			        android:layout_width="60dp"
+			        
+			        android:background="@drawable/button_round"
+				></ImageButton>-->
+	       
+</FrameLayout>
     
 

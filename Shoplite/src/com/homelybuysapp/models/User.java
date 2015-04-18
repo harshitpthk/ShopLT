@@ -7,7 +7,7 @@ public class User {
 	private String email;
 	private String phno;
 	private boolean isMale;
-//	private Location location;
+//	private HomelyBuysLocation HomelyBuysLocation;
 	private String dob;
 	
 	public String getDob() {
@@ -47,11 +47,11 @@ public class User {
 	public void setMale(boolean isMale) {
 		this.isMale = isMale;
 	}
-//	public Location getLocation() {
-//		return location;
+//	public HomelyBuysLocation getLocation() {
+//		return HomelyBuysLocation;
 //	}
-//	public void setLocation(Location location) {
-//		this.location = location;
+//	public void setLocation(HomelyBuysLocation HomelyBuysLocation) {
+//		this.location = HomelyBuysLocation;
 //	}
 	
 }

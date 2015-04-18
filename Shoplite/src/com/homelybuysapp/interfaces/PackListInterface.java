@@ -8,5 +8,6 @@ public interface PackListInterface {
 	public void PackListSuccess(PackList obj);
 	public void editPackList();
 	public void deletePackList(OrderItemDetail itemToDelete);
+	public void packListFailure();
 	
 }

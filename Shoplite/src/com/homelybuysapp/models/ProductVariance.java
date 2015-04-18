@@ -7,6 +7,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.homelybuysapp.Utils.Globals;
 import com.homelybuysapp.connection.ConnectionInterface;
@@ -93,11 +94,10 @@ public class ProductVariance implements ConnectionInterface {
 
 				@Override
 				public void failure(RetrofitError response) {
-					if (response.isNetworkError()) {
-						Log.e("Service Unavailable", "503"); // Use another code if you'd prefer
+					if (response.getKind().equals(RetrofitError.Kind.NETWORK)) {
+						Toast.makeText(Globals.ApplicationContext, "Network Problem", Toast.LENGTH_SHORT).show();
 				    }
 					else{
-						Log.e("Get Items Failure",response.getMessage());
 					}
 					
 					ServerConnectionMaker.recieveResponse(null);
@@ -119,11 +119,10 @@ public class ProductVariance implements ConnectionInterface {
 
 				@Override
 				public void failure(RetrofitError response) {
-					if (response.isNetworkError()) {
-						Log.e("Service Unavailable", "503"); 	
+					if (response.getKind().equals(RetrofitError.Kind.NETWORK)) {
+						Toast.makeText(Globals.ApplicationContext, "Network Problem", Toast.LENGTH_SHORT).show();
 				    }
 					else{
-						Log.e("Get ProductVariance Failure",response.getMessage());
 					}
 					
 					ServerConnectionMaker.recieveResponse(null);

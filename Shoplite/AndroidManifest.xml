@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.homelybuys.homelybuysApp"
-    android:versionCode="6"
-    android:versionName="1.5" >
+    android:versionCode="8"
+    android:versionName="1.7" >
 	<compatible-screens>
         <!-- all small size screens -->
         <screen android:screenSize="small" android:screenDensity="mdpi" />
@@ -41,7 +41,6 @@
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS_FULL" />
-    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
 
     <uses-feature

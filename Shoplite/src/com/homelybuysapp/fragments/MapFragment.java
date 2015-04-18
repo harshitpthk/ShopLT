@@ -19,7 +19,6 @@ import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.res.Resources;
 import android.database.MatrixCursor;
 import android.graphics.Point;
 import android.location.Address;
@@ -31,7 +30,6 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.support.v7.widget.SearchView.OnSuggestionListener;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -47,11 +45,9 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
-import com.homelybuys.homelybuysApp.R;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -69,12 +65,13 @@ import com.google.android.gms.maps.model.VisibleRegion;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.homelybuys.homelybuysApp.R;
 import com.homelybuysapp.UI.ButteryProgressBar;
 import com.homelybuysapp.UI.Controls;
 import com.homelybuysapp.UI.PlacesSearchAdapter;
 import com.homelybuysapp.UI.UIUtil;
 import com.homelybuysapp.Utils.Globals;
-import com.homelybuysapp.Utils.location;
+import com.homelybuysapp.Utils.HomelyBuysLocation;
 import com.homelybuysapp.connection.ServiceProvider;
 import com.homelybuysapp.interfaces.LocationInterface;
 import com.homelybuysapp.interfaces.MapInterface;
@@ -93,7 +90,7 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 	private LinearLayout shopDetailsView;
 	private TextView shopDetailDescription;
     private Button startShop;
-    private LinearLayout mapDialogView;
+    private FrameLayout mapDialogView;
     private LinearLayout deliveryAddressView;
     private String addressText ;
     private TextView secondaryAddress;
@@ -108,53 +105,19 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 	public static boolean mapVisible = true;						// initial visibility set to false of the map
 	private Button setDeliveryLocation;
 	private ImageButton userAddresses;
+	private ImageButton currentLocationBut;
 	private FrameLayout map_container;
 	MapInterface mCallback = null;
 	ArrayList<com.homelybuysapp.models.Address> userAddress = Globals.dbhelper.getStoreAddress();
 	public static ArrayList<Marker> markerList = new ArrayList<Marker>();
 	private static PlacesSearchAdapter searchAdapter;	
 	private static ButteryProgressBar mapSearchProgressbar ;
-	
+	private String primaryAddress;
 	public static SimpleCursorAdapter  suggestionAdapter;
     private OnCameraChangeListener onCameraChange = new OnCameraChangeListener() {
 		@Override
 		public void onCameraChange(CameraPosition position) {
-			// TODO Auto-generated method stub
-//			if(animationFlipClockWise){
-//				ObjectAnimator anim = (ObjectAnimator) AnimatorInflater.loadAnimator(getActivity(), R.anim.flip_anti_clockwise); 
-//				anim.setTarget(mapDialogView);
-//				anim.setDuration(500);
-//				anim.addListener(new AnimatorListener() {
-//					@Override
-//					public void onAnimationStart(Animator animation) {
-//						// TODO Auto-generated method stub
-//						shopDetailsView.setRotationX(0);
-//						deliveryAddressView.setRotationX(0);
-//						deliveryAddressView.setVisibility(View.VISIBLE);
-//						shopDetailsView.setVisibility(View.GONE);
-//						
-//						animationFlipClockWise = false;
-//				
-//					}
-//					@Override
-//					public void onAnimationRepeat(Animator animation) {
-//						// TODO Auto-generated method stub
-//					}
-//					@Override
-//					public void onAnimationEnd(Animator animation) {
-//						// TODO Auto-generated method stub
-//						
-//							}
-//					@Override
-//					public void onAnimationCancel(Animator animation) {
-//						// TODO Auto-generated method stub
-//					}
-//				});
-//				anim.start();
-//			}
-//			else{
-//				
-//			}
+			
 			mMap.clear();
 			addressText = null;
 			Geocoder geocoder =  new Geocoder(getActivity(), Locale.US);
@@ -221,8 +184,8 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 			if(userAddress != null){
 				AlertDialog.Builder builderSingle = new AlertDialog.Builder(
 	                    getActivity());
-	            builderSingle.setIcon(R.drawable.home_yellow);
-	            builderSingle.setTitle("Select Delivery Address");
+	            
+	            builderSingle.setTitle("Previous Delivery Addresses");
 	            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
 	                    getActivity(),
 	                    android.R.layout.simple_selectable_list_item);
@@ -277,7 +240,7 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 		
 			@Override
 			public void onClick(View v) {
-				location.removeLocationListener();
+				HomelyBuysLocation.removeLocationListener();
 				mCallback.mapShopStart();
 		
 			}
@@ -288,19 +251,16 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 		@Override
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
-			Controls.show_loading_dialog(getActivity(), "Setting Delivery Location");
 			if(deliveryAddressInput.getText().toString().length() <=0 ){
 				deliveryAddressInput.setError(getResources().getString(R.string.error_field_required));
 			}
 			else{
+				Controls.show_loading_dialog(getActivity(), "Setting Delivery Location");
+
 				deliveryAddressInput.setError(null);
 			
 				//hide keyboard
-				InputMethodManager inputManager = (InputMethodManager)
-		            getActivity().getSystemService(Context.INPUT_METHOD_SERVICE); 
-		            inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
-		            InputMethodManager.HIDE_NOT_ALWAYS);
-		     
+				UIUtil.hideSoftKeyboard(getActivity());
 			
 		    //get camera center
 			VisibleRegion visibleRegion = mMap.getProjection().getVisibleRegion();
@@ -314,7 +274,6 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 			if(deliveryMarker == null){
 			 deliveryMarker = mMap.addMarker(new MarkerOptions().position(centerFromPoint)
 					.draggable(false).title(getResources().getString(R.string.delivery_anchor_title)));
-					//.icon(BitmapDescriptorFactory.fromResource(R.drawable.home_small)));
 			}
 			else{
 				deliveryMarker.remove();
@@ -326,128 +285,30 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 			
 			
 		    
-//			zoomOutDeliveryLocation(centerFromPoint, new CancelableCallback() {
-//				
-//				@Override
-//				public void onFinish() {
-//					// TODO Auto-generated method stub
-//					      /* Do something… */
-//					final Handler handler = new Handler();
-//					handler.postDelayed(new Runnable() {
-//					  @Override
-//					  public void run() {
-//					   
-//						  mMap.setOnCameraChangeListener(onCameraChange);
-//							//Do something after 100ms
-//					  }
-//					}, 500);  
-//							
-//					  
-//				}
-//				
-//				@Override
-//				public void onCancel() {
-//					// TODO Auto-generated method stub
-//				}
-//			});
-			
-			/*
-			 * removing circle for first version 
-			 */
-			 
-			//Make circle
-//			if(circle == null){
-//			  circle = mMap.addCircle(new CircleOptions()
-//		     .center(centerFromPoint)
-//		     .radius(2000)
-//		     .strokeColor(getResources().getColor(R.color.app_color))
-//		     .strokeWidth(5)
-//		     .fillColor(getResources().getColor(R.color.transparent_white)));
-//			}
-//			else{
-//				circle.remove();
-//				circle = mMap.addCircle(new CircleOptions()
-//			     .center(centerFromPoint)
-//			     .radius(2000)
-//			     .strokeColor(getResources().getColor(R.color.app_color))
-//			     .strokeWidth(5)
-//			     .fillColor(getResources().getColor(R.color.transparent_white)));
-//			}
-			
-//			ObjectAnimator anim = (ObjectAnimator) AnimatorInflater.loadAnimator(getActivity(), R.anim.flip_clockwise); 
-//			anim.setTarget(mapDialogView);
-//			anim.setDuration(500);
-//
-//			
-//			
-//			anim.addListener(new AnimatorListener() {
-//				
-//				
-//				@Override
-//				public void onAnimationStart(Animator animation) {
-//					// TODO Auto-generated method stub
-//					shopDetailsView.setRotationX(180);
-//					deliveryAddressView.setRotationX(180);
-//					deliveryAddressView.setVisibility(View.GONE);
-//					shopDetailsView.setVisibility(View.VISIBLE);
-//					animationFlipClockWise = true;
-//					
-//				}
-//				
-//				@Override
-//				public void onAnimationRepeat(Animator animation) {
-//					
-//				}
-//				
-//				@Override
-//				public void onAnimationEnd(Animator animation) {
-//						
-//					//MapUI.mMap.setOnCameraChangeListener(onCameraChange);
-//					Globals.deliveryAddress.setDeliveryLocation( new Location(mMap.getCameraPosition().target.latitude,
-//							mMap.getCameraPosition().target.longitude));
-//					
-//					
-//					if(deliveryAddressInput.getText().toString().length()>0){
-//						Globals.deliveryAddress.setAddressString((String) deliveryAddressInput.getText().toString() + " " +addressText);
-//					}
-//				    
-//				}
-//				
-//				@Override
-//				public void onAnimationCancel(Animator animation) {
-//						
-//				}
-//			});
-//			anim.start();
-//			
-			
-			//MapUI.mMap.setOnCameraChangeListener(onCameraChange);
-			Globals.deliveryAddress.setDeliveryLocation( new Location(mMap.getCameraPosition().target.latitude,
+			Globals.deliveryAddress.setDeliveryLocation( new Location
+					(mMap.getCameraPosition().target.latitude,
 					mMap.getCameraPosition().target.longitude));
 			
 			Globals.usedPreviousAddress = false;
 			if(deliveryAddressInput.getText().toString().length()>0){
-				Globals.deliveryAddress.setAddressString((String) deliveryAddressInput.getText().toString() + " " +addressText);
+				primaryAddress = (String) deliveryAddressInput.getText().toString();
+				Globals.deliveryAddress.setAddressString(primaryAddress+ " " +addressText);
 			}
 			if(!Globals.near_shop_distance_matrix.isEmpty()){
-				Shop shpObject = Globals.min_sd_matrix();				//find the shop which is very near to the location set by the camera
+				Shop shpObject = Globals.min_sd_matrix();				//find the shop which is very near to the HomelyBuysLocation set by the camera
 					//inside the shop
 				connect_to_shop(shpObject);
-//				Globals.isInsideShop = true;
-//				shopDetailHeading.setText("Welcome to " + shpObject.getName());
-//				shopDetailDescription.setText("Happy Shopping!");
-//				startShop.setVisibility(View.VISIBLE);	
+				
 			}
 			
 			
-//			mMap.setOnCameraChangeListener(onCameraChange);
-//			animationFlipClockWise = true;
 		}
 		
 		}
 	};
 	private MatrixCursor suggestionCursor;
 	private ArrayList<String> placesNameList;
+	private boolean isWaitingForLocation = false;
 	
 	
 	public interface MoveCameraInterface{
@@ -464,7 +325,7 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 	}
 	public static void zoomInDeliveryLocation(LatLng coordinate)
 	{
-		CameraUpdate yourLocation = CameraUpdateFactory.newLatLngZoom(coordinate, 18);
+		CameraUpdate yourLocation = CameraUpdateFactory.newLatLngZoom(coordinate, 15);
 	    mMap.moveCamera(yourLocation);
 	}
 	public static void zoomOutDeliveryLocation(LatLng coordinate,final GoogleMap.CancelableCallback callback)
@@ -489,10 +350,12 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 	}
 	
 	
-	public void get_shop_list(Location areaLocation)
+	public void get_shop_list(Location location)
 	{
+		mapSearchProgressbar.setVisibility(View.VISIBLE);
+		mapSearchProgressbar.start();
 		Shop shopObj = new Shop();
-		shopObj.get_shop_list(this,areaLocation);
+		shopObj.get_shop_list(this,location);
 	}
     
 	@Override
@@ -515,14 +378,25 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
     	deliveryAddressInput = (EditText) rootView.findViewById(R.id.delivery_address_input);
     	secondaryAddress = (TextView) rootView.findViewById(R.id.delivery_address_secondary);
     	shopDetailDescription = (TextView)rootView.findViewById(R.id.shop_details_description);
-    	mapDialogView = (LinearLayout) rootView.findViewById(R.id.map_dialog);
+    	mapDialogView = (FrameLayout) rootView.findViewById(R.id.map_dialog);
     	deliveryAddressView = (LinearLayout)rootView.findViewById(R.id.delivery_address_container);
     	map_container = (FrameLayout)rootView.findViewById(R.id.map_container);
     	mMapFragment = ((SupportMapFragment)getChildFragmentManager().findFragmentById(R.id.mapFragment));
     	mMap = mMapFragment.getMap();
     	userAddresses = (ImageButton)rootView.findViewById(R.id.address_selector);
+    	currentLocationBut = (ImageButton)rootView.findViewById(R.id.location_selector);
     	userAddresses.setOnClickListener(userAddressFetch);
-    	
+    	currentLocationBut.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				if(Globals.current_location != null){
+					LatLng coordinate = new LatLng(Globals.current_location.getLatitude(), Globals.current_location.getLongitude());
+					move_map_camera(coordinate,null);
+				}
+			}
+		});
     	setDeliveryLocation = (Button)rootView.findViewById(R.id.setDeliveryLocation);
     	setDeliveryLocation.setOnClickListener(setDeliveryAnchor);
     	//HomeActivity.actionBar.setTitle(getResources().getText(R.string.pick_delivery_location));
@@ -531,9 +405,10 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
     	startShop.setOnClickListener(mapShopContinue);
     	mMap.setOnCameraChangeListener(onCameraChange);
     	mMap.setOnMarkerClickListener(this);
-    	mMap.setMyLocationEnabled(true);
+    	mMap.setMyLocationEnabled(false);
     	View mapView = mMapFragment.getView();
-       
+    	mMap.getUiSettings().setZoomControlsEnabled(true);
+
        mMap.setOnMapClickListener(new OnMapClickListener() {
 		
 		@Override
@@ -543,32 +418,9 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 			UIUtil.hideSoftKeyboard(getActivity());
 		}
        });
-    	if(mapView!= null){
-	    	Resources r = getResources();
-	    	float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25, r.getDisplayMetrics());
-	    	View locationButton = ((View) mapView.findViewById(1).getParent()).findViewById(2);
-	    	RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
-	        // position on right bottom
-	    
-	        rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
-	        rlp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
-	        rlp.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
-	        rlp.addRule(RelativeLayout.ALIGN_PARENT_START, RelativeLayout.TRUE);
-	        rlp.setMargins(30, 30, 30, (int) px);
-	        
-	        
-	    	
-	    	View zoomControls = ((View) mapView.findViewById(1).getParent()).findViewById(1);
-	    	RelativeLayout.LayoutParams rlp1 = (RelativeLayout.LayoutParams) zoomControls.getLayoutParams();
-	        // position on right bottom
-	        rlp1.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
-	        rlp1.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
-	        rlp1.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
-	        rlp1.addRule(RelativeLayout.ALIGN_PARENT_START, RelativeLayout.TRUE);
-	        rlp1.setMargins(30, 30, 30, 250);
-    	}
-    	
-    	mMap.getUiSettings().setZoomControlsEnabled(true);
+       mapSearchProgressbar.setVisibility(View.GONE);
+		mapSearchProgressbar.stop();
+
     	setHasOptionsMenu(true);
         return rootView;
     }
@@ -585,13 +437,17 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 		
 		super.onResume();
 		 if(mMap != null){
-		        if(!location.made_use_of_location){
-		        	location loc = new location();
-					loc.getLocation(this,getActivity());
+			 	 
+		        if(Globals.current_location == null){
+		        	
+					HomelyBuysLocation.getLocation(this,getActivity());
+
 		        }
 		        else{
-		        	LatLng coordinate = new LatLng(Globals.current_location.getLatitude(), Globals.current_location.getLongitude());
-		    		zoomInDeliveryLocation(coordinate);
+		        	if(Globals.current_location != null){
+		        		LatLng coordinate = new LatLng(Globals.current_location.getLatitude(), Globals.current_location.getLongitude());
+		        		zoomInDeliveryLocation(coordinate);
+		        	}
 		    		
 		        }
 	      }
@@ -601,8 +457,8 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
         }
 		 
 		 if(userAddress.size() <= 0){
-	    		userAddresses.setVisibility(View.INVISIBLE);
-	    	}
+				userAddresses.setVisibility(View.INVISIBLE);
+			}
 		 else{
 			 userAddresses.setVisibility(View.VISIBLE);
 		 }
@@ -622,7 +478,7 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 	        MenuItem searchMenuItem =  menu.findItem(R.id.search);
 	        shopSearchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
 	        
-	        shopSearchView.setQueryHint("Search Your Delivery Location");
+	        shopSearchView.setQueryHint("Search Your Delivery HomelyBuysLocation");
 	        shopSearchView.setSubmitButtonEnabled(false);
 	        shopSearchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
 	        
@@ -637,10 +493,11 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 	        shopSearchView.setOnQueryTextListener(new OnQueryTextListener(){
 				@Override
 				public boolean onQueryTextChange(String newText) {
-					mapSearchProgressbar.start();
 					if(newText.length()<= 3){
+					       mapSearchProgressbar.setVisibility(View.VISIBLE);
 
-				        
+						mapSearchProgressbar.start();
+
 						pl.autocomplete(newText);
 						
 					}
@@ -685,9 +542,12 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 					            inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
 					            InputMethodManager.HIDE_NOT_ALWAYS);
 					            shopSearchView.setIconifiedByDefault(true); //this line
+					            
+					            mapSearchProgressbar.setVisibility(View.GONE);
 					            mapSearchProgressbar.stop();
+
 					        } else {
-					            // No results for your location
+					            // No results for your HomelyBuysLocation
 					        }
 					    } catch (IOException e) {
 					        e.printStackTrace();
@@ -698,7 +558,6 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 
 				@Override
 				public boolean onSuggestionSelect(int arg0) {
-					//Toast.makeText(getApplicationContext(), Integer.toString(arg0), Toast.LENGTH_SHORT).show();
 					return true;
 				}});
 			 
@@ -706,20 +565,13 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 				
 				@Override
 				public boolean onMenuItemActionExpand(MenuItem item) {
-//					map_container.setVisibility(View.VISIBLE);
-//					mapVisible = true;
+
 					return true;
 				}
 				
 				@Override
 				public boolean onMenuItemActionCollapse(MenuItem item) {
 					
-////						FrameLayout map_container = (FrameLayout)findViewById(R.id.map_container);
-////						map_container.setVisibility(View.INVISIBLE);
-////						MenuItem CartMenuItem = (MenuItem) menu.findItem(R.id.shopping_cart);
-////			            CartMenuItem.setVisible(true);
-////						MapUI.mapVisible = false;
-										
 					
 					return true;
 				}
@@ -744,94 +596,49 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
             mCallback = (MapInterface) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement MapInterface");
+                    + "must implement MapInterface");
         }
     }
 	
 	
 	@Override
 	public void make_use_of_location() {
-		
-//		ArrayList<Shop> connectedNearShoplist  = Globals.dbhelper.getNearConnectedShop(Globals.current_location.getLatitude(), Globals.current_location.getLongitude());
-//		
-//		if(connectedNearShoplist == null){
-//			
-//			//get_shop_list(Globals.current_location);
-//		}
-//		
-//		else{
-//			//get_shop_list(Globals.current_location);
-//			//shop_list_success(Globals.current_location,connectedNearShoplist);
-//			
-//		}
-		
+				
 		LatLng coordinate = new LatLng(Globals.current_location.getLatitude(), Globals.current_location.getLongitude());
-		zoomInDeliveryLocation(coordinate);
-		location.made_use_of_location = true;
+		move_map_camera(coordinate, null);
+		//zoomInDeliveryLocation(coordinate);
 		get_shop_list(Globals.current_location);
+		isWaitingForLocation = false;
+		Log.e("waiting for location",String.valueOf(isWaitingForLocation));
+
+		Controls.dismiss_progress_dialog();
+		HomelyBuysLocation.setHasLocation(true);
+
 	}
-	public void toggle_map()
-	{
-    	
-    	
-    	
-		FrameLayout map_container = (FrameLayout)rootView.findViewById(R.id.map_container);
-		
-		if(mapVisible){
-			map_container.setVisibility(View.INVISIBLE);
-			mapVisible = false;
-		}
-		else{
-			map_container.setVisibility(View.VISIBLE);
-			mapVisible = true;
-		}
-	    	
-	}
-	public void showFullShopDetails(View v)
-	{
-		
-		if(Globals.connected_to_shop_success){
-			move_map_camera(new LatLng(Globals.connectedShop.getLocation().getLatitude(),
-					Globals.connectedShop.getLocation().getLongitude()),null);
-		}
+	
+	@Override
+	public void locationDenied(){
+		Controls.dismiss_progress_dialog();
+
 	}
 	
 	
 	
 	@Override
 	public boolean onMarkerClick(Marker marker) {
-		
-//		double lat = 	marker.getPosition().latitude;
-//		double lng = 	marker.getPosition().longitude;
-//		LatLng coordinate = new LatLng(lat, lng);
-//		
-//		Shop shopObject = Globals.get_shop_from_location(coordinate);
-//		if(shopObject == null){
-//			Toast.makeText(getActivity(), "Can not connect to this shop", Toast.LENGTH_SHORT).show();
-//			
-//			
-//		}
-//		else{
-//			
-//			if(Globals.connectedShop != null && shopObject.getName().equals(Globals.connectedShop.getName())){
-//				Toast.makeText(getActivity(), ("You are Connected to " + Globals.connectedShop.getName()), Toast.LENGTH_SHORT).show();
-//			}
-//			else{
-//				connect_to_shop(shopObject);
-//				
-//			}
-//		}
+
 		return true;
 	}
-	/* (non-Javadoc)
-	 * @see com.homelybuysapp.interfaces.ShopInterface#shop_list_success(com.homelybuysapp.models.Location, java.util.ArrayList)
-	 */
+	
 	@Override
 	public void shop_list_success(Location areaLocation,
 			ArrayList<Shop> shoplist) {
 		// TODO Auto-generated method stub
 		//MapUI.mMap.clear();
-		
+        mapSearchProgressbar.setVisibility(View.GONE);
+
+        mapSearchProgressbar.stop();
+
 		if( shoplist != null && shoplist.size()>0){
 			double map_center_lat = areaLocation.getLatitude();     // current lat and lng to create a range for blue marker representing shop in the range of 200 mtr
 			double map_center_lng = areaLocation.getLongitude();
@@ -842,72 +649,12 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 				double shopLng =  shoplist.get(i).getLocation().getLongitude();
 				Globals.add_to_sd_matrix(shoplist.get(i),shopLat,shopLng,areaLocation);
 				
-//				
-//				Marker shop_marker = null;
-//				
-//				if((Globals.current_location.getLatitude()<shopLat+0.0003) 
-//						&& (Globals.current_location.getLatitude() > shopLat-0.0003))
-//				{
-//					if((Globals.current_location.getLongitude() < shopLng+0.0003) 
-//							&& (Globals.current_location.getLongitude() > shopLng - 0.0003))
-//					{
-//						LatLng coordinate = new LatLng(shopLat, shopLng);
-//						Globals.add_to_sd_matrix(shoplist.get(i),shopLat,shopLng);
-//						
-//						//add center  for shops
-////						shop_marker = mMap.addMarker(new MarkerOptions().position(coordinate)
-////								.draggable(false).title(shoplist.get(i).getName())
-////								.icon(BitmapDescriptorFactory.fromResource(R.drawable.shop_small)));
-////						
-////						markerList.add(shop_marker);
-//						continue;
-//					}
-//				}
-//				
-//				LatLng coordinate = new LatLng(shopLat, shopLng);
-////				shop_marker = mMap.addMarker(new MarkerOptions().position(coordinate).snippet("Shop")
-////						.draggable(false).title(shoplist.get(i).getName())
-////						.icon(BitmapDescriptorFactory.fromResource(R.drawable.shop_small)));
-////				markerList.add(shop_marker);
-//				
+			
 	    
 			}
 			deliveryAddressView.setVisibility(View.VISIBLE);
 			shopDetailsView.setVisibility(View.GONE);
 			
-//			if(!Globals.near_shop_distance_matrix.isEmpty()){
-//				Shop shpObject = Globals.min_sd_matrix();				//find the shop which is very near to the location set by the camera
-//					//inside the shop
-//				connect_to_shop(shpObject);
-////				Globals.isInsideShop = true;
-////				shopDetailHeading.setText("Welcome to " + shpObject.getName());
-////				shopDetailDescription.setText("Happy Shopping!");
-////				startShop.setVisibility(View.VISIBLE);	
-//			}
-//				
-//			else 
-//			{
-//				// nearby the shop  
-//				Globals.isInsideShop = false;
-//				//shopDetailHeading.setText("Select a shop near your delivery location");
-//				if(!animationFlipClockWise){
-//					deliveryAddressView.setVisibility(View.VISIBLE);
-//					shopDetailsView.setVisibility(View.GONE);
-//				}else{
-//					if(shoplist.size()>1){
-//					 shopDetailHeading.setText("");
-//					 shopDetailDescription.setText("Multiple Shops found tap shop marker to connect or drag map to change delivery location");
-//					 startShop.setVisibility(View.GONE);
-//					}
-//					else{
-//						shopDetailHeading.setText("");
-//						connect_to_shop( shoplist.get(0));
-//						shopDetailDescription.setText("");
-//						startShop.setVisibility(View.GONE);	
-//					}
-//				}
-//				
-//			}
 						
 		}
 		else{
@@ -915,7 +662,7 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 			shopDetailHeading.setText("No Shops currently in this area,We are trying our best to expand our services.");
 			deliveryAddressView.setVisibility(View.GONE);
 			shopDetailsView.setVisibility(View.VISIBLE);
-			shopDetailDescription.setText("Drag map to change delivery Location");
+			shopDetailDescription.setText("Drag map to choose delivery Location");
 			startShop.setVisibility(View.GONE);
 		}
 		
@@ -946,8 +693,8 @@ public class MapFragment extends BaseMapfragment implements ShopInterface,OnMark
 		shopDetailDescription.setText("You can shop various " +
 				"products through your cam scanner " +
 				"or through the list at an affordable prices.\nHappy Shopping!");
-		
-		location.removeLocationListener();
+		deliveryAddressInput.setText(primaryAddress);
+		HomelyBuysLocation.removeLocationListener();
 		mCallback.mapShopStart();
 		//startShop.setVisibility(View.VISIBLE);
 	}
@@ -983,7 +730,7 @@ public static class PlacesAutoComplete {
 	    StringBuilder sb = new StringBuilder(PLACES_API_BASE + TYPE_AUTOCOMPLETE + OUT_JSON);
 	    sb.append("?key=" + API_KEY);
 	    sb.append("&types=(regions)");
-	    sb.append("&location="+Globals.current_location.getLatitude().toString()+
+	    sb.append("&HomelyBuysLocation="+Globals.current_location.getLatitude().toString()+
 	    		","+Globals.current_location.getLongitude().toString());
         sb.append("&components=country:in");
       
@@ -1008,6 +755,10 @@ public static class PlacesAutoComplete {
 			public void failure(RetrofitError response) {
 				
 				Log.e("Places API Error", response.toString());
+	            mapSearchProgressbar.setVisibility(View.GONE);
+
+				mapSearchProgressbar.stop();
+
 			}
 
 			@Override
@@ -1026,6 +777,8 @@ public static class PlacesAutoComplete {
 					searchAdapter = new PlacesSearchAdapter( Globals.ApplicationContext,suggestionCursor, placesNameList);
 					shopSearchView.setSuggestionsAdapter(searchAdapter);
 				}
+	            mapSearchProgressbar.setVisibility(View.GONE);
+
 				mapSearchProgressbar.stop();
 			}
 			

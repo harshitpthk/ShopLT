@@ -177,7 +177,6 @@ public class OrderHistoryFragment extends Fragment{
 						@Override
 						public void failure(RetrofitError response) {
 							ServerConnectionMaker.recieveResponse(null);
-							Log.e("Order Status failure", response.getMessage().toString());
 							swipeLayout.setRefreshing(false);
 							if(explicitStatusCheck == true){
 								Toast.makeText(getActivity(), getString(R.string.order_detail_fetch_failure), Toast.LENGTH_LONG).show();
@@ -189,7 +188,6 @@ public class OrderHistoryFragment extends Fragment{
 						public void success(ORDERState state, Response response) {
 							ServerConnectionMaker.recieveResponse(response);
 							updateStatus(state.ordinal());
-							Log.e("Order Status Success", response.toString());
 							swipeLayout.setRefreshing(false);
 							if(explicitStatusCheck == true){
 								Toast.makeText(getActivity(), "Orders Status Refreshed.", Toast.LENGTH_LONG).show();

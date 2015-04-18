@@ -13,7 +13,6 @@ import retrofit.client.Request;
 import retrofit.client.Response;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -75,7 +74,6 @@ public class ServerConnectionMaker  {
 				if("set-cookie".equalsIgnoreCase(header.getName())){
 					if(header.getValue().contains("JSESSIONID="))
 						star_sessionID = header.getValue();
-						Log.e("star session ID",star_sessionID);
 						
 						//add_sessionID_request.addHeader("Access-Control-Allow-Star", "shoplite");
 						
@@ -106,8 +104,7 @@ public class ServerConnectionMaker  {
 	    @Override
 	    public Response execute(Request request) throws IOException {
 	        if (!ncm.isConnected()) {
-	            Log.e("No connectivity %s ", request.toString());
-	            Toast.makeText(Globals.ApplicationContext,"No Internet Connection",Toast.LENGTH_LONG).show();
+	            Toast.makeText(Globals.ApplicationContext,"Network Problem",Toast.LENGTH_LONG).show();
 	            try {
 					throw new NoConnectivityException("No connectivity");
 				} catch (NoConnectivityException e) {

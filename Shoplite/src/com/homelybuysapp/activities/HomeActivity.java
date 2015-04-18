@@ -32,8 +32,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
@@ -69,6 +67,7 @@ import com.homelybuysapp.models.Input;
 import com.homelybuysapp.models.Location;
 import com.homelybuysapp.models.OrderItemDetail;
 import com.homelybuysapp.models.PackList;
+import com.homelybuysapp.models.PackProducts;
 import com.homelybuysapp.models.Product;
 import com.homelybuysapp.models.ProductVariance;
 import com.homelybuysapp.models.Shop;
@@ -444,7 +443,7 @@ public class HomeActivity extends ActionBarActivity  implements CategoryInterfac
 					
 					
 					alertDialog.setTitle("Are You Sure?");
-					alertDialog.setMessage("Changing Delivery Location will Remove Products from the Cart.");
+					alertDialog.setMessage("Changing Delivery HomelyBuysLocation will Remove Products from the Cart.");
 					alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE,"CANCEL", new DialogInterface.OnClickListener() {
 						
 						@Override
@@ -656,8 +655,9 @@ public class HomeActivity extends ActionBarActivity  implements CategoryInterfac
 		if(count >= Constants.MAX_NOT_SENT_ITEMS){
 					
 			PackList pl = new PackList();
-			pl.products = Product.getToSendList(Globals.item_order_list);
-			pl.state = DBState.INSERT;
+			pl.pckProd = new PackProducts( DBState.INSERT, Product.getToSendList(Globals.item_order_list));
+			
+		
 		
 			Product.setSentList(Globals.item_order_list);
 			
@@ -676,18 +676,18 @@ public class HomeActivity extends ActionBarActivity  implements CategoryInterfac
 	@Override
 	public void PackListSuccess(PackList obj) {
 		
-		if(obj.state==DBState.DELETE){
-			for(int i = 0 ;i < obj.products.size() ; i++){
-				if(CartGlobals.cartList.contains(obj.products.get(i)))
-					CartGlobals.cartList.remove(obj.products.get(i));
-				if(CartGlobals.recentDeletedItems.contains(obj.products.get(i)))
-					CartGlobals.recentDeletedItems.remove(obj.products.get(i));
+		if(obj.pckProd.getState()==DBState.DELETE){
+			for(int i = 0 ;i < obj.pckProd.getProducts().size() ; i++){
+				if(CartGlobals.cartList.contains(obj.pckProd.getProducts().get(i)))
+					CartGlobals.cartList.remove(obj.pckProd.getProducts().get(i));
+				if(CartGlobals.recentDeletedItems.contains(obj.pckProd.getProducts().get(i)))
+					CartGlobals.recentDeletedItems.remove(obj.pckProd.getProducts().get(i));
 			}
 			
 		}
-		else if (obj.state == DBState.INSERT){
-			for(int i = 0 ;i < obj.products.size() ; i++){
-				CartGlobals.cartList.add(obj.products.get(i));
+		else if (obj.pckProd.getState() == DBState.INSERT){
+			for(int i = 0 ;i < obj.pckProd.getProducts().size() ; i++){
+				CartGlobals.cartList.add(obj.pckProd.getProducts().get(i));
 			}
 		}
 		else{
@@ -707,10 +707,10 @@ public class HomeActivity extends ActionBarActivity  implements CategoryInterfac
 	public void deletePackList(OrderItemDetail itemToDelete) {
 		
 		PackList pl = new PackList();
-		pl.products = new ArrayList<OrderItemDetail>();
-		pl.products.add(itemToDelete);
-		pl.state = DBState.DELETE;
-		CartGlobals.CartServerRequestQueue.add(pl);
+		pl.pckProd = new PackProducts( DBState.DELETE, Product.getToSendList(Globals.item_order_list));
+		
+	
+		//CartGlobals.CartServerRequestQueue.add(pl);
 		pl.sendPackList(this);
 	}
 	
@@ -784,7 +784,7 @@ public class HomeActivity extends ActionBarActivity  implements CategoryInterfac
 			mostNearByShop.connect_to_shop(this);
 		}
 		else{
-			Toast.makeText(this, "No Shops found at your delivery Location", Toast.LENGTH_LONG).show();
+			Toast.makeText(this, "No Shops found at your delivery HomelyBuysLocation", Toast.LENGTH_LONG).show();
 		}
 	}
 
@@ -1045,5 +1045,12 @@ public class HomeActivity extends ActionBarActivity  implements CategoryInterfac
 			   	  Controls.dismiss_progress_dialog();
 
 		   }
+	}
+
+
+	@Override
+	public void packListFailure() {
+		// TODO Auto-generated method stub
+		
 	}
 }

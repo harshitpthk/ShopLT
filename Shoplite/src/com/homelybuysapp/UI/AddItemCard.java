@@ -93,17 +93,9 @@ public class AddItemCard extends BaseItemCard {
 		}
 		try{
 			measurePicker.setMinValue(0);
-			measurePicker.setMaxValue(item.getItemList().size()-1);
-//			measurePicker.setFormatter(new NumberPicker.Formatter() {
-//				
-//				@Override
-//				public String format(int value) {
-//					
-//					return item.getItemList().get(value).getName();
-//				}
-//			});
+			measurePicker.setMaxValue(0);
 			measurePicker.setDisplayedValues(measureStringArray);
-
+			measurePicker.setMaxValue(item.getItemList().size()-1);
 			measurePicker.setOnValueChangedListener(new OnValueChangeListener() {
 				
 				@Override
@@ -132,28 +124,21 @@ public class AddItemCard extends BaseItemCard {
 	public void initQtyPicker(){
 		try{
 			
-		
-			qtyPicker.setMaxValue(5);
-			qtyPicker.setMinValue(1);
-			qtyPicker.setFormatter(new NumberPicker.Formatter() {
-				
-				@Override
-				public String format(int value) {
-					// TODO Auto-generated method stub
-					
-					return Integer.toString(value) + " Qty";
-				}
-			});
+			String[]  qtyStringArray = {"1 Qty", "2 Qty", "3 Qty", "4 Qty","5 Qty"};
+			
+			
+			qtyPicker.setMaxValue(0);
+			qtyPicker.setMinValue(0);
+			qtyPicker.setDisplayedValues(qtyStringArray);
+			qtyPicker.setMaxValue(4);
+
 			qtyPicker.setOnValueChangedListener(new OnValueChangeListener() {
 				
 				@Override
 				public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
 					
-					// TODO Auto-generated method stub
-					int qty = newVal;
-					item.setCurrentQty(qty);
-					double totalPrice = item.getCurrentQty() * item.getCurrentMsrPrice();
-					item.setTotalPrice(totalPrice);
+					item.setCurrentQty( newVal + 1);
+					item.setTotalPrice( (double) Math.round((item.getCurrentQty()*item.getCurrentMsrPrice() * 100.0)/100.0));
 					updateView();
 				}
 			});

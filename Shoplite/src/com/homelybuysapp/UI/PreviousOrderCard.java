@@ -197,7 +197,6 @@ public class PreviousOrderCard implements ConnectionInterface{
 					@Override
 					public void failure(RetrofitError response) {
 						ServerConnectionMaker.recieveResponse(null);
-						//Log.e("order items fetch failure",response.getMessage());
 						orderedProductFetchFailure();
 					}
 
@@ -207,7 +206,6 @@ public class PreviousOrderCard implements ConnectionInterface{
 					public void success(ArrayList<OrderItemDetail> productList,
 							Response response) {
 						ServerConnectionMaker.recieveResponse(response);
-						Log.e("order items fetch success",response.toString());
 						orderedProductsFetchSuccess(productList);
 					}
 

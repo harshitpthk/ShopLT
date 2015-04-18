@@ -10,10 +10,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ProgressBar;
 
 import com.homelybuys.homelybuysApp.R;
-import com.homelybuysapp.UI.ButteryProgressBar;
 import com.homelybuysapp.fragments.MapFragment;
 import com.homelybuysapp.interfaces.MapInterface;
 
@@ -39,7 +37,7 @@ public class MapActivity extends ActionBarActivity implements MapInterface {
 		instantiator = getIntent().getStringExtra("instantiator");
 		
 	}
-
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.	

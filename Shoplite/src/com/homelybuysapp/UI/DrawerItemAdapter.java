@@ -89,7 +89,21 @@ public class DrawerItemAdapter extends ArrayAdapter<Product>{
 	 */
 	public void setAddCardView(AlertDialog addDialog) {
 		
-		this.AddDialog = addDialog;
+		this.setAddDialog(addDialog);
+	}
+
+	/**
+	 * @return the addDialog
+	 */
+	public AlertDialog getAddDialog() {
+		return AddDialog;
+	}
+
+	/**
+	 * @param addDialog the addDialog to set
+	 */
+	public void setAddDialog(AlertDialog addDialog) {
+		AddDialog = addDialog;
 	}
 
 }

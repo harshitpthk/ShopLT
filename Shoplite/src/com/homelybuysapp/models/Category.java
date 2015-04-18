@@ -6,8 +6,9 @@ import java.util.Comparator;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-import android.util.Log;
+import android.widget.Toast;
 
+import com.homelybuysapp.Utils.Globals;
 import com.homelybuysapp.connection.ConnectionInterface;
 import com.homelybuysapp.connection.ServerConnectionMaker;
 import com.homelybuysapp.connection.ServiceProvider;
@@ -88,12 +89,11 @@ public class Category implements ConnectionInterface{
 			@Override
 			public void failure(RetrofitError response) {
 				// TODO Auto-generated method stub
-				if (response.isNetworkError()) {
-					Log.e("Retrofit error", "503"); // Use another code if you'd prefer
+				if (response.getKind().equals(RetrofitError.Kind.NETWORK)) {
+					//Log.e("Retrofit error", "503"); // Use another code if you'd prefer
+					Toast.makeText(Globals.ApplicationContext, "Network Problem", Toast.LENGTH_SHORT).show();
 			    }
-				//Toast.makeText(getBaseContext(), arg0.toString(), Toast.LENGTH_LONG).show();
-				Log.e("Retrofit error", response.getUrl());
-				Log.e("Retrofit error", response.getMessage());
+				
 				ServerConnectionMaker.recieveResponse(null);
 			}
 

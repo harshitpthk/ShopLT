@@ -7,7 +7,9 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.homelybuysapp.Utils.Globals;
 import com.homelybuysapp.Utils.util;
 import com.homelybuysapp.connection.ConnectionInterface;
 import com.homelybuysapp.connection.ServerConnectionMaker;
@@ -57,14 +59,13 @@ public class Login implements ConnectionInterface {
 		serviceProvider.login(this.authCode,this.email, new Callback<String>(){
 
 			@Override
-			public void failure(RetrofitError arg0) {
+			public void failure(RetrofitError response) {
 				// TODO Auto-generated method stub
-				if (arg0.isNetworkError()) {
-					Log.e("Retrofit error", "503"); // Use another code if you'd prefer
+				if (response.getKind().equals(RetrofitError.Kind.NETWORK)) {
+					//Log.e("Retrofit error", "503"); // Use another code if you'd prefer
+					Toast.makeText(Globals.ApplicationContext, "Network Problem", Toast.LENGTH_SHORT).show();
 			    }
-				//Toast.makeText(getBaseContext(), arg0.toString(), Toast.LENGTH_LONG).show();
-				//Log.e("Retrofit error", arg0.getUrl());
-				//Log.e("Retrofit error", arg0.getMessage());
+				
 				ServerConnectionMaker.recieveResponse(null);
 				thisLoginObj.callee.loginFailure();
 			}
@@ -72,7 +73,6 @@ public class Login implements ConnectionInterface {
 			@Override
 			public void success(String message, Response response) {
 				// TODO Auto-generated method stub
-				Log.e("Retrofit Success", message);
 				
 				
 				ServerConnectionMaker.recieveResponse(response);

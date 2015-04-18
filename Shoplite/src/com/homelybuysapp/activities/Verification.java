@@ -115,7 +115,7 @@ public class Verification extends Activity implements ConnectionInterface,LoginI
 		 resendButton = (Button)findViewById(R.id.resend);
 //		 String auth_token = Globals.dbhelper.getItem("auth-token");
 //		 authToken = Integer.parseInt(auth_token);
-		 cntTimer = new CountDownTimer(startTime, interval) {
+		 setCntTimer(new CountDownTimer(startTime, interval) {
 				
 				@Override
 				public void onTick(long millisUntilFinished) {
@@ -131,7 +131,7 @@ public class Verification extends Activity implements ConnectionInterface,LoginI
 					resendButton.setTextColor(getResources().getColor(R.color.dark_app_color));
 					 resendButton.setText(getString(R.string.resend ));
 				}
-			}.start();
+			}.start());
 			 resendButton.setEnabled(false);
 			 resendButton.setTextColor(getResources().getColor(android.R.color.darker_gray));
 			 resendButton.setBackgroundResource(R.drawable.button_disabled);
@@ -234,14 +234,16 @@ public class Verification extends Activity implements ConnectionInterface,LoginI
 			serviceProvider.addUser(authToken, new Callback<ArrayList<String>>(){
 
 				@Override
-				public void failure(RetrofitError arg0) {
+				public void failure(RetrofitError response) {
 					
-					if (arg0.isNetworkError()) {
-						Log.e("Retrofit error", "503"); // Use another code if you'd prefer
-				    }
-					Toast.makeText(getBaseContext(), R.string.verification_failure, Toast.LENGTH_LONG).show();
-					Log.e("Retrofit error", arg0.getUrl());
-					Log.e("Retrofit error", arg0.getMessage());
+					if (response.getKind().equals(RetrofitError.Kind.NETWORK)) {
+						Toast.makeText(Globals.ApplicationContext, "Network Problem", Toast.LENGTH_SHORT).show();
+				    }else{
+					
+				    	Toast.makeText(getBaseContext(), R.string.verification_failure, Toast.LENGTH_LONG).show();
+					
+				    }	
+				    
 					ServerConnectionMaker.recieveResponse(null);
 				}
 
@@ -251,7 +253,6 @@ public class Verification extends Activity implements ConnectionInterface,LoginI
 					Globals.dbhelper.setItem("cliendID", clientID.get(0).toString());
 					String email = Globals.dbhelper.getItem("email");
 					ServerConnectionMaker.recieveResponse(response);
-					//Toast.makeText(getBaseContext(), clientID.get(0).toString(), Toast.LENGTH_LONG).show();
 					Login ln = new Login();
 					ln.login(clientID.get(0).toString(), email ,vf);
 					
@@ -271,14 +272,14 @@ public class Verification extends Activity implements ConnectionInterface,LoginI
 			serviceProvider.signup(user, new Callback<Integer>(){
 
 				@Override
-				public void failure(RetrofitError arg0) {
+				public void failure(RetrofitError response) {
 					
-					if (arg0.isNetworkError()) {
-						Log.e("Retrofit error", "503"); // Use another code if you'd prefer
+					if (response.getKind().equals(RetrofitError.Kind.NETWORK)) {
+						//Log.e("Retrofit error", "503"); // Use another code if you'd prefer
+						Toast.makeText(Globals.ApplicationContext, "Network Problem", Toast.LENGTH_SHORT).show();
 				    }
-					//Toast.makeText(getBaseContext(), arg0.toString(), Toast.LENGTH_LONG).show();
-					Log.e("Retrofit error", arg0.getUrl());
-					Log.e("Retrofit error", arg0.getMessage());
+					
+					
 					ServerConnectionMaker.recieveResponse(null);
 					
 				}
@@ -289,7 +290,7 @@ public class Verification extends Activity implements ConnectionInterface,LoginI
 					//Toast.makeText(getBaseContext(), arg0.toString(), Toast.LENGTH_LONG).show();
 					ServerConnectionMaker.recieveResponse(response);
 					Globals.dbhelper.setItem("auth-token", auth_token.toString() );
-					cntTimer = new CountDownTimer(startTime, interval) {
+					setCntTimer(new CountDownTimer(startTime, interval) {
 						
 						@Override
 						public void onTick(long millisUntilFinished) {
@@ -305,7 +306,7 @@ public class Verification extends Activity implements ConnectionInterface,LoginI
 							resendButton.setTextColor(getResources().getColor(R.color.dark_app_color));
 							 resendButton.setText(getString(R.string.resend ));
 						}
-					}.start();
+					}.start());
 					 resendButton.setEnabled(false);
 					 resendButton.setTextColor(getResources().getColor(android.R.color.darker_gray));
 					 resendButton.setBackgroundResource(R.drawable.button_disabled);
@@ -330,6 +331,20 @@ public class Verification extends Activity implements ConnectionInterface,LoginI
 	public void loginFailure() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	/**
+	 * @return the cntTimer
+	 */
+	public CountDownTimer getCntTimer() {
+		return cntTimer;
+	}
+
+	/**
+	 * @param cntTimer the cntTimer to set
+	 */
+	public void setCntTimer(CountDownTimer cntTimer) {
+		this.cntTimer = cntTimer;
 	}
 	
 

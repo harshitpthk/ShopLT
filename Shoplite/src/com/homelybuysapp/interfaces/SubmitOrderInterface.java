@@ -9,5 +9,5 @@ package com.homelybuysapp.interfaces;
  */
 public interface SubmitOrderInterface {
 	public void submitOrderSuccess(Integer orderId);
-	
+	public void submitOrderFailure();
 }
